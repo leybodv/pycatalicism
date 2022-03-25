@@ -25,5 +25,6 @@ calc_parser.add_argument('--output-data', default=None, help='path to file to sa
 calc_parser.add_argument('--show-plot', action='store_true', help='whether to show data plot or not')
 calc_parser.add_argument('--output-plot', default=None, help='path to file to save plot')
 
-args = parser.parse_args()
-args.func(args)
+if (__name__ == '__main__'):
+    args = parser.parse_args()
+    args.func(args)
