@@ -1,12 +1,13 @@
 #!/usr/bin/python
 
 import logging
-import logging_config.logging_config as logging_config
+import logging_config.logging_config as lc
 import argparse
 import calc
+import calc.main
 
 logger = logging.getLogger(__name__)
-logging_config.configure_logger(logger)
+lc.configure_logger(logger)
 
 def calculate(args:argparse.Namespace):
     """
