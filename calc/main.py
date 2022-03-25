@@ -1,8 +1,8 @@
 import logging
-import logging_config
+import pycatalicism.logging_config.logging_config as lc
 
 logger = logging.getLogger(__name__)
-logging_config.configure_logger(logger)
+lc.configure_logger(logger)
 
 def get_calculator(reaction:str) -> calculator.Calculator:
     """
