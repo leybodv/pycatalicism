@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import logging
-import logging_config.logging_config as lc
+import logging_config as lc
 import argparse
 import calc.main
 
