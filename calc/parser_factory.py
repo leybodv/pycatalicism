@@ -1,6 +1,7 @@
 import logging
 import logging_config
 from pathlib import Path
+from parser import Parser
 
 logger = logging.getLogger(__name__)
 logging_config.configure_logger(logger)
