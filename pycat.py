@@ -3,7 +3,7 @@
 import logging
 import logging_config as lc
 import argparse
-import calc.calc as calc
+from calc import calc
 
 logger = logging.getLogger(__name__)
 lc.configure_logger(logger)
