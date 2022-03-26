@@ -1,9 +1,15 @@
 import logging
 import logger_config
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-def calculate(reaction:str):
+def _export_results(output_data_path:Path, conversion, selectivity):
+    """
+    """
+    raise NotImplementedError()
+
+def calculate(reaction:str, output_data_path:Path|None=None, show_plot:bool=False, output_plot_path:Path|None=None):
     """
     """
     logger.info(f'calculating conversion and selectivity for reaction {reaction}')
