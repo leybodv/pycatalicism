@@ -33,3 +33,6 @@ def calculate(input_data_path:Path, reaction:str, output_data_path:Path|None=Non
         _export_results(output_data_path, conversion, selectivity)
     if show_plot or (output_plot_path is not None):
         plotter.plot(conversion, selectivity, show_plot, output_plot_path)
+
+if __name__ == '__main__':
+    logger.info('executing calc.py')
