@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import logging
 import logging_config
 from pathlib import Path
