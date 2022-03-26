@@ -11,3 +11,8 @@ class Calculator():
         """
         """
         raise NotImplementedError()
+
+    def calculate_selecctivity(self, input_data):
+        """
+        """
+        raise NotImplementedError()
