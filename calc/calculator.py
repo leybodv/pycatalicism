@@ -6,6 +6,12 @@ class Calculator():
         """
         """
         input_data = data_importer.get_input_data()
+        if reaction == 'co-oxidation':
+            data_calculator = COOxidationCalculator()
+        elif reaction == 'co2-hydrogenation':
+            data_caltulator = CO2HeydrogenationCalculator()
+        else:
+            raise Exception(f'reaction {reaction} is not supported')
         conversion = data_calculator.calculate_conversion(input_data)
         selectivity = data_calculator.calculate_selectivity(input_data)
         self._print_results(conversion, selectivity)
