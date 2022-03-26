@@ -1,7 +1,7 @@
-import rawdata.RawData as RawData
-import conversion.Conversion as Conversion
-import selectivity.Selectivity as Selectivity
-import activity.Activity as Activity
+from rawdata import RawData
+from conversion import Conversion
+from selectivity import Selectivity
+from activity import Activity
 
 class Calculator():
     """
