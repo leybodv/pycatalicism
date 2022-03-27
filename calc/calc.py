@@ -22,8 +22,12 @@ def _print_results(conversion, selectivity):
 def calculate(input_data_path:Path, reaction:str, output_data_path:Path|None=None, show_plot:bool=False, output_plot_path:Path|None=None):
     """
     """
+    import sys
+    logger.debug(f'{sys.path = }')
     import calculator_factory
     import parser_factory
+    # from . import calculator_factory
+    # from . import parser_factory
     logger.info(f'calculating conversion and selectivity for reaction {reaction}')
     calculator = calculator_factory.get_calculator(reaction)
     parser = parser_factory.get_parser()
