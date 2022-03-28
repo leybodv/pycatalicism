@@ -4,8 +4,8 @@ import logging
 from pathlib import Path
 
 from calc import logging_config
-import calc.calculator_factory
-import calc.parser_factory
+from calc import calculator_factory
+from calc import parser_factory
 
 logger = logging.getLogger(__name__)
 logging_config.configure_logger(logger)
