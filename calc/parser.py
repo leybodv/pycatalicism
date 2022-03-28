@@ -1,5 +1,6 @@
 from pathlib import Path
-from rawdata import RawData
+
+from calc.rawdata import RawData
 
 class Parser():
     """

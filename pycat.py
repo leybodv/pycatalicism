@@ -1,8 +1,10 @@
 #!/usr/bin/python
 
 import logging
-import logging_config as lc
 import argparse
+
+import logging_config as lc
+from calc import calc
 
 logger = logging.getLogger(__name__)
 lc.configure_logger(logger)
@@ -11,9 +13,6 @@ def calculate(args:argparse.Namespace):
     """
     """
     logger.info('Calculating conversion and selectivity vs. temperature')
-    from calc import calc
-    import sys
-    sys.path.append('./calc')
     logger.debug(f'{dir() = }')
     logger.debug(f'{dir(calc) = }')
     calc.calculate(input_data_path=args.input_data_path, reaction=args.reaction, output_data_path=args.output_data, show_plot=args.show_plot, output_plot_path=args.output_plot)
