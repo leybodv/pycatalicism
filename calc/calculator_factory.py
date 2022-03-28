@@ -2,6 +2,8 @@ import logging
 
 from calc import logging_config
 from calc.calculator import Calculator
+from calc.cooxidationcalculator import COOxidationCalculator
+from calc.co2hydrogenationcalculator import CO2HydrogenationCalculator
 
 logger = logging.getLogger(__name__)
 logging_config.configure_logger(logger)
