@@ -3,7 +3,7 @@
 import logging
 from pathlib import Path
 
-import calc.logging_config
+from calc import logging_config
 import calc.calculator_factory
 import calc.parser_factory
 

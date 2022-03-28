@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-import calc.logging_config
+from calc import logging_config
 from calc.parser import Parser
 
 logger = logging.getLogger(__name__)

@@ -1,6 +1,6 @@
 import logging
 
-import calc.logging_config
+from calc import logging_config
 from calc.calculator import Calculator
 
 logger = logging.getLogger(__name__)
