@@ -10,4 +10,9 @@ def get_calculator(reaction:str) -> Calculator:
     """
     """
     logger.debug(f'creating calculator for reaction {reaction}')
-    raise NotImplementedError()
+    if reaction == 'co-oxidation':
+        return COOxidationCalculator()
+    elif reaction == 'co2-hydrogenation':
+        return CO2HydrogenationCalculator()
+    else:
+        raise Exception(f'Cannot create calculator for reaction {reaction}')
