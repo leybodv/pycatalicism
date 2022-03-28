@@ -23,7 +23,7 @@ def _print_results(conversion, selectivity):
 def calculate(input_data_path:Path, reaction:str, output_data_path:Path|None=None, show_plot:bool=False, output_plot_path:Path|None=None):
     """
     """
-    logger.info(f'calculating conversion and selectivity for reaction {reaction}')
+    logger.debug(f'calculating conversion and selectivity for reaction {reaction}')
     calculator = calculator_factory.get_calculator(reaction)
     parser = parser_factory.get_parser()
     input_data = parser.parse_data(input_data_path)
@@ -34,6 +34,3 @@ def calculate(input_data_path:Path, reaction:str, output_data_path:Path|None=Non
         _export_results(output_data_path, conversion, selectivity)
     if show_plot or (output_plot_path is not None):
         plotter.plot(conversion, selectivity, show_plot, output_plot_path)
-
-if __name__ == '__main__':
-    logger.info('executing calc.py')

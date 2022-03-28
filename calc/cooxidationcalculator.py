@@ -12,4 +12,4 @@ class COOxidationCalculator(Calculator):
         """
         self.logger = logging.getLogger(__class__.__name__)
         logging_config.configure_logger(self.logger)
-        raise NotImplementedError()
+        self.logger.debug(f'creating {__class__.__name__}')
