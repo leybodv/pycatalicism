@@ -2,6 +2,7 @@ import logging
 
 from calc import logging_config
 from calc.parser import Parser
+from calc.chromatec_crystal_composition_copy_paste_parser import ChromatecCrystalCompositionCopyPasteParser
 
 logger = logging.getLogger(__name__)
 logging_config.configure_logger(logger)
