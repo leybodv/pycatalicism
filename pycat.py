@@ -12,7 +12,7 @@ lc.configure_logger(logger)
 def calculate(args:argparse.Namespace):
     """
     """
-    logger.info('Calculating conversion and selectivity vs. temperature')
+    logger.info(f'Calculating conversion and selectivity vs. temperature for reaction {args.reaction}')
     calc.calculate(input_data_path=args.input_data_path, reaction=args.reaction, output_data_path=args.output_data, show_plot=args.show_plot, output_plot_path=args.output_plot)
 
 parser = argparse.ArgumentParser()
