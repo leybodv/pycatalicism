@@ -1,7 +1,7 @@
 import logging
 
-from calc import logging_config
-from calc.parser import Parser
+from . import logging_config
+from .parser import Parser
 
 class ChromatecCrystalCompositionCopyPasteParser(Parser):
     """

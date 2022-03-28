@@ -1,9 +1,9 @@
 import logging
 from pathlib import Path
 
-from calc import logging_config
-from calc import calculator_factory
-from calc import parser_factory
+from . import logging_config
+from . import calculator_factory
+from . import parser_factory
 
 logger = logging.getLogger(__name__)
 logging_config.configure_logger(logger)

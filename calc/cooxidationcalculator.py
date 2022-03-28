@@ -1,7 +1,7 @@
 import logging
 
-from calc import logging_config
-from calc.calculator import Calculator
+from . import logging_config
+from .calculator import Calculator
 
 class COOxidationCalculator(Calculator):
     """
