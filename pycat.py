@@ -5,6 +5,7 @@ import argparse
 
 import logging_config as lc
 from calc import calc
+import config
 
 logger = logging.getLogger(__name__)
 lc.configure_logger(logger)
@@ -13,6 +14,7 @@ def calculate(args:argparse.Namespace):
     """
     """
     logger.info(f'Calculating conversion and selectivity vs. temperature for reaction {args.reaction}')
+    parser_type = config.raw_data_parser_type
     calc.calculate(input_data_path=args.input_data_path, reaction=args.reaction, parser_type=parser_type, output_data_path=args.output_data, show_plot=args.show_plot, output_plot_path=args.output_plot)
 
 parser = argparse.ArgumentParser()
