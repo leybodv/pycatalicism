@@ -18,6 +18,7 @@ class COOxidationCalculator(Calculator):
 
     def calculate_conversion(self, input_data:RawData) -> Conversion:
         """
+        raise warning about wrong calculation
         """
         self.logger.debug(f'calculatong conversion')
         temperatures = []
