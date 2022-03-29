@@ -22,7 +22,7 @@ class COOxidationCalculator(Calculator):
         self.logger.debug(f'calculatong conversion')
         temperatures = []
         alphas = []
-        for temperature in input_data.get_temperature():
+        for temperature in input_data.get_temperatures():
             T_i = input_data.get_init_amb_temp()
             p_i = input_data.get_init_amb_pres()
             f_i = input_data.get_init_flow()
