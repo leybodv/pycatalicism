@@ -43,3 +43,9 @@ class COOxidationCalculator(Calculator):
             alphas.append(alpha)
         conversion = Conversion(temperatures, alphas)
         return conversion
+
+    def calculate_selectivity(self, input_data:RawData) -> None:
+        """
+        """
+        self.logger.debug('nothing to calculate')
+        return None
