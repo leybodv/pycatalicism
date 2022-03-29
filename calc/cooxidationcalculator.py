@@ -32,7 +32,7 @@ class COOxidationCalculator(Calculator):
             f_f = input_data.get_fin_flow(temperature)
             C_CO_i = input_data.get_init_conc('CO')
             C_CO_f = input_data.get_conc('CO', temperature)
-            if T_i == None or p_i == None or f_i == None or T_f == None or p_f == None or f_f == None:
+            if T_i is None or p_i is None or f_i is None or T_f is None or p_f is None or f_f is None:
                 T_i = 1
                 p_i = 1
                 f_i = 1
