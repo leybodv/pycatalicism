@@ -13,3 +13,9 @@ class COOxidationCalculator(Calculator):
         self.logger = logging.getLogger(__class__.__name__)
         logging_config.configure_logger(self.logger)
         self.logger.debug(f'creating {__class__.__name__}')
+
+    def calculate_conversion(self, input_data:RawData) -> Conversion:
+        """
+        """
+        self.logger.debug(f'calculating conversion')
+        raise NotImplementedError()
