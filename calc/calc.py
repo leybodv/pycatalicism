@@ -20,13 +20,13 @@ def _print_results(conversion, selectivity):
     logger.debug('printing results')
     raise NotImplementedError()
 
-def calculate(input_data_path:Path, reaction:str, parser_type:str, output_data_path:Path|None=None, show_plot:bool=False, output_plot_path:Path|None=None):
+def calculate(input_data_path:Path, initial_data_path:Path, reaction:str, parser_type:str, output_data_path:Path|None=None, show_plot:bool=False, output_plot_path:Path|None=None):
     """
     """
     logger.debug(f'calculating conversion and selectivity for reaction {reaction}')
     calculator = calculator_factory.get_calculator(reaction)
     parser = parser_factory.get_parser(parser_type)
-    input_data = parser.parse_data(input_data_path)
+    input_data = parser.parse_data(input_data_path, initial_data_path)
     conversion = calculator.calculate_conversion(input_data)
     selectivity = calculator.calculate_selectivity(input_data)
     _print_results(conversion, selectivity)
