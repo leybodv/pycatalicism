@@ -17,7 +17,6 @@ class RawData():
         self.fin_flows = None if final_flows is None else np.array(final_flows)
         self.init_concs = initial_concentrations
         self.concs = concentrations
-        raise NotImplementedError()
 
     def get_temperatures(self) -> np.ndarray[float, np.dtype]:
         """
