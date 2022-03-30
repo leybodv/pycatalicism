@@ -24,6 +24,8 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
             raise Exception(f'initial data path {initial_data_path} must be a file')
         if self._data_file_format_is_ok(initial_data_path):
             _, Cs_i, Ta_i, Pa_i, f_i = self._parse_file(initial_data_path)
+        else:
+            raise Exception(f'Wrong format in file {initial_data_path} with initial data')
         Ts = []
         Cs_f = []
         Ta_f = []
