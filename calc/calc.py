@@ -18,7 +18,8 @@ def _print_results(conversion, selectivity):
     """
     """
     logger.debug('printing results')
-    raise NotImplementedError()
+    print(conversion)
+    print(selectivity)
 
 def calculate(input_data_path:Path, initial_data_path:Path, reaction:str, parser_type:str, output_data_path:Path|None=None, show_plot:bool=False, output_plot_path:Path|None=None):
     """
