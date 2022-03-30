@@ -45,7 +45,22 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
     def _data_file_format_is_ok(self, path:Path) -> bool:
         """
         """
-        raise NotImplementedError()
+        if path.is_file():
+            temp_h = False
+            conc_h = False
+            with path.open(mode='r') as file:
+                for line in file.readlines():
+                    if line.startswith('Температура'):
+                        temp_h = True
+                    elif line.startswith('Название\tВремя, мин\tДетектор\tКонцентрация\tЕд, измерения\tПлощадь\tВысота'):
+                        conc_h = True
+            format_is_ok = temp_h and conc_h
+        else:
+            self.logger.warning(f'Path to data file {path} is not a file, skipping')
+            format_is_ok = False
+        if not format_is_ok:
+            self.logger.warning(f'Data file format in {path} is wrong, skipping')
+        return format_is_ok
 
     def _parse_file(self, path:Path) -> tuple[float,dict[str,float],float|None,float|None,float|None]:
         """
