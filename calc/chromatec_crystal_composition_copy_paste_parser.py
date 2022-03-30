@@ -41,3 +41,13 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
                 f_f.append(f)
         rawdata = RawData(temperatures=Ts, initial_concentrations=Cs_i, concentrations=Cs_f, initial_ambient_temperature=Ta_i, initial_ambient_pressure=Pa_i, initial_flow=f_i, final_ambient_temperatures=Ta_f, final_ambient_pressures=Pa_f, final_flows=f_f)
         return rawdata
+
+    def _data_file_format_is_ok(self, path:Path) -> bool:
+        """
+        """
+        raise NotImplementedError()
+
+    def _parse_file(self, path:Path) -> tuple[float,dict[str,float],float|None,float|None,float|None]:
+        """
+        """
+        raise NotImplementedError()
