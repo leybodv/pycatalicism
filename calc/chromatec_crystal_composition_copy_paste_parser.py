@@ -46,4 +46,28 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
         """
         """
         file_contents = self._replace_commas_with_dots(path)
-        raise NotImplementedError()
+        T = None
+        C = {}
+        Ta = None
+        Pa = None
+        f = None
+        lines = file_contents.split(sep='\n')
+        while lines:
+            line = lines.pop(0)
+            if line.startswith('Температура'):
+                T = float(line.split(sep='\t')[1])
+            if line.startswith('Название\tВремя. мин\tДетектор\tКонцентрация\tЕд. измерения\tПлощадь\tВысота'):
+                while line != '' or lines:
+                    line = lines.pop(0)
+                    compound = line.split(sep='\t')[0]
+                    concentration = line.split(sep='\t')[3]
+                    C[compound] = float(concentration)
+            if line.startswith('Темп. (газовые часы)'):
+                Ta = float(line.split(sep='\t')[1])
+            if line.startswith('Давление (газовые часы)'):
+                Pa = float(line.split(sep='\t')[1])
+            if line.startswith('Поток'):
+                f = float(line.split(sep='\t')[1])
+        if T is None or len(C) == 0:
+            raise ParserException(f'Wrong data format in file {path}')
+        return (T, C, Ta, Pa, f)
