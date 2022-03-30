@@ -4,6 +4,7 @@ from pathlib import Path
 from . import logging_config
 from .parser import Parser
 from .rawdata import RawData
+from .parserexception import ParserException
 
 class ChromatecCrystalCompositionCopyPasteParser(Parser):
     """
@@ -33,7 +34,14 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
         for file in input_data_path.iterdir():
             if file == initial_data_path:
                 continue
-            T, C, Ta, Pa, f = self._parse_file(file)
+            if file.is_dir():
+                self.logger.warning(f'Found directory {file} in input data path')
+                continue
+            try:
+                T, C, Ta, Pa, f = self._parse_file(file)
+            except ParserException:
+                self.logger.warning(f'Wrong data format in file {file}. Skipping.')
+                continue
             Ts.append(T)
             Cs_f.append(C)
             Ta_f.append(Ta)
