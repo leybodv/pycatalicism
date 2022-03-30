@@ -10,3 +10,11 @@ class Conversion():
         """
         self.temperatures = np.array(temperatures)
         self.alphas = np.array(alphas)
+
+    def __str__(self) -> str:
+        """
+        """
+        string = 'Temperature\tConversion\n'
+        for temperature, alpha in zip(self.temperatures, self.alphas):
+            string = string + f'{temperature}\t{alpha}\n'
+        return string
