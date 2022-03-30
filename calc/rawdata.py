@@ -5,7 +5,7 @@ class RawData():
     Wrapper for imported data storage
     """
 
-    def __init__(self, temperatures:list[float]|np.ndarray[float,np.dtype], initial_concentrations:dict[str,float], initial_ambient_temperature:float|None=None, initial_ambient_pressure:float|None=None, initial_flow:float|None=None, final_ambient_temperatures:list[float]|np.ndarray[float,np.dtype]|None=None, final_ambient_pressures:list[float]|np.ndarray[float,np.dtype]|None=None, final_flows:list[float]|np.ndarray[float,np.dtype]|None=None):
+    def __init__(self, temperatures:list[float]|np.ndarray[float,np.dtype], initial_concentrations:dict[str,float], concentrations:np.ndarray[dict[str,float],np.dtype], initial_ambient_temperature:float|None=None, initial_ambient_pressure:float|None=None, initial_flow:float|None=None, final_ambient_temperatures:list[float]|np.ndarray[float,np.dtype]|None=None, final_ambient_pressures:list[float]|np.ndarray[float,np.dtype]|None=None, final_flows:list[float]|np.ndarray[float,np.dtype]|None=None):
         """
         """
         self.temperatures = np.array(temperatures)
@@ -16,6 +16,7 @@ class RawData():
         self.fin_amb_pres = None if final_ambient_pressures is None else np.array(final_ambient_pressures)
         self.fin_flows = None if final_flows is None else np.array(final_flows)
         self.init_concs = initial_concentrations
+        self.concs = concentrations
         raise NotImplementedError()
 
     def get_temperatures(self) -> np.ndarray[float, np.dtype]:
@@ -65,4 +66,9 @@ class RawData():
     def get_init_conc(self, compound:str) -> float:
         """
         """
-        return self.init_concs['CO']
+        return self.init_concs[compound]
+
+    def get_conc(self, compound:str, temperature:float) -> float:
+        """
+        """
+        return dict(self.concs[self.temperatures == temperature])[compound]
