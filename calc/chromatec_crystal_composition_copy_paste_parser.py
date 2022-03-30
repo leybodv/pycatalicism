@@ -71,3 +71,24 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
         if T is None or len(C) == 0:
             raise ParserException(f'Wrong data format in file {path}')
         return (T, C, Ta, Pa, f)
+
+    def _replace_commas_with_dots(self, path:Path) -> str:
+        """
+        replace all commas with dots in a file
+
+        parameters
+        ----------
+            path:Path
+                path to file for processing
+
+        returns
+        -------
+            new_contents:str
+                string with file contents in which commas were replaced with dots
+        """
+        self.logger.debug('starting replace of commas with dots')
+        with path.open(mode='r') as file:
+            contents = file.read()
+            new_contents = contents.replace(',', '.')
+        self.logger.debug('finished replace of commas with dots')
+        return new_contents
