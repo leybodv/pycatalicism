@@ -22,9 +22,9 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
         """
         self.logger.debug(f'parsing data from {input_data_path}')
         if not initial_data_path.is_file():
-            raise Exception(f'initial data path {initial_data_path} must be a file')
+            raise ParserException(f'initial data path {initial_data_path} must be a file')
         if not input_data_path.is_dir():
-            raise Exception(f'input data path {input_data_path} must be a directory')
+            raise ParserException(f'input data path {input_data_path} must be a directory')
         _, Cs_i, Ta_i, Pa_i, f_i = self._parse_file(initial_data_path)
         Ts = []
         Cs_f = []
