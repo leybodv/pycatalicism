@@ -1,14 +1,9 @@
 #!/usr/bin/python
 
-import logging
 import argparse
 
-import logging_config as lc
 from calc import calc
 import config
-
-logger = logging.getLogger(__name__)
-lc.configure_logger(logger)
 
 def calculate(args:argparse.Namespace):
     """
@@ -23,9 +18,9 @@ calc_parser.set_defaults(func=calculate)
 calc_parser.add_argument('input_data_path', metavar='input-data-path', help='path to folder with files from concentration measurement device')
 calc_parser.add_argument('initial_data_path', metavar='initial-data-path', help='path to file with data about initial composition of gas')
 calc_parser.add_argument('reaction', choices=['co-oxidation', 'co2-hydrogenation'], help='reaction for which to calculate data')
-calc_parser.add_argument('--output-data', default=None, help='path to file to save calculated data')
+calc_parser.add_argument('--output-data', default=None, help='path to directory to save calculated data')
 calc_parser.add_argument('--show-plot', action='store_true', help='whether to show data plot or not')
-calc_parser.add_argument('--output-plot', default=None, help='path to file to save plot')
+calc_parser.add_argument('--output-plot', default=None, help='path to directory to save plot')
 
 if (__name__ == '__main__'):
     args = parser.parse_args()
