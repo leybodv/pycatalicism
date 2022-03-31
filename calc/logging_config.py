@@ -1,7 +1,7 @@
 import logging
 from logging import Logger
 
-level = logging.DEBUG
+level = logging.INFO
 
 def configure_logger(logger: Logger):
     """
