@@ -60,14 +60,21 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
         lines = file_contents.split(sep='\n')
         while lines:
             line = lines.pop(0)
+            self.logger.debug(f'processing line: "{line}"')
             if line.startswith('Температура'):
                 T = float(line.split(sep='\t')[1])
             if line.startswith('Название\tВремя. мин\tДетектор\tКонцентрация\tЕд. измерения\tПлощадь\tВысота'):
-                while line != '' or lines:
-                    line = lines.pop(0)
-                    compound = line.split(sep='\t')[0]
-                    concentration = line.split(sep='\t')[3]
-                    C[compound] = float(concentration)
+                while True:
+                    if lines:
+                        line = lines.pop(0)
+                        if line == '':
+                            break
+                        self.logger.debug(f'processing line: "{line}"')
+                        compound = line.split(sep='\t')[0]
+                        concentration = line.split(sep='\t')[3]
+                        C[compound] = float(concentration)
+                    else:
+                        break
             if line.startswith('Темп. (газовые часы)'):
                 Ta = float(line.split(sep='\t')[1])
             if line.startswith('Давление (газовые часы)'):
