@@ -27,11 +27,11 @@ def calculate(input_data_path:str, initial_data_path:str, reaction:str, parser_t
     logger.debug(f'calculating conversion and selectivity for reaction {reaction}')
     calculator = calculator_factory.get_calculator(reaction)
     parser = parser_factory.get_parser(parser_type)
-    input_data = parser.parse_data(Path(input_data_path), Path(initial_data_path))
+    input_data = parser.parse_data(Path(input_data_path).resolve(), Path(initial_data_path).resolve())
     conversion = calculator.calculate_conversion(input_data)
     selectivity = calculator.calculate_selectivity(input_data)
     _print_results(conversion, selectivity)
     if output_data_path is not None:
         _export_results(Path(output_data_path), conversion, selectivity)
     if show_plot or (output_plot_path is not None):
-        plotter.plot(conversion, selectivity, show_plot, Path(output_plot_path))
+        plotter.plot(conversion, selectivity, show_plot, Path(output_plot_path).resolve())
