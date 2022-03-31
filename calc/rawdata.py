@@ -83,4 +83,9 @@ class RawData():
         self.logger.debug(f'{compound = }')
         self.logger.debug(f'{temperature = }')
         self.logger.debug(f'{self.concs[self.temperatures == temperature][0][compound] = }')
-        return self.concs[self.temperatures == temperature][0][compound]
+        try:
+            conc = self.concs[self.temperatures == temperature][0][compound]
+        except KeyError:
+            self.logger.warning(f'Did not find concentration for "{compound}" at "{temperature}". Returning zero')
+            conc = 0
+        return conc
