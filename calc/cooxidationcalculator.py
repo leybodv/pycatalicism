@@ -20,7 +20,7 @@ class COOxidationCalculator(Calculator):
         """
         raise warning about wrong calculation
         """
-        self.logger.debug(f'calculatong conversion')
+        self.logger.info(f'Calculating conversion for CO oxidation reaction')
         temperatures = []
         alphas = []
         for temperature in input_data.get_temperatures():
@@ -48,5 +48,4 @@ class COOxidationCalculator(Calculator):
     def calculate_selectivity(self, input_data:RawData) -> None:
         """
         """
-        self.logger.debug('nothing to calculate')
         return None
