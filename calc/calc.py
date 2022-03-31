@@ -11,20 +11,17 @@ logging_config.configure_logger(logger)
 def _export_results(output_data_path:Path, conversion, selectivity):
     """
     """
-    logger.debug(f'exporting results to {output_data_path}')
     raise NotImplementedError()
 
 def _print_results(conversion, selectivity):
     """
     """
-    logger.debug('printing results')
     print(conversion)
     print(selectivity)
 
 def calculate(input_data_path:str, initial_data_path:str, reaction:str, parser_type:str, output_data_path:str|None=None, show_plot:bool=False, output_plot_path:str|None=None):
     """
     """
-    logger.debug(f'calculating conversion and selectivity for reaction {reaction}')
     calculator = calculator_factory.get_calculator(reaction)
     parser = parser_factory.get_parser(parser_type)
     input_data = parser.parse_data(Path(input_data_path).resolve(), Path(initial_data_path).resolve())
