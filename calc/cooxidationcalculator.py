@@ -18,7 +18,6 @@ class COOxidationCalculator(Calculator):
 
     def calculate_conversion(self, input_data:RawData) -> Conversion:
         """
-        raise warning about wrong calculation
         """
         self.logger.info(f'Calculating conversion for CO oxidation reaction')
         temperatures = []
@@ -33,6 +32,7 @@ class COOxidationCalculator(Calculator):
             C_CO_i = input_data.get_init_conc('CO')
             C_CO_f = input_data.get_conc('CO', temperature)
             if T_i is None or p_i is None or f_i is None or T_f is None or p_f is None or f_f is None:
+                self.logger.warning(f'No data about initial and final flow rate found. Calculating results based only on concentrations')
                 T_i = 1
                 p_i = 1
                 f_i = 1
