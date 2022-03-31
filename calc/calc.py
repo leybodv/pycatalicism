@@ -27,7 +27,7 @@ def calculate(input_data_path:str, initial_data_path:str, reaction:str, parser_t
     _print_results(conversion, selectivity)
     if output_data_path is not None:
         exporter = exporter_factory.get_exporter(reaction)
-        exporter.export(Path(output_data_path), conversion, selectivity)
+        exporter.export(Path(output_data_path).resolve(), conversion, selectivity)
     if show_plot or (output_plot_path is not None):
         plotter = plotter_factory.get_plotter(reaction)
         path = None if output_plot_path is None else Path(output_plot_path).resolve()
