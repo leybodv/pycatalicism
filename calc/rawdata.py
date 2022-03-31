@@ -23,7 +23,7 @@ class RawData():
         self.fin_amb_pres = None if final_ambient_pressures is None else np.array(final_ambient_pressures)
         self.fin_flows = None if final_flows is None else np.array(final_flows)
         self.init_concs = initial_concentrations
-        self.concs = concentrations
+        self.concs = np.array(concentrations)
 
     def get_temperatures(self) -> np.ndarray[float, np.dtype]:
         """
@@ -78,4 +78,9 @@ class RawData():
     def get_conc(self, compound:str, temperature:float) -> float:
         """
         """
-        return dict(self.concs[self.temperatures == temperature])[compound]
+        self.logger.debug(f'{self.concs = }')
+        self.logger.debug(f'{self.temperatures = }')
+        self.logger.debug(f'{compound = }')
+        self.logger.debug(f'{temperature = }')
+        self.logger.debug(f'{self.concs[self.temperatures == temperature][0][compound] = }')
+        return self.concs[self.temperatures == temperature][0][compound]
