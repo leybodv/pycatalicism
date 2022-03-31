@@ -20,7 +20,7 @@ class COOxidationExporter(Exporter):
     def export(self, output_data_path:Path, conversion:Conversion, selectivity:Selectivity|None):
         """
         """
-        if not output_data_path.is_dir():
+        if output_data_path.exists() and not output_data_path.is_dir():
             raise ExporterException(f'Data path for exporting data must be a folder')
         self._export_conversion(output_data_path, conversion)
 
