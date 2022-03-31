@@ -4,14 +4,11 @@ from pathlib import Path
 from . import logging_config
 from . import calculator_factory
 from . import parser_factory
+from . import exporter_factory
+from . import plotter_factory
 
 logger = logging.getLogger(__name__)
 logging_config.configure_logger(logger)
-
-def _export_results(output_data_path:Path, conversion, selectivity):
-    """
-    """
-    raise NotImplementedError()
 
 def _print_results(conversion, selectivity):
     """
@@ -29,6 +26,9 @@ def calculate(input_data_path:str, initial_data_path:str, reaction:str, parser_t
     selectivity = calculator.calculate_selectivity(input_data)
     _print_results(conversion, selectivity)
     if output_data_path is not None:
-        _export_results(Path(output_data_path), conversion, selectivity)
+        exporter = exporter_factory.get_exporter(reaction)
+        exporter.export(Path(output_data_path), conversion, selectivity)
     if show_plot or (output_plot_path is not None):
-        plotter.plot(conversion, selectivity, show_plot, Path(output_plot_path).resolve())
+        plotter = plotter_factory.get_plotter(reaction)
+        path = None if output_plot_path is None else Path(output_plot_path).resolve()
+        plotter.plot(conversion, selectivity, show_plot, path)
