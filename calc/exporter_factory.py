@@ -1,5 +1,6 @@
 from .exporter import Exporter
 from .co_oxidation_exporter import COOxidationExporter
+from .exporterexception import ExporterException
 
 def get_exporter(reaction:str) -> Exporter:
     """
