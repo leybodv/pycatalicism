@@ -82,7 +82,6 @@ class RawData():
         self.logger.debug(f'{self.temperatures = }')
         self.logger.debug(f'{compound = }')
         self.logger.debug(f'{temperature = }')
-        self.logger.debug(f'{self.concs[self.temperatures == temperature][0][compound] = }')
         try:
             conc = self.concs[self.temperatures == temperature][0][compound]
         except KeyError:
