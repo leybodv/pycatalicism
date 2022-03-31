@@ -18,6 +18,7 @@ class RawData():
         self.init_amb_temp = initial_ambient_temperature
         self.init_amb_pres = initial_ambient_pressure
         self.init_flow = initial_flow
+        self.logger.debug(f'{final_ambient_temperatures = }')
         self.fin_amb_temps = None if final_ambient_temperatures is None else np.array(final_ambient_temperatures)
         self.fin_amb_pres = None if final_ambient_pressures is None else np.array(final_ambient_pressures)
         self.fin_flows = None if final_flows is None else np.array(final_flows)

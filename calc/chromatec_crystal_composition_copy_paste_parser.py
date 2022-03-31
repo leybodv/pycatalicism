@@ -24,11 +24,12 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
         if not input_data_path.is_dir():
             raise ParserException(f'input data path {input_data_path} must be a directory')
         _, Cs_i, Ta_i, Pa_i, f_i = self._parse_file(initial_data_path)
+        flow_is_measured = Ta_i and Pa_i and f_i
         Ts = []
         Cs_f = []
-        Ta_f = []
-        Pa_f = []
-        f_f = []
+        Ta_f = [] if flow_is_measured else None
+        Pa_f = [] if flow_is_measured else None
+        f_f = [] if flow_is_measured else None
         for file in input_data_path.iterdir():
             if file == initial_data_path:
                 continue
@@ -42,9 +43,10 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
                 continue
             Ts.append(T)
             Cs_f.append(C)
-            Ta_f.append(Ta)
-            Pa_f.append(Pa)
-            f_f.append(f)
+            if Ta_f is not None and Pa_f is not None and f_f is not None:
+                Ta_f.append(Ta)
+                Pa_f.append(Pa)
+                f_f.append(f)
         rawdata = RawData(temperatures=Ts, initial_concentrations=Cs_i, concentrations=Cs_f, initial_ambient_temperature=Ta_i, initial_ambient_pressure=Pa_i, initial_flow=f_i, final_ambient_temperatures=Ta_f, final_ambient_pressures=Pa_f, final_flows=f_f)
         return rawdata
 
