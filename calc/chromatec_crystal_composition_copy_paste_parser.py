@@ -15,12 +15,10 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
         """
         self.logger = logging.getLogger(__class__.__name__)
         logging_config.configure_logger(self.logger)
-        self.logger.debug(f'creating {__class__.__name__}')
 
     def parse_data(self, input_data_path:Path, initial_data_path:Path) -> RawData:
         """
         """
-        self.logger.debug(f'parsing data from {input_data_path}')
         if not initial_data_path.is_file():
             raise ParserException(f'initial data path {initial_data_path} must be a file')
         if not input_data_path.is_dir():
@@ -94,9 +92,7 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
             new_contents:str
                 string with file contents in which commas were replaced with dots
         """
-        self.logger.debug('starting replace of commas with dots')
         with path.open(mode='r') as file:
             contents = file.read()
             new_contents = contents.replace(',', '.')
-        self.logger.debug('finished replace of commas with dots')
         return new_contents
