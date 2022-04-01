@@ -31,5 +31,15 @@ class CO2HydrogenationExporter(Exporter):
         self.logger.info(f'Exporting conversion vs. temperature data for CO2 hydrogenation reaction to "{output_data_path.joinpath("conversion.dat")}"')
         if not output_data_path.exists():
             output_data_path.mkdir(parents=True)
-        with output_data_path.joinpath('selectivity.dat').open(mode='w') as f:
+        with output_data_path.joinpath('conversion.dat').open(mode='w') as f:
             f.write(str(conversion))
+
+    def _export_selectivity(self, output_data_path:Path, selectivity:Selectivity):
+        """
+        """
+        self.logger.info(f'Exporting selectivities vs. temperature data for CO2 hydrogenation reaction to "{output_data_path.joinpath("selectivity.dat")}"')
+        if not output_data_path.exists():
+            output_data_path.mkdir(parents=True)
+        with output_data_path.joinpath('selectivity.dat').open(mode='w') as f:
+            f.write(str(selectivity))
+
