@@ -39,7 +39,7 @@ class CO2HydrogenationCalculator(Calculator):
                 T_f = 1
                 p_f = 1
                 f_f = 1
-            alpha = (C_CO2_i - C_CO2_f) / C_CO2_i
+            alpha = ((p_i * f_i / T_i) * C_CO2_i - (p_f * f_f / T_f) * C_CO2_f) / (p_i * f_i / T_i) * C_CO2_i
             temperatures.append(temperature)
             alphas.append(alpha)
         conversion = Conversion(temperatures, alphas)
@@ -48,4 +48,18 @@ class CO2HydrogenationCalculator(Calculator):
     def calculate_selectivity(self, input_data:RawData) -> Selectivity:
         """
         """
-        raise NotImplementedError()
+        self.logger.info(f'Calculating selectivities for CO2 hydrogenation reaction')
+        temperatures = []
+        s_list = []
+        for temperature in input_data.get_temperatures():
+            c_tot = 0
+            s_dict = {}
+            for compound in ['CO', 'CH4', 'C2H6', 'C3H8', 'i-C4H10', 'n-C4H10', 'i-C5H12', 'n-C5H12']:
+                s_dict[compound] = input_data.get_conc(compound, temperature)
+                c_tot = c_tot + s_dict[compound]
+            for key in s_dict:
+                s_dict[key] = s_dict[key] / c_tot
+            temperatures.append(temperature)
+            s_list.append(s_dict)
+        selectivity = Selectivity(temperatures, s_list)
+        return selectivity
