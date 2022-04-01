@@ -14,7 +14,7 @@ class Selectivity():
     def __str__(self) -> str:
         """
         """
-        sorted_selectivities = self._get_sorted()
+        sorted_selectivities = self.get_sorted()
         c_l = []
         for compound in sorted_selectivities.get_selectivities()[0]:
             c_l.append(compound)
@@ -46,7 +46,7 @@ class Selectivity():
         """
         return self.selectivities[self.temperatures==temperature][compound]
 
-    def _get_sorted(self) -> 'Selectivity':
+    def get_sorted(self) -> 'Selectivity':
         """
         """
         zipped_lists = zip(self.get_temperatures(), self.get_selectivities(), strict=True)
