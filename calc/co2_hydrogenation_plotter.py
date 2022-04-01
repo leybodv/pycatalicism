@@ -37,7 +37,7 @@ class CO2HydrogenationPlotter(Plotter):
                 output_plot_path.mkdir(parents=True)
             self.logger.info(f'Exporting plot of conversion vs. temperature for CO oxidation reaction')
             dpi = 300
-            width = 80 / 25.4
+            width = 160 / 25.4
             height = 80 / 25.4
             fig.set_dpi(dpi)
             fig.set_figheight(height)
