@@ -14,6 +14,7 @@ class Selectivity():
         """
         self.logger = logging.getLogger(__class__.__name__)
         logging_config.configure_logger(self.logger)
+        self.logger.warning(f'{self.logger.getEffectiveLevel() = }')
         self.temperatures = np.array(temperatures)
         self.selectivities = np.array(selectivities)
 
