@@ -28,3 +28,12 @@ class Selectivity():
             data = data + '\n'
         string = header + data
         return string
+
+    def _get_sorted(self) -> 'Selectivity':
+        """
+        """
+        zipped_lists = zip(self.get_temperatures(), self.get_selectivities(), strict=True)
+        sorted_pairs = sorted(zipped_lists)
+        tuples = zip(*sorted_pairs)
+        sorted_temperatures, sorted_selectivities = [list(tuple) for tuple in tuples]
+        return Selectivity(sorted_temperatures, sorted_selectivities)
