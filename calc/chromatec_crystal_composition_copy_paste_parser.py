@@ -10,11 +10,11 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
     """
     """
 
-    def __init__(self):
+    def __init__(self, logging_level=logging.INFO):
         """
         """
         self.logger = logging.getLogger(__class__.__name__)
-        logging_config.configure_logger(self.logger)
+        logging_config.configure_logger(self.logger, logging_level)
 
     def parse_data(self, input_data_path:Path, initial_data_path:Path) -> RawData:
         """

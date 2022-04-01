@@ -15,7 +15,8 @@ class CO2HydrogenationExporter(Exporter):
         """
         """
         self.logger = logging.getLogger(__class__.__name__)
-        logging_config.configure_logger(self.logger)
+        level = logging.INFO
+        logging_config.configure_logger(self.logger, level)
 
     def export(self, output_data_path:Path, conversion:Conversion, selectivity:Selectivity):
         """

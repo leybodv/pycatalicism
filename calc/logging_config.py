@@ -1,9 +1,7 @@
 import logging
 from logging import Logger
 
-level = logging.DEBUG
-
-def configure_logger(logger: Logger):
+def configure_logger(logger: Logger, level:int):
     """
     """
     logger.setLevel(level)

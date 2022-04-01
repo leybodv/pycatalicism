@@ -8,3 +8,9 @@
 #   Название<tab>Время, мин<tab>Детектор<tab>Концентрация<tab>Ед, измерения<tab>Площадь<tab>Высота
 #   <compound-name><tab><retention-time><tab><detector-name><tab><compound-concentration><tab><concentration-units><tab><peak-area><tab><peak-height>
 raw_data_parser_type = 'chromatec-crystal-composition-copy-paste'
+
+# logging levels for different classes/modules
+import logging
+logging_levels = {
+                    'ChromatecCrystalCompositionCopyPasteParser'    :   logging.INFO,
+                    }

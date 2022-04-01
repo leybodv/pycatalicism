@@ -14,7 +14,8 @@ class CO2HydrogenationCalculator(Calculator):
         """
         """
         self.logger = logging.getLogger(__class__.__name__)
-        logging_config.configure_logger(self.logger)
+        level = logging.INFO
+        logging_config.configure_logger(self.logger, level)
 
     def calculate_conversion(self, input_data:RawData) -> Conversion:
         """

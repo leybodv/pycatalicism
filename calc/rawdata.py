@@ -13,7 +13,8 @@ class RawData():
         """
         """
         self.logger = logging.getLogger(__class__.__name__)
-        logging_config.configure_logger(self.logger)
+        level = logging.INFO
+        logging_config.configure_logger(self.logger, level)
         self.temperatures = np.array(temperatures)
         self.init_amb_temp = initial_ambient_temperature
         self.init_amb_pres = initial_ambient_pressure

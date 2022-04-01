@@ -5,7 +5,8 @@ from .parser import Parser
 from .chromatec_crystal_composition_copy_paste_parser import ChromatecCrystalCompositionCopyPasteParser
 
 logger = logging.getLogger(__name__)
-logging_config.configure_logger(logger)
+level = logging.INFO
+logging_config.configure_logger(logger, level)
 
 def get_parser(parser_type:str) -> Parser:
     """

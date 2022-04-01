@@ -13,7 +13,8 @@ class Selectivity():
         """
         """
         self.logger = logging.getLogger(__class__.__name__)
-        logging_config.configure_logger(self.logger)
+        level = logging.INFO
+        logging_config.configure_logger(self.logger, level)
         self.temperatures = np.array(temperatures)
         self.selectivities = np.array(selectivities)
 
@@ -66,4 +67,5 @@ class Selectivity():
     def get_selectivities_at(self, temperature:float) -> dict[str,float]:
         """
         """
-        return self.get_selectivities()[self.get_temperatures() == temperature]
+        self.logger.debug(f'{self.get_selectivities()[self.get_temperatures() == temperature][0] = }')
+        return self.get_selectivities()[self.get_temperatures() == temperature][0]

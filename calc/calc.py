@@ -1,14 +1,9 @@
-import logging
 from pathlib import Path
 
-from . import logging_config
 from . import calculator_factory
 from . import parser_factory
 from . import exporter_factory
 from . import plotter_factory
-
-logger = logging.getLogger(__name__)
-logging_config.configure_logger(logger)
 
 def _print_results(conversion, selectivity):
     """
