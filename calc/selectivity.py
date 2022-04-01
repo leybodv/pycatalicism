@@ -1,3 +1,5 @@
+import numpy as np
+
 class Selectivity():
     """
     Wrapper for selectivity data storage
@@ -6,8 +8,8 @@ class Selectivity():
     def __init__(self, temperatures:list[float], selectivities:list[dict[str,float]]):
         """
         """
-        self.temperatures = temperatures
-        self.selectivities = selectivities
+        self.temperatures = np.array(temperatures)
+        self.selectivities = np.array(selectivities)
 
     def __str__(self) -> str:
         """
@@ -28,6 +30,21 @@ class Selectivity():
             data = data + '\n'
         string = header + data
         return string
+
+    def get_temperatures(self) -> np.ndarray[float, np.dtype]:
+        """
+        """
+        return self.temperatures
+
+    def get_selectivities(self) -> np.ndarray[dict[str,float], np.dtype]:
+        """
+        """
+        return self.selectivities
+
+    def get_selectivity(self, compound:str, temperature:float) -> float:
+        """
+        """
+        return self.selectivities[self.temperatures==temperature][compound]
 
     def _get_sorted(self) -> 'Selectivity':
         """
