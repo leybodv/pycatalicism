@@ -26,12 +26,7 @@ class CO2HydrogenationPlotter(Plotter):
         """
         fig, (ax_conversion, ax_selectivity) = plt.subplots(nrows=1, ncols=2)
         ax_conversion = self._plot_conversion(ax_conversion, conversion)
-        ax_selectivity = self._plot_selectivity(ax_selectivity, conversion)
-        sorted_conversion = conversion.get_sorted()
-        ax.plot(sorted_conversion.get_temperatures(), sorted_conversion.get_alphas(), marker='o', markersize=5)
-        ax.set_ylim(bottom=-0.1, top=1.1)
-        ax.set_xlabel('Temperature, °C')
-        ax.set_ylabel('$\mathrm{CO}$ conversion')
+        ax_selectivity = self._plot_selectivity(ax_selectivity, selectivity)
         if show_plot:
             self.logger.info(f'Plotting conversion vs. temperature for CO oxidation reaction')
             plt.show()
@@ -53,9 +48,15 @@ class CO2HydrogenationPlotter(Plotter):
     def _plot_conversion(self, ax:matplotlib.axes.Axes, conversion:Conversion) -> matplotlib.axes.Axes:
         """
         """
-        raise NotImplementedError()
+        sorted_conversion = conversion.get_sorted()
+        ax.plot(sorted_conversion.get_temperatures(), sorted_conversion.get_alphas(), marker='o', markersize=5)
+        ax.set_ylim(bottom=-0.1, top=1.1)
+        ax.set_xlabel('Temperature, °C')
+        ax.set_ylabel('$\mathrm{CO_2}$ conversion')
+        return ax
 
     def _plot_selectivity(self, ax:matplotlib.axes.Axes, selectivity:Selectivity) -> matplotlib.axes.Axes:
         """
         """
+        sorted_selectivity = selectivity.get_sorted()
         raise NotImplementedError()
