@@ -3,7 +3,8 @@ class Selectivity():
     Wrapper for selectivity data storage
     """
 
-    def __init__(self):
+    def __init__(self, temperatures:list[float], selectivities:list[dict[str,float]]):
         """
         """
-        raise NotImplementedError()
+        self.temperatures = temperatures
+        self.selectivities = selectivities
