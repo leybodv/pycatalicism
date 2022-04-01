@@ -14,7 +14,6 @@ class Selectivity():
         """
         self.logger = logging.getLogger(__class__.__name__)
         logging_config.configure_logger(self.logger)
-        self.logger.warning(f'{self.logger.getEffectiveLevel() = }')
         self.temperatures = np.array(temperatures)
         self.selectivities = np.array(selectivities)
 
@@ -53,7 +52,7 @@ class Selectivity():
         """
         self.logger.debug(f'{self.get_selectivities() = }')
         self.logger.debug(f'{self.get_selectivities()[self.get_temperatures()==temperature] = }')
-        return self.get_selectivities()[self.temperatures==temperature][compound]
+        return self.get_selectivities()[self.temperatures==temperature][0][compound]
 
     def get_sorted(self) -> 'Selectivity':
         """
