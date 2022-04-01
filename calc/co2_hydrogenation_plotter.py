@@ -61,7 +61,7 @@ class CO2HydrogenationPlotter(Plotter):
         sorted_selectivity = selectivity.get_sorted()
         s_dict = {}
         for temperature in sorted_selectivity.get_temperatures():
-            for compound in sorted_selectivity.get_selectivity_at(temperature):
+            for compound in sorted_selectivity.get_selectivities_at(temperature):
                 if compound in s_dict:
                     s_dict[compound].append(sorted_selectivity.get_selectivity(compound, temperature))
                 else:
