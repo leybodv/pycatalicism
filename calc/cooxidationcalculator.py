@@ -18,6 +18,7 @@ class COOxidationCalculator(Calculator):
 
     def calculate_conversion(self, input_data:RawData) -> Conversion:
         """
+        p,f,T from gas clock must be in or transformed to SI units
         """
         self.logger.info(f'Calculating conversion for CO oxidation reaction')
         temperatures = []
@@ -39,7 +40,7 @@ class COOxidationCalculator(Calculator):
                 T_f = 1
                 p_f = 1
                 f_f = 1
-            alpha = (C_CO_i - C_CO_f) / C_CO_i
+            alpha = ((p_i * f_i / T_i) * C_CO_i - (p_f * f_f / T_f) * C_CO_f) / (p_i * f_i / T_i) * C_CO_i
             temperatures.append(temperature)
             alphas.append(alpha)
         conversion = Conversion(temperatures, alphas)
