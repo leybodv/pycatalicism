@@ -55,7 +55,7 @@ class Selectivity():
         sorted_temperatures, sorted_selectivities = [list(tuple) for tuple in tuples]
         return Selectivity(sorted_temperatures, sorted_selectivities)
 
-    def get_selectivity_at(self, temperature:float) -> dict[str,float]:
+    def get_selectivities_at(self, temperature:float) -> dict[str,float]:
         """
         """
         return self.get_selectivities()[self.get_temperatures() == temperature]
