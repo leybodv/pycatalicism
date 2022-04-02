@@ -20,7 +20,7 @@ class Logging:
             logger = logging.getLogger(self.func.__module__)
             self._configure_logger(logger)
             raise NotImplementedError()
-        elif self.func.__name__ == '__init__' or inspect.ismethod(self.func):
+        elif inspect.ismethod(self.func):
             obj = self.func.__self__
             obj.logger = logging.getLogger(obj.__class__.__name__)
             self._configure_logger(obj.logger)
