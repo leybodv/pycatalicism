@@ -19,12 +19,10 @@ class Logging:
         if inspect.isfunction(self.func):
             logger = logging.getLogger(self.func.__module__)
             self._configure_logger(logger)
-            raise NotImplementedError()
         elif inspect.ismethod(self.func):
             obj = self.func.__self__
             obj.logger = logging.getLogger(obj.__class__.__name__)
             self._configure_logger(obj.logger)
-            raise NotImplementedError()
         else:
             raise Exception(f'Cannot decorate function {self.func.__name__}')
         return self.func(*args, **kwargs)
