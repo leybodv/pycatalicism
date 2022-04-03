@@ -1,20 +1,14 @@
-import logging
-
 import numpy as np
-
-from . import logging_config
 
 class RawData():
     """
     Wrapper for imported data storage
     """
 
+    @Logging
     def __init__(self, temperatures:list[float]|np.ndarray[float,np.dtype], initial_concentrations:dict[str,float], concentrations:list[dict[str,float]]|np.ndarray[dict[str,float],np.dtype], initial_ambient_temperature:float|None=None, initial_ambient_pressure:float|None=None, initial_flow:float|None=None, final_ambient_temperatures:list[float]|np.ndarray[float,np.dtype]|None=None, final_ambient_pressures:list[float]|np.ndarray[float,np.dtype]|None=None, final_flows:list[float]|np.ndarray[float,np.dtype]|None=None):
         """
         """
-        self.logger = logging.getLogger(__class__.__name__)
-        level = logging.INFO
-        logging_config.configure_logger(self.logger, level)
         self.temperatures = np.array(temperatures)
         self.init_amb_temp = initial_ambient_temperature
         self.init_amb_pres = initial_ambient_pressure
