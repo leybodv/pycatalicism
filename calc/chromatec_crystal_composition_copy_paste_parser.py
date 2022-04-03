@@ -1,20 +1,19 @@
-import logging
 from pathlib import Path
 
-from . import logging_config
 from .parser import Parser
 from .rawdata import RawData
 from .parserexception import ParserException
+from ..logging_decorator import Logging
 
 class ChromatecCrystalCompositionCopyPasteParser(Parser):
     """
     """
 
-    def __init__(self, logging_level=logging.INFO):
+    @Logging
+    def __init__(self):
         """
         """
-        self.logger = logging.getLogger(__class__.__name__)
-        logging_config.configure_logger(self.logger, logging_level)
+        super().__init__()
 
     def parse_data(self, input_data_path:Path, initial_data_path:Path) -> RawData:
         """
