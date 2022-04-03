@@ -1,21 +1,18 @@
-import logging
-
-from . import logging_config
 from .calculator import Calculator
 from .rawdata import RawData
 from .conversion import Conversion
 from .selectivity import Selectivity
+from ..logging_decorator import Logging
 
 class CO2HydrogenationCalculator(Calculator):
     """
     """
 
+    @Logging
     def __init__(self):
         """
         """
-        self.logger = logging.getLogger(__class__.__name__)
-        level = logging.INFO
-        logging_config.configure_logger(self.logger, level)
+        super().__init__()
 
     def calculate_conversion(self, input_data:RawData) -> Conversion:
         """
