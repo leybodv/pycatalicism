@@ -1,5 +1,4 @@
 from pathlib import Path
-import logging
 
 import matplotlib.pyplot as plt
 import matplotlib
@@ -9,18 +8,17 @@ from .plotter import Plotter
 from .plotterexception import PlotterException
 from .conversion import Conversion
 from .selectivity import Selectivity
-from . import logging_config
+from ..logging_decorator import Logging
 
 class CO2HydrogenationPlotter(Plotter):
     """
     """
 
+    @Logging
     def __init__(self):
         """
         """
-        self.logger = logging.getLogger(__class__.__name__)
-        level = logging.INFO
-        logging_config.configure_logger(self.logger, level)
+        super().__init__()
 
     def plot(self, conversion:Conversion, selectivity:Selectivity, show_plot:bool=False, output_plot_path:Path|None=None):
         """
