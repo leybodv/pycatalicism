@@ -22,7 +22,7 @@ class Logging:
         elif inspect.ismethod(self.func):
             obj = self.func.__self__
             obj.logger = logging.getLogger(obj.__class__.__name__)
-            self._configure_logger(obj.logger, obj.__class__.__name__)
+            self._configure_logger(obj.logger, self.logging_levels[obj.__class__.__name__])
         else:
             raise Exception(f'Cannot decorate function {self.func.__name__}')
         return self.func(*args, **kwargs)
