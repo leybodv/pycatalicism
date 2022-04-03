@@ -18,16 +18,26 @@ class Logging:
         """
         if inspect.isfunction(self.func):
             logger = logging.getLogger(self.func.__module__)
-            self._configure_logger(logger)
+            self._configure_logger(logger, self.logging_levels[self.func.__module__])
         elif inspect.ismethod(self.func):
             obj = self.func.__self__
             obj.logger = logging.getLogger(obj.__class__.__name__)
-            self._configure_logger(obj.logger)
+            self._configure_logger(obj.logger, obj.__class__.__name__)
         else:
             raise Exception(f'Cannot decorate function {self.func.__name__}')
         return self.func(*args, **kwargs)
 
-    def _configure_logger(self, logger:logging.Logger):
+    def _configure_logger(self, logger:logging.Logger, level:int):
         """
         """
-        raise NotImplementedError()
+        logger.setLevel(level)
+        logger.propagate = False
+
+        ch = logging.StreamHandler()
+        ch.setLevel(level)
+
+        formatter = logging.Formatter(fmt='[%(asctime)s] %(name)s.%(funcName)s: %(levelname)s: %(message)s', datefmt='%d.%m.%Y %H:%M:%S')
+
+        ch.setFormatter(formatter)
+
+        logger.addHandler(ch)
