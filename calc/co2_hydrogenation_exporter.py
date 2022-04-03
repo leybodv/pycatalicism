@@ -1,22 +1,20 @@
 from pathlib import Path
-import logging
 
 from .exporter import Exporter
 from .conversion import Conversion
 from .selectivity import Selectivity
 from .exporterexception import ExporterException
-from . import logging_config
+from ..logging_decorator import Logging
 
 class CO2HydrogenationExporter(Exporter):
     """
     """
 
+    @Logging
     def __init__(self):
         """
         """
-        self.logger = logging.getLogger(__class__.__name__)
-        level = logging.INFO
-        logging_config.configure_logger(self.logger, level)
+        super().__init__()
 
     def export(self, output_data_path:Path, conversion:Conversion, selectivity:Selectivity):
         """
