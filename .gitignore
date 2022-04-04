@@ -2,6 +2,7 @@
 __pycache__/
 calc/__pycache__/
 calc/examples/
+test/
 *.py[cod]
 *$py.class
 
