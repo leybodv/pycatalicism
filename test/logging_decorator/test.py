@@ -1,12 +1,15 @@
 from decorator import Decorator
+import inspect
 
-print('Access to test.py')
+print('\t\tAccess to test.py')
 
 class Test:
 
-    def __init__(self):
-        print('Test.__init__')
-
     @Decorator
-    def method(self):
-        print('Test.method')
+    def __init__(self):
+        print('\t\tTest.__init__')
+        print(f'\t\t{self = }')
+        print('\t\tMembers of self:')
+        for member in inspect.getmembers(self):
+            if member[0] in ['__class__', '__dict__', '__module__', '__name__', '__self__']:
+                print(f'\t\t{member}')
