@@ -58,8 +58,10 @@ class CO2HydrogenationPlotter(Plotter):
         """
         """
         sorted_selectivity = selectivity.get_sorted()
+        self.logger.debug(f'{str(sorted_selectivity) = }')
         s_dict = {}
         for temperature in sorted_selectivity.get_temperatures():
+            self.logger.debug(f'{temperature = }')
             for compound in sorted_selectivity.get_selectivities_at(temperature):
                 self.logger.debug(f'{compound = }')
                 self.logger.debug(f'{s_dict = }')
@@ -67,7 +69,8 @@ class CO2HydrogenationPlotter(Plotter):
                     self.logger.debug(f'{sorted_selectivity.get_selectivity(compound, temperature) = }')
                     s_dict[compound].append(sorted_selectivity.get_selectivity(compound, temperature))
                 else:
-                    s_dict[compound] = [].append(sorted_selectivity.get_selectivity(compound, temperature))
+                    self.logger.debug(f'{sorted_selectivity.get_selectivity(compound, temperature) = }')
+                    s_dict[compound] = [sorted_selectivity.get_selectivity(compound, temperature)]
         for compound in s_dict:
             ax.bar(sorted_selectivity.get_temperatures(), s_dict[compound])
         return ax
