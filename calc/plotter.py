@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from .conversion import Conversion
-from .selectivity import Selectivity
+from pycatalicism.calc.conversion import Conversion
+from pycatalicism.calc.selectivity import Selectivity
 
 class Plotter():
     """

@@ -3,7 +3,7 @@ import inspect
 import logging
 import sys
 
-from . import config
+import config
 
 class Logging:
 

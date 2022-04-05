@@ -1,5 +1,5 @@
-from .parser import Parser
-from .chromatec_crystal_composition_copy_paste_parser import ChromatecCrystalCompositionCopyPasteParser
+from pycatalicism.calc.parser import Parser
+from pycatalicism.calc.chromatec_crystal_composition_copy_paste_parser import ChromatecCrystalCompositionCopyPasteParser
 
 def get_parser(parser_type:str) -> Parser:
     """

@@ -1,9 +1,10 @@
 from pathlib import Path
 
-from . import calculator_factory
-from . import parser_factory
-from . import exporter_factory
-from . import plotter_factory
+from pycatalicism.calc import calculator_factory
+from pycatalicism.calc import parser_factory
+from pycatalicism.calc import exporter_factory
+from pycatalicism.calc import plotter_factory
+
 
 def _print_results(conversion, selectivity):
     """

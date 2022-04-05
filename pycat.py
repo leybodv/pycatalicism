@@ -2,7 +2,7 @@
 
 import argparse
 
-from calc import calc
+import pycatalicism.calc.calc as calc
 import config
 
 def calculate(args:argparse.Namespace):

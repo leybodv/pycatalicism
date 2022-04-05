@@ -1,7 +1,7 @@
-from .exporter import Exporter
-from .co2_hydrogenation_exporter import CO2HydrogenationExporter
-from .co_oxidation_exporter import COOxidationExporter
-from .exporterexception import ExporterException
+from pycatalicism.calc.exporter import Exporter
+from pycatalicism.calc.co2_hydrogenation_exporter import CO2HydrogenationExporter
+from pycatalicism.calc.co_oxidation_exporter import COOxidationExporter
+from pycatalicism.calc.exporterexception import ExporterException
 
 def get_exporter(reaction:str) -> Exporter:
     """

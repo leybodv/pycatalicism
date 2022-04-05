@@ -1,10 +1,10 @@
 from pathlib import Path
 
-from .exporter import Exporter
-from .conversion import Conversion
-from .selectivity import Selectivity
-from .exporterexception import ExporterException
-from ..logging_decorator import Logging
+from pycatalicism.calc.exporter import Exporter
+from pycatalicism.calc.conversion import Conversion
+from pycatalicism.calc.selectivity import Selectivity
+from pycatalicism.calc.exporterexception import ExporterException
+from pycatalicism.logging_decorator import Logging
 
 class CO2HydrogenationExporter(Exporter):
     """

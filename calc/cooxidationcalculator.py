@@ -1,7 +1,7 @@
-from .calculator import Calculator
-from .rawdata import RawData
-from .conversion import Conversion
-from ..logging_decorator import Logging
+from pycatalicism.calc.calculator import Calculator
+from pycatalicism.calc.rawdata import RawData
+from pycatalicism.calc.conversion import Conversion
+from pycatalicism.logging_decorator import Logging
 
 class COOxidationCalculator(Calculator):
     """

@@ -1,6 +1,6 @@
-from .calculator import Calculator
-from .cooxidationcalculator import COOxidationCalculator
-from .co2hydrogenationcalculator import CO2HydrogenationCalculator
+from pycatalicism.calc.calculator import Calculator
+from pycatalicism.calc.cooxidationcalculator import COOxidationCalculator
+from pycatalicism.calc.co2hydrogenationcalculator import CO2HydrogenationCalculator
 
 def get_calculator(reaction:str) -> Calculator:
     """
