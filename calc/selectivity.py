@@ -1,8 +1,4 @@
-import logging
-
 import numpy as np
-
-from . import logging_config
 
 class Selectivity():
     """
@@ -12,9 +8,6 @@ class Selectivity():
     def __init__(self, temperatures:list[float], selectivities:list[dict[str,float]]):
         """
         """
-        self.logger = logging.getLogger(__class__.__name__)
-        level = logging.INFO
-        logging_config.configure_logger(self.logger, level)
         self.temperatures = np.array(temperatures)
         self.selectivities = np.array(selectivities)
 
@@ -51,8 +44,6 @@ class Selectivity():
     def get_selectivity(self, compound:str, temperature:float) -> float:
         """
         """
-        self.logger.debug(f'{self.get_selectivities() = }')
-        self.logger.debug(f'{self.get_selectivities()[self.get_temperatures()==temperature] = }')
         return self.get_selectivities()[self.temperatures==temperature][0][compound]
 
     def get_sorted(self) -> 'Selectivity':
@@ -67,5 +58,4 @@ class Selectivity():
     def get_selectivities_at(self, temperature:float) -> dict[str,float]:
         """
         """
-        self.logger.debug(f'{self.get_selectivities()[self.get_temperatures() == temperature][0] = }')
         return self.get_selectivities()[self.get_temperatures() == temperature][0]
