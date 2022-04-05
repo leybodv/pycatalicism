@@ -1,5 +1,8 @@
 from decorator import Decorator
 import inspect
+import logging
+
+import logging_config
 
 print('\t\tAccess to test.py')
 
@@ -7,9 +10,5 @@ class Test:
 
     @Decorator
     def __init__(self):
-        print('\t\tTest.__init__')
-        print(f'\t\t{self = }')
-        print('\t\tMembers of self:')
-        for member in inspect.getmembers(self):
-            if member[0] in ['__class__', '__dict__', '__module__', '__name__', '__self__']:
-                print(f'\t\t{member}')
+        self.logger = logging.getLogger(self.__class__.__name__)
+        logging_config.configure_logger(self.logger)
