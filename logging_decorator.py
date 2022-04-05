@@ -1,6 +1,7 @@
 import functools
 import inspect
 import logging
+import sys
 
 from . import config
 
@@ -13,16 +14,27 @@ class Logging:
         self.func = func
         self.logging_levels = config.logging_levels
 
+    def __get__(self, obj, type=None):
+        """
+        """
+        func = self.func.__get__(obj, type)
+        return self.__class__(func)
+
     def __call__(self, *args, **kwargs):
         """
         """
         if inspect.isfunction(self.func):
-            logger = logging.getLogger(self.func.__module__)
-            self._configure_logger(logger, self.logging_levels[self.func.__module__])
+            module = sys.modules[self.func.__module__]
+            if 'logger' not in module.__dict__:
+                logger = logging.getLogger(module.__name__)
+                self._configure_logger(logger, self.logging_levels[module.__name__])
+                module.__dict__['logger'] = logger
         elif inspect.ismethod(self.func):
             obj = self.func.__self__
-            obj.logger = logging.getLogger(obj.__class__.__name__)
-            self._configure_logger(obj.logger, self.logging_levels[obj.__class__.__name__])
+            if 'logger' not in obj.__dict__:
+                logger = logging.getLogger(obj.__class__.__name__)
+                self._configure_logger(logger, self.logging_levels[obj.__class__.__name__])
+                obj.__dict__['logger'] = logger
         else:
             raise Exception(f'Cannot decorate function {self.func.__name__}')
         return self.func(*args, **kwargs)
