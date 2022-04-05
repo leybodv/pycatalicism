@@ -19,4 +19,5 @@ logging_levels = {
                     'COOxidationCalculator'                         :   logging.INFO,
                     'COOxidationExporter'                           :   logging.INFO,
                     'COOxidationPlotter'                            :   logging.INFO,
+                    'RawData'                                       :   logging.INFO,
                     }
