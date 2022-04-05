@@ -4,7 +4,8 @@ import logging
 
 import logging_config
 
-print('\tAccess to decorator.py')
+log_dict = {'__main__':logging.INFO,
+            'Test':logging.INFO}
 
 class Decorator:
 
@@ -20,10 +21,14 @@ class Decorator:
     def __call__(self, *args, **kwargs):
         if inspect.isfunction(self.func):
             module = sys.modules[self.func.__module__]
+            if f'{module.__name__}_logger' not in module.__dict__:
+                module.__dict__[f'{module.__name__}_logger'] = log_dict[module.__name__]
             self.logger.info(f'{module = }')
             self.logger.info(f'{module.__dict__ = }')
         elif inspect.ismethod(self.func):
             obj = self.func.__self__
+            if f'{obj.__class__.__name__}_logger' not in obj.__dict__:
+                obj.__dict__[f'{obj.__class__.__name__}_logger'] = log_dict[obj.__class__.__name__]
             self.logger.info(f'{obj = }')
             self.logger.info(f'{obj.__dict__ = }')
         val = self.func(*args, **kwargs)

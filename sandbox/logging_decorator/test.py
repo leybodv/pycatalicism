@@ -4,8 +4,6 @@ import logging
 
 import logging_config
 
-print('\t\tAccess to test.py')
-
 class Test:
 
     @Decorator
