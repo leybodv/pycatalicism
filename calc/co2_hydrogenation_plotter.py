@@ -49,7 +49,10 @@ class CO2HydrogenationPlotter(Plotter):
         """
         sorted_conversion = conversion.get_sorted()
         ax.plot(sorted_conversion.get_temperatures(), sorted_conversion.get_alphas(), marker='o', markersize=5)
-        ax.set_ylim(bottom=0 - 0.1 * sorted_conversion.get_alphas().max(), top=1.1 * sorted_conversion.get_alphas().max())
+        _max = sorted_conversion.get_alphas().max()
+        _min = sorted_conversion.get_alphas().min()
+        delta = _max - _min
+        ax.set_ylim(bottom=_min - 0.1 * delta, top=_max + 0.1 * delta)
         ax.set_xlabel('Temperature, °C')
         ax.set_ylabel('$\mathrm{CO_2}$ conversion')
         return ax
