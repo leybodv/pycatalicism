@@ -57,8 +57,10 @@ class CO2HydrogenationCalculator(Calculator):
             c_tot = 0
             s_dict = {}
             for compound in ['CO', 'CH4', 'C2H6', 'C3H8', 'i-C4H10', 'n-C4H10', 'i-C5H12', 'n-C5H12']:
-                s_dict[compound] = input_data.get_conc(compound, temperature)
-                c_tot = c_tot + s_dict[compound]
+                n_str = compound[compound.find('C')+1]
+                n = int(n_str) if n_str.isdecimal() else 1
+                s_dict[compound] = input_data.get_conc(compound, temperature) * n
+                c_tot = c_tot + s_dict[compound] * n
             for key in s_dict:
                 s_dict[key] = s_dict[key] / c_tot
             temperatures.append(temperature)
