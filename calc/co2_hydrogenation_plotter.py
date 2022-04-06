@@ -3,6 +3,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import matplotlib
 import matplotlib.axes
+import numpy as np
 
 from pycatalicism.calc.plotter import Plotter
 from pycatalicism.calc.plotterexception import PlotterException
@@ -74,6 +75,19 @@ class CO2HydrogenationPlotter(Plotter):
                 else:
                     self.logger.debug(f'{sorted_selectivity.get_selectivity(compound, temperature) = }')
                     s_dict[compound] = [sorted_selectivity.get_selectivity(compound, temperature)]
-        for compound in s_dict:
-            ax.bar(sorted_selectivity.get_temperatures(), s_dict[compound])
+        compounds = list(s_dict)
+        bottom = 0
+        for i in range(len(compounds)):
+            self.logger.debug(f'{compounds[i] = }')
+            self.logger.debug(f'{sorted_selectivity.get_temperatures() = }')
+            self.logger.debug(f'{s_dict[compounds[i]] = }')
+            self.logger.debug(f'{bottom = }')
+            if not np.all(np.array(s_dict[compounds[i]]) == 0):
+                ax.bar(sorted_selectivity.get_temperatures(), s_dict[compounds[i]], bottom=bottom, width=5, label=compounds[i])
+                bottom = bottom + np.array(s_dict[compounds[i]])
+        # for compound in s_dict:
+        #     ax.bar(sorted_selectivity.get_temperatures(), s_dict[compound])
+        ax.set_xlabel('Temperature, °C')
+        ax.set_ylabel('Selectivity')
+        ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
         return ax
