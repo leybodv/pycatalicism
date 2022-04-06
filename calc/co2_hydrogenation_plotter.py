@@ -27,7 +27,7 @@ class CO2HydrogenationPlotter(Plotter):
         ax_conversion = self._plot_conversion(ax_conversion, conversion)
         ax_selectivity = self._plot_selectivity(ax_selectivity, selectivity)
         if show_plot:
-            self.logger.info(f'Plotting conversion vs. temperature for CO oxidation reaction')
+            self.logger.info(f'Plotting conversion vs. temperature for CO2 hydrogenation reaction')
             plt.show()
         if output_plot_path:
             if output_plot_path.exists() and not output_plot_path.is_dir():
@@ -49,7 +49,7 @@ class CO2HydrogenationPlotter(Plotter):
         """
         sorted_conversion = conversion.get_sorted()
         ax.plot(sorted_conversion.get_temperatures(), sorted_conversion.get_alphas(), marker='o', markersize=5)
-        ax.set_ylim(bottom=-0.1, top=1.1)
+        ax.set_ylim(bottom=0 - 0.1 * sorted_conversion.get_alphas().max(), top=1.1 * sorted_conversion.get_alphas().max())
         ax.set_xlabel('Temperature, °C')
         ax.set_ylabel('$\mathrm{CO_2}$ conversion')
         return ax
