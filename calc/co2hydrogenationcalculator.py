@@ -54,15 +54,24 @@ class CO2HydrogenationCalculator(Calculator):
         temperatures = []
         s_list = []
         for temperature in input_data.get_temperatures():
+            self.logger.debug(f'{temperature = }')
             c_tot = 0
             s_dict = {}
             for compound in ['CO', 'CH4', 'C2H6', 'C3H8', 'i-C4H10', 'n-C4H10', 'i-C5H12', 'n-C5H12']:
                 n_str = compound[compound.find('C')+1]
                 n = int(n_str) if n_str.isdecimal() else 1
                 s_dict[compound] = input_data.get_conc(compound, temperature) * n
-                c_tot = c_tot + s_dict[compound] * n
+                c_tot = c_tot + s_dict[compound]
+                self.logger.debug(f'{compound = }')
+                self.logger.debug(f'{n = }')
+                self.logger.debug(f'{input_data.get_conc(compound, temperature) = }')
+            self.logger.debug(f'{s_dict = }')
+            self.logger.debug(f'{sum(list(s_dict.values())) = }')
+            self.logger.debug(f'{c_tot = }')
             for key in s_dict:
                 s_dict[key] = s_dict[key] / c_tot
+            self.logger.debug(f'{s_dict = }')
+            self.logger.debug(f'{sum(list(s_dict.values())) = }')
             temperatures.append(temperature)
             s_list.append(s_dict)
         selectivity = Selectivity(temperatures, s_list)
