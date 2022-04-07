@@ -68,6 +68,8 @@ class CO2HydrogenationCalculator(Calculator):
             self.logger.debug(f'{s_dict = }')
             self.logger.debug(f'{sum(list(s_dict.values())) = }')
             self.logger.debug(f'{c_tot = }')
+            if c_tot == 0:
+                c_tot = 1
             for key in s_dict:
                 s_dict[key] = s_dict[key] / c_tot
             self.logger.debug(f'{s_dict = }')
