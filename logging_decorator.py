@@ -2,20 +2,31 @@ import functools
 import inspect
 import logging
 import sys
+from typing import Callable
 
 import config
 
 class Logging:
+    """
+    Class used to register and configure logger with objects or modules. In order to use it one should decorate any method in module or __init__ method in object class with Logging class. The registered logger is available as "logger" or "self.logger" instance variables
+    """
 
-    def __init__(self, func):
+    def __init__(self, func:Callable):
         """
+        Assign parameter to instance variable, get logging levels from config file placed in the same directory as this module.
+
+        parameters
+        ----------
+        func:Callable
+            function to be decorated with this class
         """
         functools.update_wrapper(self, func)
         self.func = func
         self.logging_levels = config.logging_levels
 
-    def __get__(self, obj, type=None):
+    def __get__(self, obj:object, type=None):
         """
+        When this class is initialized at import time, it does not know whether func is function or method. This method is used to overcome the problem (see https://stackoverflow.com/questions/2366713/can-a-decorator-of-an-instance-method-access-the-class/48491028#48491028)
         """
         func = self.func.__get__(obj, type)
         return self.__class__(func)
