@@ -7,16 +7,58 @@ from pycatalicism.logging_decorator import Logging
 
 class ChromatecCrystalCompositionCopyPasteParser(Parser):
     """
+    Class for parsing data obtained by simple copy-paste from chromatec analytics software and adding relevant data to resulting file.
+
+    Data for this parser must be in the following format:
+
+    Температура<tab><temperature>
+    <br>
+    Название<tab>Время, мин<tab>Детектор<tab>Концентрация<tab>Ед, измерения<tab>Площадь<tab>Высота
+    <compound-name><tab><retention-time><tab><detector-name><tab><compound-concentration><tab><concentration-units><tab><peak-area><tab><peak-height>
+    [<br>
+    Темп. (газовые часы)<tab><flow-temperature>
+    Давление (газовые часы)<tab><flow-pressure>
+    Поток<tab><flow-rate>]
     """
 
     @Logging
     def __init__(self):
         """
+        Registers logger to the object which can be used by self.logger instance variable.
         """
         super().__init__()
 
     def parse_data(self, input_data_path:Path, initial_data_path:Path) -> RawData:
         """
+        Main interface to the class. Parses concentration, temperature and, if present, flow rate data from data files. Data must be in the following format:
+
+        Температура<tab><temperature>
+        <br>
+        Название<tab>Время, мин<tab>Детектор<tab>Концентрация<tab>Ед, измерения<tab>Площадь<tab>Высота
+        <compound-name><tab><retention-time><tab><detector-name><tab><compound-concentration><tab><concentration-units><tab><peak-area><tab><peak-height>
+        [<br>
+        Темп. (газовые часы)<tab><flow-temperature>
+        Давление (газовые часы)<tab><flow-pressure>
+        Поток<tab><flow-rate>]
+
+        If format in a file is wrong that file is ignored and warning is logged via self.logger
+
+        parameters
+        ----------
+        input_data_path:Path
+            path to folder with initial data files
+        initial_data_path:Path
+            path to file with initial data (i.e. when reaction did not occured)
+
+        returns
+        -------
+        raw_data:RawData
+            wrapper with parsed data
+
+        raises
+        ------
+        exception:ParserException
+            if initial_data_path is not file or if input_data_path is not directory
         """
         if not initial_data_path.is_file():
             raise ParserException(f'initial data path {initial_data_path} must be a file')
@@ -51,6 +93,42 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
 
     def _parse_file(self, path:Path) -> tuple[float,dict[str,float],float|None,float|None,float|None]:
         """
+        Parse single file with data. Data in a file must be in a following format:
+
+        Температура<tab><temperature>
+        <br>
+        Название<tab>Время, мин<tab>Детектор<tab>Концентрация<tab>Ед, измерения<tab>Площадь<tab>Высота
+        <compound-name><tab><retention-time><tab><detector-name><tab><compound-concentration><tab><concentration-units><tab><peak-area><tab><peak-height>
+        [<br>
+        Темп. (газовые часы)<tab><flow-temperature>
+        Давление (газовые часы)<tab><flow-pressure>
+        Поток<tab><flow-rate>]
+
+        All commas in a file is replaced with dots before parsing, so decimal separator may be both "," and "."
+
+        parameters
+        ----------
+        path:Path
+            path to file with data
+
+        returns
+        -------
+        (T, C, Ta, Pa, f):tuple
+            T:float
+                temperature at which reaction taken place
+            C:dict[str:float]
+                dictionary of compounds and their concentrations in mol.%
+            Ta:float|None
+                temperature at which measurement of flow rate was done or None if not present in a file (NB: units)
+            Pa:float|None
+                pressure at which measurement of flow rate was done or None if not present in a file (NB: units)
+            f:float|None
+                total gas flow rate or None if not present in a file (NB: units)
+
+        raises
+        ------
+        exception:ParserException
+            if data format is wrong
         """
         file_contents = self._replace_commas_with_dots(path)
         T = None
