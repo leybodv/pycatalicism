@@ -6,16 +6,40 @@ from pycatalicism.logging_decorator import Logging
 
 class CO2HydrogenationCalculator(Calculator):
     """
+    Calculates CO2 conversion and CO, alkanes selectivity at different temperatures from parsed data for CO2 hydrogenation reaction
     """
 
     @Logging
     def __init__(self):
         """
+        Registers logger with the object which can be accessed via self.logger instance variable
         """
         super().__init__()
 
     def calculate_conversion(self, input_data:RawData) -> Conversion:
         """
+        Calculates CO2 conversion at different temperatures for CO2 hydrogenation reaction.
+
+        CO2 conversion is calculated as:
+
+        a = ((pi * fi / Ti) * C(CO2)i - (pf * ff / Tf) * C(CO2)f) /  ((pi * fi / Ti) * C(CO2)i)
+        where
+            C(CO2)i, C(CO2)f - concentrations of CO2 before and after catalytic reactor, respectively, in mol.%
+            fi, ff - total gas flow rates before and after catalytic reactor, respectively, in m^3/s
+            pi, pf - pressure of gas at point of total gas flow rate measurement before and after catalytic reactor, respectively, in Pa
+            Ti, Tf - temperature of gas at point of total gas flow rate measurement before and after catalytic reactor, respectively, in K
+
+        If flow rate measurement data is not provided, conversion is calculated based solely on CO2 concentrations and warning is logged to console in this case.
+
+        parameters
+        ----------
+        input_data:RawData
+            wrapper of parsed data containing CO2 concentrations at different temperatures as well as initial CO2 concentration before reaction started
+
+        returns
+        -------
+        conversion:Conversion
+            wrapper with CO2 conversion at different temperatures data
         """
         self.logger.info(f'Calculating conversion for CO2 hydrogenation reaction')
         temperatures = []
@@ -49,6 +73,30 @@ class CO2HydrogenationCalculator(Calculator):
 
     def calculate_selectivity(self, input_data:RawData) -> Selectivity:
         """
+        Calculates selectivity to CO, CH4, C2H6, C3H8, i-C4H10, n-C4H10, i-C5H12, n-C5H12 at different temperatures from compounds concentrations.
+
+        Selectivity to i-th component is calculated as:
+
+        Si = Xi * n / SUM(Xi * n)
+        where
+            Xi - concentration of ith component in mol.%
+            n - stoichiometry coefficient in CO2 hydrogenation reaction
+                CO2 + H2 = CO + H2O, n = 1
+                CO2 + 4H2 = CH4 + 2H2O, n = 1
+                2CO2 + 7H2 = C2H6 + 4H2O, n = 2
+                3CO2 + 10H2 = C3H8 + 6H2O, n = 3
+                4CO2 + 13H2 = C4H10 + 8H2O, n = 4
+                5CO2 + 16H2 = C5H12 + 10H2O, n = 5
+
+        parameters
+        ----------
+        input_data:RawData
+            wrapper with concentrations of reaction product compounds at different temperatures
+
+        returns
+        -------
+        selectivity:Selectivity
+            wrapper with selectivities to corresponding compounds at different temperatures
         """
         self.logger.info(f'Calculating selectivities for CO2 hydrogenation reaction')
         temperatures = []
