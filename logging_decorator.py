@@ -31,13 +31,29 @@ class Logging:
         parameters
         ----------
         parameters are overriden from standard python __get__ method
+
+        returns
+        -------
+        self.__class_(func)
         """
         func = self.func.__get__(obj, type)
         return self.__class__(func)
 
     def __call__(self, *args, **kwargs):
         """
-        To make class callable, this method is overriden. If func is function, add configured logger to its module's namespace, else if func is method add configured logger to its object namespace.
+        To make class callable, this method is overriden. If self.func is function, add configured logger to its module's namespace, else if self.func is method add configured logger to its object namespace.
+
+        parameters
+        ----------
+        args
+            positional arguments to self.func
+        kwargs
+            keyword arguments to self.func
+
+        returns
+        -------
+        self.func(*args, **kwargs)
+            return value, returned by self.func
         """
         if inspect.isfunction(self.func):
             module = sys.modules[self.func.__module__]
@@ -57,6 +73,14 @@ class Logging:
 
     def _configure_logger(self, logger:logging.Logger, level:int):
         """
+        Set level to logger, add StreamHandler (will log to console) and formatter
+
+        parameters
+        ----------
+        logger:Logger
+            logger to be configured
+        level:int
+            logging level
         """
         logger.setLevel(level)
         logger.propagate = False
