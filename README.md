@@ -5,4 +5,5 @@
 <h2>ToDo</h2>
 <ul>
   <li>implement abstract classes in "pythonic" way</li>
+  <li>convert p, T, f data from gas clock to SI units before usage</li>
 </ul>
