@@ -7,6 +7,10 @@
 #   <br>
 #   Название<tab>Время, мин<tab>Детектор<tab>Концентрация<tab>Ед, измерения<tab>Площадь<tab>Высота
 #   <compound-name><tab><retention-time><tab><detector-name><tab><compound-concentration><tab><concentration-units><tab><peak-area><tab><peak-height>
+#   [<br>
+#   Темп. (газовые часы)<tab><flow-temperature>
+#   Давление (газовые часы)<tab><flow-pressure>
+#   Поток<tab><flow-rate>]
 raw_data_parser_type = 'chromatec-crystal-composition-copy-paste'
 
 # logging levels for different classes/modules
