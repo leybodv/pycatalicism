@@ -27,12 +27,17 @@ class Logging:
     def __get__(self, obj:object, type=None):
         """
         When this class is initialized at import time, it does not know whether func is function or method. This method is used to overcome the problem (see https://stackoverflow.com/questions/2366713/can-a-decorator-of-an-instance-method-access-the-class/48491028#48491028)
+
+        parameters
+        ----------
+        parameters are overriden from standard python __get__ method
         """
         func = self.func.__get__(obj, type)
         return self.__class__(func)
 
     def __call__(self, *args, **kwargs):
         """
+        To make class callable, this method is overriden. If func is function, add configured logger to its module's namespace, else if func is method add configured logger to its object namespace.
         """
         if inspect.isfunction(self.func):
             module = sys.modules[self.func.__module__]
