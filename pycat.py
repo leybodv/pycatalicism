@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+"""
+Module is a start point for the program. It parses arguments provided by user as command line arguments and executes corresponding functions.
+"""
+
 import argparse
 
 import pycatalicism.calc.calc as calc
@@ -7,6 +11,7 @@ import config
 
 def calculate(args:argparse.Namespace):
     """
+    Calculate conversion and selectivity vs. temperature for CO oxidation or CO2 hydrogenation reactions, print results to console and export them if path to export directory was provided by user. Plot corresponding graphs if --show-plot argument was provided by user and export them if export directory was provided.
     """
     parser_type = config.raw_data_parser_type
     calc.calculate(input_data_path=args.input_data_path, initial_data_path=args.initial_data_path, reaction=args.reaction, parser_type=parser_type, output_data_path=args.output_data, show_plot=args.show_plot, output_plot_path=args.output_plot)
