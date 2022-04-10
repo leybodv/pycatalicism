@@ -3,8 +3,28 @@ from pycatalicism.calc.co_oxidation_plotter import COOxidationPlotter
 from pycatalicism.calc.co2_hydrogenation_plotter import CO2HydrogenationPlotter
 from pycatalicism.calc.plotterexception import PlotterException
 
+"""
+Factory for creation of resulting data plotters.
+"""
+
 def get_plotter(reaction:str) -> Plotter:
     """
+    Get plotter for specified reaction
+
+    parameters
+    ----------
+    reaction:str {co-oxidation|co2-hydrogenation}
+        chemical reaction of interest
+
+    returns
+    -------
+    plotter:Plotter
+        plotter for specified reaction
+
+    raises
+    ------
+    exception:PlotterException
+        if unknown reaction provided as parameter
     """
     if reaction == 'co-oxidation':
         return COOxidationPlotter()
