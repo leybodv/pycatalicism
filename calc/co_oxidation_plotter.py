@@ -10,15 +10,29 @@ from pycatalicism.logging_decorator import Logging
 
 class COOxidationPlotter(Plotter):
     """
+    Class for plotting CO oxidation conversion data and exporting resulting plots to file.
     """
 
     @Logging
     def __init__(self):
         """
+        Registers logger with instances of this class which can be accessed via self.logger instance variable
         """
 
     def plot(self, conversion:Conversion, selectivity:Selectivity|None, show_plot:bool=False, output_plot_path:Path|None=None):
         """
+        Main interface of this class. Plots conversion vs. temperature as line plot. If show_plot is true, shows plots. If output_data_path was provided, exports plots to result.png to provided directory
+
+        parameters
+        ----------
+        conversion:Conversion
+            wrapper for CO conversion at different temperatures data
+        selectivity:Selectivity|None
+            should be None since selectivity does not make sense for CO oxidation
+        show_plot:bool (default:False)
+            if True, show plots
+        output_data_path:Path|None (default:None)
+            path to directory to export data
         """
         fig, ax = plt.subplots()
         sorted_conversion = conversion.get_sorted()
