@@ -5,17 +5,38 @@ from pycatalicism.logging_decorator import Logging
 
 class COOxidationCalculator(Calculator):
     """
+    Class for calculating CO conversion data.
     """
 
     @Logging
     def __init__(self):
         """
+        Registers logger with instance of this class which can be accessed via self.logger instance variable.
         """
         super().__init__()
 
     def calculate_conversion(self, input_data:RawData) -> Conversion:
         """
-        p,f,T from gas clock must be in or transformed to SI units
+        Main interface to this class. Calculate CO conversion at different temperatures for CO oxidation reaction. Conversion is calculated as:
+
+        a = ((pi * fi / Ti) * C(CO)i - (pf * ff / Tf) * C(CO)f) /  ((pi * fi / Ti) * C(CO)i)
+        where
+            C(CO)i, C(CO)f - concentrations of CO before and after catalytic reactor, respectively, in mol.%
+            fi, ff - total gas flow rates before and after catalytic reactor, respectively, in m^3/s
+            pi, pf - pressure of gas at point of total gas flow rate measurement before and after catalytic reactor, respectively, in Pa
+            Ti, Tf - temperature of gas at point of total gas flow rate measurement before and after catalytic reactor, respectively, in K
+
+        If flow rate measurement data is not provided, conversion is calculated based solely on CO concentrations and warning is logged to console in this case.
+
+        parameters
+        ----------
+        input_data:RawData
+            wrapper with concentrations and flow rate data
+
+        returns
+        -------
+        conversion:Conversion
+            wrapper with conversion vs. temperature data
         """
         self.logger.info(f'Calculating conversion for CO oxidation reaction')
         temperatures = []
@@ -45,5 +66,6 @@ class COOxidationCalculator(Calculator):
 
     def calculate_selectivity(self, input_data:RawData) -> None:
         """
+        Overrides method of superclass. Just returns None since selectivity for CO oxidation reaction does not make sense.
         """
         return None
