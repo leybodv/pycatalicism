@@ -81,5 +81,6 @@
   <li>implement abstract classes in "pythonic" way</li>
   <li>implement factory design in "pythonic" way?</li>
   <li>convert p, T, f data from gas clock to SI units before usage</li>
-  <li>update calc/calc.py docs</li>
+  <li>update calc&sol;calc.py, pycalc.py, calc&sol;calculator_factory.py docs</li>
+  <li>add docs for co22hydrogenationproductsbasiccalculator.py, calculatorexception.py</li>
 </ul>
