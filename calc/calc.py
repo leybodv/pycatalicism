@@ -29,7 +29,7 @@ def _print_results(conversion:Conversion, selectivity:Selectivity):
     if selectivity:
         print(selectivity)
 
-def calculate(input_data_path:str, initial_data_path:str, reaction:str, parser_type:str, calculate_conversion:bool, calculate_selectivity:bool, output_data_path:str|None=None, show_plot:bool=False, output_plot_path:str|None=None):
+def calculate(input_data_path:str, initial_data_path:str, reaction:str, parser_type:str, calculate_conversion:bool, calculate_selectivity:bool, products_basis:bool=False, output_data_path:str|None=None, show_plot:bool=False, output_plot_path:str|None=None):
     """
     Main interface to module. Parses input data from equipment capable of measuring composition and, ideally, initial and final gas total flow rate. Calculates conversion and selectivity data from input data. Prints results to console. If output_data_path was provided exports results. If show_plot is True, shows resulting plots. If output_plot_path was provided, exports corresponding plots.
 
@@ -52,7 +52,7 @@ def calculate(input_data_path:str, initial_data_path:str, reaction:str, parser_t
     """
     if not (calculate_conversion and calculate_selectivity):
         raise CalculatorException('Nothing to calculate')
-    calculator = calculator_factory.get_calculator(reaction)
+    calculator = calculator_factory.get_calculator(reaction, products_basis)
     parser = parser_factory.get_parser(parser_type)
     input_data = parser.parse_data(Path(input_data_path).resolve(), Path(initial_data_path).resolve())
     conversion = None
