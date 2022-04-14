@@ -6,6 +6,7 @@ from pycatalicism.calc import exporter_factory
 from pycatalicism.calc import plotter_factory
 from pycatalicism.calc.conversion import Conversion
 from pycatalicism.calc.selectivity import Selectivity
+from pycatalicism.calc.calculatorexception import CalculatorException
 
 """
 Main interface for calculating conversion, activity and selectivity of catalysts. Users of this module should use calculate method to perform all calculation tasks.
@@ -23,10 +24,12 @@ def _print_results(conversion:Conversion, selectivity:Selectivity):
     selectivity:Selectivity
         Catalyst selectivities for different product components at different temperatures data wrapper
     """
-    print(conversion)
-    print(selectivity)
+    if conversion:
+        print(conversion)
+    if selectivity:
+        print(selectivity)
 
-def calculate(input_data_path:str, initial_data_path:str, reaction:str, parser_type:str, output_data_path:str|None=None, show_plot:bool=False, output_plot_path:str|None=None):
+def calculate(input_data_path:str, initial_data_path:str, reaction:str, parser_type:str, calculate_conversion:bool, calculate_selectivity:bool, output_data_path:str|None=None, show_plot:bool=False, output_plot_path:str|None=None):
     """
     Main interface to module. Parses input data from equipment capable of measuring composition and, ideally, initial and final gas total flow rate. Calculates conversion and selectivity data from input data. Prints results to console. If output_data_path was provided exports results. If show_plot is True, shows resulting plots. If output_plot_path was provided, exports corresponding plots.
 
@@ -47,11 +50,17 @@ def calculate(input_data_path:str, initial_data_path:str, reaction:str, parser_t
     output_plot_path:str|None {default:None}
         Path to directory to export resulting plot
     """
+    if not (calculate_conversion and calculate_selectivity):
+        raise CalculatorException('Nothing to calculate')
     calculator = calculator_factory.get_calculator(reaction)
     parser = parser_factory.get_parser(parser_type)
     input_data = parser.parse_data(Path(input_data_path).resolve(), Path(initial_data_path).resolve())
-    conversion = calculator.calculate_conversion(input_data)
-    selectivity = calculator.calculate_selectivity(input_data)
+    conversion = None
+    selectivity = None
+    if calculate_conversion:
+        conversion = calculator.calculate_conversion(input_data)
+    if calculate_selectivity:
+        selectivity = calculator.calculate_selectivity(input_data)
     _print_results(conversion, selectivity)
     if output_data_path is not None:
         exporter = exporter_factory.get_exporter(reaction)
