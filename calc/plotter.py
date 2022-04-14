@@ -8,7 +8,7 @@ class Plotter():
     Abstract class for plotting resulting data
     """
 
-    def plot(self, conversion:Conversion, selectivity:Selectivity|None, show_plot:bool=False, output_plot_path:Path|None=None):
+    def plot(self, conversion:Conversion, selectivity:Selectivity|None, show_plot:bool=False, output_plot_path:Path|None=None, plot_title:str|None=None):
         """
         Method should be overriden by concrete classes. Plots conversion, selectivity vs. temperature plots, shows them and exports to file.
 
