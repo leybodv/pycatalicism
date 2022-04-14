@@ -18,6 +18,7 @@ import logging
 logging_levels = {
                     'ChromatecCrystalCompositionCopyPasteParser'    :   logging.INFO,
                     'CO2HydrogenationCalculator'                    :   logging.INFO,
+                    'CO2HydrogenationProductsBasisCalculator'       :   logging.INFO,
                     'CO2HydrogenationExporter'                      :   logging.INFO,
                     'CO2HydrogenationPlotter'                       :   logging.INFO,
                     'COOxidationCalculator'                         :   logging.INFO,
