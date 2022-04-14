@@ -23,7 +23,7 @@ class CO2HydrogenationPlotter(Plotter):
         """
         super().__init__()
 
-    def plot(self, conversion:Conversion, selectivity:Selectivity, show_plot:bool=False, output_plot_path:Path|None=None):
+    def plot(self, conversion:Conversion, selectivity:Selectivity, show_plot:bool=False, output_plot_path:Path|None=None, plot_title:str|None=None):
         """
         Main interface of this class. Plots conversion vs. temperature as line plot and selectivities vs. temperature as bar plot. If show_plot is true, shows plots. If output_data_path was provided, exports plots to result.png to provided directory
 
@@ -41,6 +41,8 @@ class CO2HydrogenationPlotter(Plotter):
         fig, (ax_conversion, ax_selectivity) = plt.subplots(nrows=1, ncols=2)
         ax_conversion = self._plot_conversion(ax_conversion, conversion)
         ax_selectivity = self._plot_selectivity(ax_selectivity, selectivity)
+        if plot_title:
+            fig.suptitle(plot_title)
         if show_plot:
             self.logger.info(f'Plotting conversion vs. temperature for CO2 hydrogenation reaction')
             plt.show()
