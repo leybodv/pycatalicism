@@ -50,7 +50,7 @@ def calculate(input_data_path:str, initial_data_path:str, reaction:str, parser_t
     output_plot_path:str|None {default:None}
         Path to directory to export resulting plot
     """
-    if not (calculate_conversion and calculate_selectivity):
+    if not (calculate_conversion or calculate_selectivity):
         raise CalculatorException('Nothing to calculate')
     calculator = calculator_factory.get_calculator(reaction, products_basis)
     parser = parser_factory.get_parser(parser_type)
