@@ -12,7 +12,7 @@ from pycatalicism.calc.calculatorexception import CalculatorException
 
 def calculate(args:argparse.Namespace):
     """
-    Calculate conversion and selectivity vs. temperature for CO oxidation or CO2 hydrogenation reactions, print results to console and export them if path to export directory was provided by user. Plot corresponding graphs if --show-plot argument was provided by user and export them if export directory was provided.
+    Calculate conversion and/or selectivity (depending on --conversion/--selectivity flag provided by user) vs. temperature for CO oxidation or CO2 hydrogenation reactions, print results to console and export them if path to export directory was provided by user. Plot corresponding graphs if --show-plot argument was provided by user and export them if export directory was provided.
     """
     parser_type = config.raw_data_parser_type
     try:

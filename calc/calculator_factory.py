@@ -16,6 +16,8 @@ def get_calculator(reaction:str, products_basis:bool) -> Calculator:
     ----------
     reaction:str {co-oxidation|co2-hydrogenation}
         Chemical reaction for which to calculate results
+    products_basis:bool
+        If True, return calculator, which calculates conversion based on products composition
 
     returns
     -------

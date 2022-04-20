@@ -23,7 +23,7 @@ class CO2HydrogenationPlotter(Plotter):
         """
         super().__init__()
 
-    def plot(self, conversion:Conversion, selectivity:Selectivity, show_plot:bool=False, output_plot_path:Path|None=None, plot_title:str|None=None):
+    def plot(self, conversion:Conversion|None, selectivity:Selectivity|None, show_plot:bool=False, output_plot_path:Path|None=None, plot_title:str|None=None):
         """
         Main interface of this class. Plots conversion vs. temperature as line plot and selectivities vs. temperature as bar plot. If show_plot is true, shows plots. If output_data_path was provided, exports plots to result.png to provided directory
 
@@ -37,10 +37,24 @@ class CO2HydrogenationPlotter(Plotter):
             if True, show plots
         output_data_path:Path|None (default:None)
             path to directory to export data
+
+        raises
+        ------
+        PlotterException
+            if conversion and selectivities are None
         """
-        fig, (ax_conversion, ax_selectivity) = plt.subplots(nrows=1, ncols=2)
-        ax_conversion = self._plot_conversion(ax_conversion, conversion)
-        ax_selectivity = self._plot_selectivity(ax_selectivity, selectivity)
+        if conversion and selectivity:
+            fig, (ax_conversion, ax_selectivity) = plt.subplots(nrows=1, ncols=2)
+            ax_conversion = self._plot_conversion(ax_conversion, conversion)
+            ax_selectivity = self._plot_selectivity(ax_selectivity, selectivity)
+        elif conversion and not selectivity:
+            fig, ax_conversion = plt.subplots()
+            ax_conversion = self._plot_conversion(ax_conversion, conversion)
+        elif selectivity and not conversion:
+            fig, ax_selectivity = plt.subplots()
+            ax_selectivity = self._plot_selectivity(ax_selectivity, selectivity)
+        else:
+            raise PlotterException('Nothing to plot')
         if plot_title:
             fig.suptitle(plot_title)
         if show_plot:

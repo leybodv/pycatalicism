@@ -15,7 +15,7 @@ Main interface for calculating conversion, activity and selectivity of catalysts
 
 def _print_results(conversion:Conversion, selectivity:Selectivity):
     """
-    Print results for conversion and selectivities vs. temperature to console.
+    Print results for conversion and/or selectivities vs. temperature to console.
 
     parameters
     ----------
@@ -31,7 +31,7 @@ def _print_results(conversion:Conversion, selectivity:Selectivity):
 
 def calculate(input_data_path:str, initial_data_path:str, reaction:str, parser_type:str, calculate_conversion:bool, calculate_selectivity:bool, products_basis:bool=False, output_data_path:str|None=None, show_plot:bool=False, output_plot_path:str|None=None, plot_title:str|None=None):
     """
-    Main interface to module. Parses input data from equipment capable of measuring composition and, ideally, initial and final gas total flow rate. Calculates conversion and selectivity data from input data. Prints results to console. If output_data_path was provided exports results. If show_plot is True, shows resulting plots. If output_plot_path was provided, exports corresponding plots.
+    Main interface to module. Parses input data from equipment capable of measuring composition and, ideally, initial and final gas total flow rate. Calculates conversion and/or selectivity data from input data. Prints results to console. If output_data_path was provided exports results. If show_plot is True, shows resulting plots. If output_plot_path was provided, exports corresponding plots.
 
     parameters
     ----------
@@ -43,6 +43,12 @@ def calculate(input_data_path:str, initial_data_path:str, reaction:str, parser_t
         Chemical reaction to calculate data for
     parser_type:str {chromatec-crystal-composition-copy-paste}
         Parser type to use for parsing input data
+    calculate_conversion:bool
+        Whether to calculate conversion
+    calculate_selectivity:bool
+        Whether to calculate selectivity
+    products_bases:bool (default:False)
+        If True, calculate conversion based on products concentrations
     output_data_path:str|None {default:None}
         Path to directory to export results in text format
     show_plot:bool {default:False}
