@@ -16,7 +16,7 @@ def calculate(args:argparse.Namespace):
     """
     parser_type = config.raw_data_parser_type
     try:
-        calc.calculate(input_data_path=args.input_data_path, initial_data_path=args.initial_data_path, reaction=args.reaction, parser_type=parser_type, calculate_conversion=args.conversion, calculate_selectivity=args.selectivity, products_basis=args.products_basis, output_data_path=args.output_data, show_plot=args.show_plot, output_plot_path=args.output_plot, plot_title=args.sample_name)
+        calc.calculate(input_data_path=args.input_data_path, initial_data_path=args.initial_data_path, reaction=args.reaction, parser_type=parser_type, calculate_conversion=args.conversion, calculate_selectivity=args.selectivity, products_basis=args.products_basis, output_data_path=args.output_data, show_plot=args.show_plot, output_plot_path=args.output_plot, sample_name=args.sample_name)
     except CalculatorException:
         print('At least one of the flags {--conversion|--selectivity} must be provided to the program')
 
