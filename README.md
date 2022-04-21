@@ -1,8 +1,8 @@
 <h1>pycatalicism</h1>
-<p>Program for control of catalytic activity of materials measurement equipment (to be developed...) as well as for calculation of main parameters relevant for catalyst functional properties characterization (conversion, activity, selectivity, stability, activation energy).</p>
+<p>Program controls catalytic activity of materials measurement equipment (to be developed...) as well as calculates main parameters relevant for catalyst functional properties characterization (conversion, activity, selectivity, stability, activation energy).</p>
 <h2>Usage</h2>
 <h3>Calculation of catalyst functional properties</h3>
-<p>pycat calc --output-data OUTPUT_DATA --show-plot --output-plot OUPUT_PLOT input-data-path initial-data-path {co-oxidation|co2-hydrogenation}</p>
+<p><code>pycat calc --conversion|--selectivity [--output-data OUTPUT_DATA] [--show-plot] [--output-plot OUPUT_PLOT] [--products-basis] [--sample-name SAMPLE_NAME] input-data-path initial-data-path {co-oxidation|co2-hydrogenation}</code></p>
 <p>positional arguments:</p>
 <table>
   <tr>
