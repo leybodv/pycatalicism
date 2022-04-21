@@ -9,6 +9,7 @@ import argparse
 import pycatalicism.calc.calc as calc
 import config
 from pycatalicism.calc.calculatorexception import CalculatorException
+import pycatalicism.compare.compare as compare
 
 def calculate(args:argparse.Namespace):
     """
@@ -20,8 +21,16 @@ def calculate(args:argparse.Namespace):
     except CalculatorException:
         print('At least one of the flags {--conversion|--selectivity} must be provided to the program')
 
+def compare(args:argparse.Namespace):
+    """
+    Graphically compare calculation results among different catalyst samples, show resulting plots and, if --output-plot was provided export them as comparison-results.png file
+    """
+    compare.compare(files_list_path=args.file_list, output_plot_path=args.output_plot)
+    raise NotImplementedError()
+
 parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers(required=True)
+
 calc_parser = subparsers.add_parser('calc', help='calculate conversion and selectivity vs. temperature')
 calc_parser.set_defaults(func=calculate)
 calc_parser.add_argument('input_data_path', metavar='input-data-path', help='path to directory with files from concentration measurement device')
@@ -34,6 +43,11 @@ calc_parser.add_argument('--show-plot', action='store_true', help='whether to sh
 calc_parser.add_argument('--output-plot', default=None, help='path to directory to save plot')
 calc_parser.add_argument('--products-basis', action='store_true', help='calculate conversion based on products concentration instead of reactants')
 calc_parser.add_argument('--sample-name', help='sample name will be added to results data files and as a title to the result plots')
+
+compare_parser = subparsers.add_parser('compare', help='graphically compare calculation results among different catalyst samples')
+compare_parser.set_defaults(func=compare)
+compare_parser.add_argument('files_list', metavar='files-list', help='path to file with absolute paths of catalyst characteristics results obtained using "calc" module of this program')
+compare_parser.add_argument('--output-plot', default=None, help='path to directory to save plot')
 
 if (__name__ == '__main__'):
     args = parser.parse_args()
