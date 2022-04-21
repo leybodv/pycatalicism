@@ -11,30 +11,42 @@
   </tr>
   <tr>
     <td>initial-data-path</td>
-    <td>path to file with data of initial concentration measurement</td>
+    <td>path to file with data of initial composition of gas</td>
   </tr>
   <tr>
     <td>{co-oxidation|co2-hydrogenation}</td>
-    <td>catalytic reaction for which to make calculations</td>
+    <td>reaction for which to calculate data</td>
   </tr>
 </table>
 <p>parameters:</p>
 <table>
   <tr>
+    <td>--conversion|--selectivity</td>
+    <td>whether to calculate conversion or selectivity for the specified reaction (at least one must be specified, can be specified both of them)</td>
+  </tr>
+  <tr>
     <td>--ouput-data OUPUT_DATA</td>
-    <td>path to directory in which to export calculated data</td>
+    <td>path to directory to save calculated data</td>
   </tr>
   <tr>
     <td>--show-plot</td>
-    <td>if provided plot will be shown with calculated data</td>
+    <td>whether to show data plot or not</td>
   </tr>
   <tr>
     <td>--ouput-plot OUTPUT_PLOT</td>
-    <td>path to directory in which to export plot of calclated data</td>
+    <td>path to directory to save plot</td>
+  </tr>
+  <tr>
+    <td>--products-basis</td>
+    <td>calculate cconversion based on products concentration instead of reactants</td>
+  </tr>
+  <tr>
+    <td>--sample-name</td>
+    <td>sample name will be added to results data files and as a title to the resulting plots</td>
   </tr>
 </table>
 <br>
-<p>To calculate conversion and selectivity for the reaction of interest program needs to know initial parameters, i.e. the ones before catalytic reaction started, and results of measurement at different temperatures of catalytic reaction. Minimal parameters are reaction participants concentrations in mol.% and temperatures of catalytic reaction. Parameters provided as files with strictly defined format:</p>
+<p>To calculate conversion and selectivity for the reaction of interest program needs to know initial parameters, i.e. the ones before catalytic reaction started, and results of measurement at different temperatures of catalytic reaction. Minimal parameters are reaction participants concentrations in mol.% and temperatures of catalytic reaction. Parameters are provided as files with strictly defined format:</p>
 <br>
 <p>
 Температура&lt;tab&gt;<i>temperature</i><br>
@@ -75,6 +87,8 @@
     <td>gas total flow rate</td>
   </tr>
 </table>
+<p>Calculations are made using following equations:</p>
+<p><img src="https://latex.codecogs.com/svg.image?\alpha&space;=&space;\frac{\frac{p_{i}\cdot&space;f_{i}}{T_{i}}\cdot&space;C_{CO,i}&space;-&space;\frac{p_f\cdot&space;f_f}{T_f}\cdot&space;C_{CO,f}}{\frac{p_{i}\cdot&space;f_{i}}{T_{i}}\cdot&space;C_{CO,i}}" title="https://latex.codecogs.com/svg.image?\alpha = \frac{\frac{p_{i}\cdot f_{i}}{T_{i}}\cdot C_{CO,i} - \frac{p_f\cdot f_f}{T_f}\cdot C_{CO,f}}{\frac{p_{i}\cdot f_{i}}{T_{i}}\cdot C_{CO,i}}" /></p>
 <h2>ToDo</h2>
 <ul>
   <li>implement abstract classes in "pythonic" way</li>
