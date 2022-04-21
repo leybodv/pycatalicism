@@ -89,8 +89,8 @@
 <p>Calculations are made using following equations:</p>
 <p><b>CO oxidation</b></p>
 <pre><img src="https://latex.codecogs.com/svg.image?\alpha&space;=&space;\frac{\frac{p_{i}\cdot&space;f_{i}}{T_{i}}\cdot&space;C_{CO,i}&space;-&space;\frac{p_f\cdot&space;f_f}{T_f}\cdot&space;C_{CO,f}}{\frac{p_{i}\cdot&space;f_{i}}{T_{i}}\cdot&space;C_{CO,i}}" title="https://latex.codecogs.com/svg.image?\alpha = \frac{\frac{p_{i}\cdot f_{i}}{T_{i}}\cdot C_{CO,i} - \frac{p_f\cdot f_f}{T_f}\cdot C_{CO,f}}{\frac{p_{i}\cdot f_{i}}{T_{i}}\cdot C_{CO,i}}" /></pre>
-<p>where</p>
 <p>
+  where<br>
   <img src="https://latex.codecogs.com/svg.image?\inline&space;\alpha" title="https://latex.codecogs.com/svg.image?\inline \alpha" /> - CO conversion<br>
   <img src="https://latex.codecogs.com/svg.image?\inline&space;C_{CO,i}" title="https://latex.codecogs.com/svg.image?\inline C_{CO,i}" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;C_{CO,f}" title="https://latex.codecogs.com/svg.image?\inline C_{CO,f}" /> - concentrations of CO before and after catalytic reactor, respectively, in mol.%<br>
   <img src="https://latex.codecogs.com/svg.image?\inline&space;f_{i}" title="https://latex.codecogs.com/svg.image?\inline f_{i}" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;f_{f}" title="https://latex.codecogs.com/svg.image?\inline f_{f}" /> - total gas flow rates before and after catalytic reactor, respectively, in m<sup>3</sup>/s<br>
@@ -99,8 +99,8 @@
 </p>
 <p><b>CO<sub>2</sub> hydrogenation</b></p>
 <pre><img src="https://latex.codecogs.com/svg.image?\inline&space;alpha&space;=&space;\frac{\frac{p_{i}\cdot&space;f_{i}}{T_{i}}\cdot&space;C_{CO_2,i}&space;-&space;\frac{p_f\cdot&space;f_f}{T_f}\cdot&space;C_{CO_2,f}}{\frac{p_{i}\cdot&space;f_{i}}{T_{i}}\cdot&space;C_{CO_2,i}}" title="https://latex.codecogs.com/svg.image?\inline alpha = \frac{\frac{p_{i}\cdot f_{i}}{T_{i}}\cdot C_{CO_2,i} - \frac{p_f\cdot f_f}{T_f}\cdot C_{CO_2,f}}{\frac{p_{i}\cdot f_{i}}{T_{i}}\cdot C_{CO_2,i}}" /></pre>
-<p>where</p>
 <p>
+  where<br>
   <img src="https://latex.codecogs.com/svg.image?\inline&space;\alpha" title="https://latex.codecogs.com/svg.image?\inline \alpha" /> - CO<sub>2</sub> conversion<br>
   <img src="https://latex.codecogs.com/svg.image?\inline&space;C_{CO_2,i}" title="https://latex.codecogs.com/svg.image?\inline C_{CO_2,i}" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;C_{CO_2,f}" title="https://latex.codecogs.com/svg.image?\inline C_{CO_2,f}" /> - concentrations of CO<sub>2</sub> before and after catalytic reactor, respectively, in mol.%<br>
   <img src="https://latex.codecogs.com/svg.image?\inline&space;f_{i}" title="https://latex.codecogs.com/svg.image?\inline f_{i}" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;f_{f}" title="https://latex.codecogs.com/svg.image?\inline f_{f}" /> - total gas flow rates before and after catalytic reactor, respectively, in m<sup>3</sup>/s<br>
@@ -108,15 +108,24 @@
   <img src="https://latex.codecogs.com/svg.image?\inline&space;T_i" title="https://latex.codecogs.com/svg.image?\inline T_i" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;T_f" title="https://latex.codecogs.com/svg.image?\inline T_f" /> - temperature of gas at point of total gas flow rate measurement before and after catalytic reactor, respectively, in K
 </p>
 <pre><img src="https://latex.codecogs.com/svg.image?\inline&space;S&space;=&space;\frac{n_i\cdot&space;C_i}{\sum&space;n_i\cdot&space;C_i}" title="https://latex.codecogs.com/svg.image?\inline S = \frac{n_i\cdot C_i}{\sum n_i\cdot C_i}" /></pre>
-<p>where</p>
 <p>
+  where<br>
   S - selectivity towards i<sup>th</sup> component<br>
   <img src="https://latex.codecogs.com/svg.image?\inline&space;C_i" title="https://latex.codecogs.com/svg.image?\inline C_i" /> - concentrations of i<sup>th</sup> component among CO, CH<sub>4</sub>, C<sub>2</sub>H<sub>6</sub>, C<sub>3</sub>H<sub>8</sub>, i-C<sub>4</sub>H<sub>10</sub>, n-C<sub>4</sub>H<sub>10</sub>, i-C<sub>5</sub>H<sub>12</sub>, n-C<sub>5</sub>H<sub>12</sub>, in mol.%<br>
   n - stoichiometry coefficient in CO<sub>2</sub> hydrogenation reaction (number of C atoms in product molecule)
 </p>
 <p><b>CO<sub>2</sub> hydrogenation, products basis</b></p>
 <p>Sometimes the results obtained with above equation give erroneous results with large negative conversions. It is useful to calculate CO<sub>2</sub> conversion based on products. However, this method is prone to error due to the assumption, that only certain products are formed.</p>
-<pre></pre>
+<pre><img src="https://latex.codecogs.com/svg.image?\inline&space;\alpha&space;=&space;\frac{\sum{n_p\cdot&space;C_p}}{C_{CO_2,i}}\cdot&space;\frac{p_f&space;\cdot&space;f_f&space;\cdot&space;T_i}{p_i&space;\cdot&space;f_i&space;\cdot&space;T_f}" title="https://latex.codecogs.com/svg.image?\inline \alpha = \frac{\sum{n_p\cdot C_p}}{C_{CO_2,i}}\cdot \frac{p_f \cdot f_f \cdot T_i}{p_i \cdot f_i \cdot T_f}" /></pre>
+<p>
+  where<br>
+  <img src="https://latex.codecogs.com/svg.image?\inline&space;C_{CO_2,i}" title="https://latex.codecogs.com/svg.image?\inline C_{CO_2,i}" /> - concentration of CO<sub>2</sub> before catalytic reactor, respectively, in mol.%<br>
+  <img src="https://latex.codecogs.com/svg.image?\inline&space;C_p" title="https://latex.codecogs.com/svg.image?\inline C_p" /> - concentrations of p<sup>th</sup> component among CO, CH<sub>4</sub>, C<sub>2</sub>H<sub>6</sub>, C<sub>3</sub>H<sub>8</sub>, i-C<sub>4</sub>H<sub>10</sub>, n-C<sub>4</sub>H<sub>10</sub>, i-C<sub>5</sub>H<sub>12</sub>, n-C<sub>5</sub>H<sub>12</sub>, in mol.%<br>
+  n - stoichiometry coefficient in CO<sub>2</sub> hydrogenation reaction (number of C atoms in product molecule)
+  <img src="https://latex.codecogs.com/svg.image?\inline&space;f_{i}" title="https://latex.codecogs.com/svg.image?\inline f_{i}" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;f_{f}" title="https://latex.codecogs.com/svg.image?\inline f_{f}" /> - total gas flow rates before and after catalytic reactor, respectively, in m<sup>3</sup>/s<br>
+  <img src="https://latex.codecogs.com/svg.image?\inline&space;p_i" title="https://latex.codecogs.com/svg.image?\inline p_i" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;p_f" title="https://latex.codecogs.com/svg.image?\inline p_f" /> - pressure of gas at point of total gas flow rate measurement before and after catalytic reactor, respectively, in Pa<br>
+  <img src="https://latex.codecogs.com/svg.image?\inline&space;T_i" title="https://latex.codecogs.com/svg.image?\inline T_i" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;T_f" title="https://latex.codecogs.com/svg.image?\inline T_f" /> - temperature of gas at point of total gas flow rate measurement before and after catalytic reactor, respectively, in K
+</p>
 <p>If flow rate measurement data is not provided, conversion is calculated based solely on concentrations and warning is logged to console in this case.</p>
 <h2>ToDo</h2>
 <ul>
