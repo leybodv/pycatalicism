@@ -5,7 +5,7 @@ class Conversion():
     Wrapper for conversion data storage. Conversion is stored as two parallel numpy.ndarrays of floats: temperature and conversion data.
     """
 
-    def __init__(self, temperatures:list[float], alphas:list[float]):
+    def __init__(self, temperatures:list[float], alphas:list[float], sample_name:str|None):
         """
         Assign parameters to instance variables after conversion lists to numpy.ndarrays.
 
@@ -15,14 +15,18 @@ class Conversion():
             list of temperatures
         alphas:list[float]
             list of conversions
+        sample_name:str|None
         """
         self.temperatures = np.array(temperatures)
         self.alphas = np.array(alphas)
+        self.sample_name = sample_name
 
     def __str__(self) -> str:
         """
         Get string representation of covnersion vs. temperature data in a format:
 
+        Sample<tab><sample-name><br>
+        <br>
         Temperature<tab>Conversion<br>
         <temperature><tab><covnersion><br>
         ...
@@ -32,7 +36,7 @@ class Conversion():
         string:str
             string representation of conversion vs. temperature data
         """
-        string = 'Temperature\tConversion\n'
+        string = f'Sample\t{self.sample_name}\n\nTemperature\tConversion\n'
         sorted_conversion = self.get_sorted()
         for temperature, alpha in zip(sorted_conversion.get_temperatures(), sorted_conversion.get_alphas()):
             string = string + f'{temperature}\t{alpha}\n'
