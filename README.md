@@ -90,7 +90,10 @@
 <p><b>CO oxidation</b></p>
 <pre><img src="https://latex.codecogs.com/svg.image?\alpha&space;=&space;\frac{\frac{p_{i}\cdot&space;f_{i}}{T_{i}}\cdot&space;C_{CO,i}&space;-&space;\frac{p_f\cdot&space;f_f}{T_f}\cdot&space;C_{CO,f}}{\frac{p_{i}\cdot&space;f_{i}}{T_{i}}\cdot&space;C_{CO,i}}" title="https://latex.codecogs.com/svg.image?\alpha = \frac{\frac{p_{i}\cdot f_{i}}{T_{i}}\cdot C_{CO,i} - \frac{p_f\cdot f_f}{T_f}\cdot C_{CO,f}}{\frac{p_{i}\cdot f_{i}}{T_{i}}\cdot C_{CO,i}}" /></pre>
 <p>where</p>
-<p><img src="https://latex.codecogs.com/svg.image?C_{CO,i}" title="https://latex.codecogs.com/svg.image?C_{CO,i}" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;C_{CO,f}" title="https://latex.codecogs.com/svg.image?\inline C_{CO,f}" /> - concentrations of CO before and after catalytic reactor, respectively, in mol.%</p>
+<p>
+  <img src="https://latex.codecogs.com/svg.image?\inline&space;C_{CO,i}" title="https://latex.codecogs.com/svg.image?\inline C_{CO,i}" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;C_{CO,f}" title="https://latex.codecogs.com/svg.image?\inline C_{CO,f}" /> - concentrations of CO before and after catalytic reactor, respectively, in mol.%<br>
+  <img src="https://latex.codecogs.com/svg.image?\inline&space;f_{i}" title="https://latex.codecogs.com/svg.image?\inline f_{i}" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;f_{f}" title="https://latex.codecogs.com/svg.image?\inline f_{f}" /> - total gas flow rates before and after catalytic reactor, respectively, in m<sup>3</sup>/s
+</p>
 <h2>ToDo</h2>
 <ul>
   <li>implement abstract classes in "pythonic" way</li>
