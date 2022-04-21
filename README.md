@@ -1,9 +1,3 @@
-<head>
-<style>
-  .simplebar-scrollbar {
-    visibility: visible !important;
-</style>
-</head>
 <h1>pycatalicism</h1>
 <p>Program controls catalytic activity of materials measurement equipment (to be developed...) as well as calculates main parameters relevant for catalyst functional properties characterization (conversion, activity, selectivity, stability, activation energy).</p>
 <h2>Usage</h2>
@@ -54,7 +48,7 @@
 <br>
 <p>To calculate conversion and selectivity for the reaction of interest program needs to know initial parameters, i.e. the ones before catalytic reaction started, and results of measurement at different temperatures of catalytic reaction. Minimal parameters are reaction participants concentrations in mol.% and temperatures of catalytic reaction. Parameters are provided as files with strictly defined format:</p>
 <br>
-<div style=""><pre>
+<div style=".simplebar-scrollbar {visibility: visible !important;"><pre>
 Температура&lt;tab&gt;<i>temperature</i>
 &lt;br&gt;
 Название&lt;tab&gt;Время, мин&lt;tab&gt;Детектор&lt;tab&gt;Концентрация&lt;tab&gt;Ед, измерения&lt;tab&gt;Площадь&lt;tab&gt;Высота
