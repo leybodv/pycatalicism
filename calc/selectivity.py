@@ -5,7 +5,7 @@ class Selectivity():
     Wrapper for selectivity data storage. Selectivities are stored as numpy.ndarray of dictionaries, containing name of compounds and corresponding calculated selectivities. The list is parallel to the list of corresponding temperatures.
     """
 
-    def __init__(self, temperatures:list[float]|np.ndarray[float, np.dtype], selectivities:list[dict[str,float]]|np.ndarray[dict[str,float], np.dtype]):
+    def __init__(self, temperatures:list[float]|np.ndarray[float, np.dtype], selectivities:list[dict[str,float]]|np.ndarray[dict[str,float], np.dtype], sample_name:str|None):
         """
         Assigns parameters to instance variables, converting lists to numpy.ndarrays.
 
@@ -19,9 +19,12 @@ class Selectivity():
                     chemical formula of compound
                 selectivity:float
                     selectivity of catalyst to this compound
+        sample_name:str|None
+            name of sample
         """
         self.temperatures = np.array(temperatures)
         self.selectivities = np.array(selectivities)
+        self.sample_name = sample_name
 
     def __str__(self) -> str:
         """
@@ -38,7 +41,7 @@ class Selectivity():
         c_l = []
         for compound in sorted_selectivities.get_selectivities()[0]:
             c_l.append(compound)
-        header = 'Temperature'
+        header = f'Sample\t{self.sample_name}\n\nTemperature'
         for compound in c_l:
             header = header + f'\t{compound}'
         header = header + '\n'
