@@ -76,4 +76,4 @@ def calculate(input_data_path:str, initial_data_path:str, reaction:str, parser_t
     if show_plot or (output_plot_path is not None):
         plotter = plotter_factory.get_plotter(reaction)
         path = None if output_plot_path is None else Path(output_plot_path).resolve()
-        plotter.plot(conversion, selectivity, show_plot, path, plot_title)
+        plotter.plot(conversion, selectivity, show_plot, path, sample_name)
