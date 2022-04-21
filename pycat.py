@@ -26,7 +26,6 @@ def compare(args:argparse.Namespace):
     Graphically compare calculation results among different catalyst samples, show resulting plots and, if --output-plot was provided export them as comparison-results.png file
     """
     compare.compare(files_list_path=args.file_list, output_plot_path=args.output_plot)
-    raise NotImplementedError()
 
 parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers(required=True)
