@@ -48,7 +48,7 @@
 <br>
 <p>To calculate conversion and selectivity for the reaction of interest program needs to know initial parameters, i.e. the ones before catalytic reaction started, and results of measurement at different temperatures of catalytic reaction. Minimal parameters are reaction participants concentrations in mol.% and temperatures of catalytic reaction. Parameters are provided as files with strictly defined format:</p>
 <br>
-<div><pre>
+<div><details>
 Температура&lt;tab&gt;<i>temperature</i>
 &lt;br&gt;
 Название&lt;tab&gt;Время, мин&lt;tab&gt;Детектор&lt;tab&gt;Концентрация&lt;tab&gt;Ед, измерения&lt;tab&gt;Площадь&lt;tab&gt;Высота
@@ -57,7 +57,7 @@
 Темп. (газовые часы)&lt;tab&gt;<i>flow-temperature</i>
 Давление (газовые часы)&lt;tab&gt;<i>flow-pressure</i>
 Поток&lt;tab&gt;<i>flow-rate</i>]
-</pre></div>
+</details></div>
 <table>
   <tr>
     <td><i>temperature</i></td>
