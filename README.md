@@ -38,7 +38,7 @@
   </tr>
   <tr>
     <td>--products-basis</td>
-    <td>calculate cconversion based on products concentration instead of reactants</td>
+    <td>calculate conversion based on products concentrations instead of reactants</td>
   </tr>
   <tr>
     <td>--sample-name</td>
@@ -57,6 +57,7 @@
 Давление (газовые часы)&lt;tab&gt;<i>flow-pressure</i>
 Поток&lt;tab&gt;<i>flow-rate</i>]
 </pre></div>
+<p>If program encounters file with wrong format, the file is ignored and corresponding warning is logged to console.</p>
 <table>
   <tr>
     <td><i>temperature</i></td>
@@ -111,7 +112,7 @@
 <p>
   where<br>
   S - selectivity towards i<sup>th</sup> component<br>
-  <img src="https://latex.codecogs.com/svg.image?\inline&space;C_i" title="https://latex.codecogs.com/svg.image?\inline C_i" /> - concentrations of i<sup>th</sup> component among CO, CH<sub>4</sub>, C<sub>2</sub>H<sub>6</sub>, C<sub>3</sub>H<sub>8</sub>, i-C<sub>4</sub>H<sub>10</sub>, n-C<sub>4</sub>H<sub>10</sub>, i-C<sub>5</sub>H<sub>12</sub>, n-C<sub>5</sub>H<sub>12</sub>, in mol.%<br>
+  <img src="https://latex.codecogs.com/svg.image?\inline&space;C_i" title="https://latex.codecogs.com/svg.image?\inline C_i" /> - concentration of i<sup>th</sup> component among CO, CH<sub>4</sub>, C<sub>2</sub>H<sub>6</sub>, C<sub>3</sub>H<sub>8</sub>, i-C<sub>4</sub>H<sub>10</sub>, n-C<sub>4</sub>H<sub>10</sub>, i-C<sub>5</sub>H<sub>12</sub>, n-C<sub>5</sub>H<sub>12</sub>, in mol.%<br>
   n - stoichiometry coefficient in CO<sub>2</sub> hydrogenation reaction (number of C atoms in product molecule)
 </p>
 <p><b>CO<sub>2</sub> hydrogenation, products basis</b></p>
@@ -121,7 +122,7 @@
   where<br>
   <img src="https://latex.codecogs.com/svg.image?\inline&space;C_{CO_2,i}" title="https://latex.codecogs.com/svg.image?\inline C_{CO_2,i}" /> - concentration of CO<sub>2</sub> before catalytic reactor, respectively, in mol.%<br>
   <img src="https://latex.codecogs.com/svg.image?\inline&space;C_p" title="https://latex.codecogs.com/svg.image?\inline C_p" /> - concentrations of p<sup>th</sup> component among CO, CH<sub>4</sub>, C<sub>2</sub>H<sub>6</sub>, C<sub>3</sub>H<sub>8</sub>, i-C<sub>4</sub>H<sub>10</sub>, n-C<sub>4</sub>H<sub>10</sub>, i-C<sub>5</sub>H<sub>12</sub>, n-C<sub>5</sub>H<sub>12</sub>, in mol.%<br>
-  n - stoichiometry coefficient in CO<sub>2</sub> hydrogenation reaction (number of C atoms in product molecule)
+  n - stoichiometry coefficient in CO<sub>2</sub> hydrogenation reaction (number of C atoms in product molecule)<br>
   <img src="https://latex.codecogs.com/svg.image?\inline&space;f_{i}" title="https://latex.codecogs.com/svg.image?\inline f_{i}" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;f_{f}" title="https://latex.codecogs.com/svg.image?\inline f_{f}" /> - total gas flow rates before and after catalytic reactor, respectively, in m<sup>3</sup>/s<br>
   <img src="https://latex.codecogs.com/svg.image?\inline&space;p_i" title="https://latex.codecogs.com/svg.image?\inline p_i" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;p_f" title="https://latex.codecogs.com/svg.image?\inline p_f" /> - pressure of gas at point of total gas flow rate measurement before and after catalytic reactor, respectively, in Pa<br>
   <img src="https://latex.codecogs.com/svg.image?\inline&space;T_i" title="https://latex.codecogs.com/svg.image?\inline T_i" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;T_f" title="https://latex.codecogs.com/svg.image?\inline T_f" /> - temperature of gas at point of total gas flow rate measurement before and after catalytic reactor, respectively, in K
