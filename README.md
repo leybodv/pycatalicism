@@ -51,12 +51,12 @@
 <div><pre>
 Температура&lt;tab&gt;<i>temperature</i>
 &lt;br&gt;
-Название&lt;tab&gt;Время, мин&lt;tab&gt;Детектор&lt;tab&gt;Концентрация&lt;tab&gt;Ед, измерения&lt;tab&gt;Площадь&lt;tab&gt;Высота<br>
-<i>compound-name</i>&lt;tab&gt;<i>retention-time</i>&lt;tab&gt;<i>detector-name</i>&lt;tab&gt;<i>compound-concentration</i>&lt;tab&gt;<i>concentration-units</i>&lt;tab&gt;<i>peak-area</i>&lt;tab&gt;<i>peak-height</i><br>
-[&lt;br&gt;<br>
-Темп. (газовые часы)&lt;tab&gt;<i>flow-temperature</i><br>
-Давление (газовые часы)&lt;tab&gt;<i>flow-pressure</i><br>
-Поток&lt;tab&gt;<i>flow-rate</i>]<br>
+Название&lt;tab&gt;Время, мин&lt;tab&gt;Детектор&lt;tab&gt;Концентрация&lt;tab&gt;Ед, измерения&lt;tab&gt;Площадь&lt;tab&gt;Высота
+<i>compound-name</i>&lt;tab&gt;<i>retention-time</i>&lt;tab&gt;<i>detector-name</i>&lt;tab&gt;<i>compound-concentration</i>&lt;tab&gt;<i>concentration-units</i>&lt;tab&gt;<i>peak-area</i>&lt;tab&gt;<i>peak-height</i>
+[&lt;br&gt;
+Темп. (газовые часы)&lt;tab&gt;<i>flow-temperature</i>
+Давление (газовые часы)&lt;tab&gt;<i>flow-pressure</i>
+Поток&lt;tab&gt;<i>flow-rate</i>]
 </pre></div>
 <table>
   <tr>
