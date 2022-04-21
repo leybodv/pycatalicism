@@ -47,8 +47,7 @@
 </table>
 <br>
 <p>To calculate conversion and selectivity for the reaction of interest program needs to know initial parameters, i.e. the ones before catalytic reaction started, and results of measurement at different temperatures of catalytic reaction. Minimal parameters are reaction participants concentrations in mol.% and temperatures of catalytic reaction. Parameters are provided as files with strictly defined format:</p>
-<br>
-<div style=".simplebar-scrollbar {visibility: visible !important;"><pre>
+<div><pre>
 Температура&lt;tab&gt;<i>temperature</i>
 &lt;br&gt;
 Название&lt;tab&gt;Время, мин&lt;tab&gt;Детектор&lt;tab&gt;Концентрация&lt;tab&gt;Ед, измерения&lt;tab&gt;Площадь&lt;tab&gt;Высота
@@ -88,7 +87,10 @@
   </tr>
 </table>
 <p>Calculations are made using following equations:</p>
-<p><img src="https://latex.codecogs.com/svg.image?\alpha&space;=&space;\frac{\frac{p_{i}\cdot&space;f_{i}}{T_{i}}\cdot&space;C_{CO,i}&space;-&space;\frac{p_f\cdot&space;f_f}{T_f}\cdot&space;C_{CO,f}}{\frac{p_{i}\cdot&space;f_{i}}{T_{i}}\cdot&space;C_{CO,i}}" title="https://latex.codecogs.com/svg.image?\alpha = \frac{\frac{p_{i}\cdot f_{i}}{T_{i}}\cdot C_{CO,i} - \frac{p_f\cdot f_f}{T_f}\cdot C_{CO,f}}{\frac{p_{i}\cdot f_{i}}{T_{i}}\cdot C_{CO,i}}" /></p>
+<p><b>CO oxidation</b></p>
+<pre><img src="https://latex.codecogs.com/svg.image?\alpha&space;=&space;\frac{\frac{p_{i}\cdot&space;f_{i}}{T_{i}}\cdot&space;C_{CO,i}&space;-&space;\frac{p_f\cdot&space;f_f}{T_f}\cdot&space;C_{CO,f}}{\frac{p_{i}\cdot&space;f_{i}}{T_{i}}\cdot&space;C_{CO,i}}" title="https://latex.codecogs.com/svg.image?\alpha = \frac{\frac{p_{i}\cdot f_{i}}{T_{i}}\cdot C_{CO,i} - \frac{p_f\cdot f_f}{T_f}\cdot C_{CO,f}}{\frac{p_{i}\cdot f_{i}}{T_{i}}\cdot C_{CO,i}}" /></pre>
+<p>where</p>
+<p><img src="https://latex.codecogs.com/svg.image?C_{CO,i}" title="https://latex.codecogs.com/svg.image?C_{CO,i}" />, <img src="https://latex.codecogs.com/svg.image?C_{CO,f}" title="https://latex.codecogs.com/svg.image?C_{CO,f}" /> - concentrations of CO before and after catalytic reactor, respectively, in mol.%</p>
 <h2>ToDo</h2>
 <ul>
   <li>implement abstract classes in "pythonic" way</li>
