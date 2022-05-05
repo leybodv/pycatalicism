@@ -28,7 +28,7 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
         """
         super().__init__()
 
-    def parse_data(self, input_data_path:Path, initial_data_path:Path) -> RawData:
+    def parse_data(self, input_data_path:Path, initial_data_path:Path, sample_name:str|None) -> RawData:
         """
         Main interface to the class. Parses concentration, temperature and, if present, flow rate data from data files. Data must be in the following format:
 
@@ -49,6 +49,8 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
             path to folder with initial data files
         initial_data_path:Path
             path to file with initial data (i.e. when reaction did not occured)
+        sample_name:str|None
+            name of sample used as label for plotting
 
         returns
         -------
@@ -88,7 +90,7 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
                 Ta_f.append(Ta)
                 Pa_f.append(Pa)
                 f_f.append(f)
-        rawdata = RawData(temperatures=Ts, initial_concentrations=Cs_i, concentrations=Cs_f, initial_ambient_temperature=Ta_i, initial_ambient_pressure=Pa_i, initial_flow=f_i, final_ambient_temperatures=Ta_f, final_ambient_pressures=Pa_f, final_flows=f_f)
+        rawdata = RawData(temperatures=Ts, initial_concentrations=Cs_i, concentrations=Cs_f, initial_ambient_temperature=Ta_i, initial_ambient_pressure=Pa_i, initial_flow=f_i, final_ambient_temperatures=Ta_f, final_ambient_pressures=Pa_f, final_flows=f_f, sample_name=sample_name)
         return rawdata
 
     def _parse_file(self, path:Path) -> tuple[float,dict[str,float],float|None,float|None,float|None]:

@@ -62,7 +62,7 @@ def calculate(input_data_path:str, initial_data_path:str, reaction:str, parser_t
         raise CalculatorException('Nothing to calculate')
     calculator = calculator_factory.get_calculator(reaction, products_basis)
     parser = parser_factory.get_parser(parser_type)
-    input_data = parser.parse_data(Path(input_data_path).resolve(), Path(initial_data_path).resolve())
+    input_data = parser.parse_data(Path(input_data_path).resolve(), Path(initial_data_path).resolve(), sample_name)
     conversion = None
     selectivity = None
     if calculate_conversion:

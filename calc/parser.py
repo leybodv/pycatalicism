@@ -7,7 +7,7 @@ class Parser():
     Abstract class for parsers of initial data.
     """
 
-    def parse_data(self, input_data_path:Path, initial_data_path:Path) -> RawData:
+    def parse_data(self, input_data_path:Path, initial_data_path:Path, sample_name:str|None) -> RawData:
         """
         Methods of concrete classes should override this method.
 
@@ -17,6 +17,8 @@ class Parser():
             path to directory with data files
         initial_data_path:Path
             path to file with initial (i.e. before catalytic reaction occured) dad
+        sample_name:str|None
+            name of sample used as label for plotting
 
         returns
         -------
