@@ -124,5 +124,5 @@ class CO2HydrogenationCalculator(Calculator):
             self.logger.debug(f'{sum(list(s_dict.values())) = }')
             temperatures.append(temperature)
             s_list.append(s_dict)
-        selectivity = Selectivity(temperatures, s_list)
+        selectivity = Selectivity(temperatures, s_list, input_data.get_sample_name())
         return selectivity
