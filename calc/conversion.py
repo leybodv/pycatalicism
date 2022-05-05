@@ -55,7 +55,7 @@ class Conversion():
         sorted_pairs = sorted(zipped_lists)
         tuples = zip(*sorted_pairs)
         sorted_temperatures, sorted_alphas = [list(tuple) for tuple in tuples]
-        return Conversion(sorted_temperatures, sorted_alphas)
+        return Conversion(sorted_temperatures, sorted_alphas, self.sample_name)
 
     def get_temperatures(self) -> np.ndarray[float, np.dtype]:
         """
