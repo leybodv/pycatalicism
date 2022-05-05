@@ -68,7 +68,7 @@ class CO2HydrogenationCalculator(Calculator):
             self.logger.debug(f'{alpha = }')
             temperatures.append(temperature)
             alphas.append(alpha)
-        conversion = Conversion(temperatures, alphas)
+        conversion = Conversion(temperatures, alphas, input_data.get_sample_name())
         return conversion
 
     def calculate_selectivity(self, input_data:RawData) -> Selectivity:

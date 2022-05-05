@@ -8,7 +8,7 @@ class RawData():
     """
 
     @Logging
-    def __init__(self, temperatures:list[float]|np.ndarray[float,np.dtype], initial_concentrations:dict[str,float], concentrations:list[dict[str,float]]|np.ndarray[dict[str,float],np.dtype], initial_ambient_temperature:float|None=None, initial_ambient_pressure:float|None=None, initial_flow:float|None=None, final_ambient_temperatures:list[float]|np.ndarray[float,np.dtype]|None=None, final_ambient_pressures:list[float]|np.ndarray[float,np.dtype]|None=None, final_flows:list[float]|np.ndarray[float,np.dtype]|None=None):
+    def __init__(self, temperatures:list[float]|np.ndarray[float,np.dtype], initial_concentrations:dict[str,float], concentrations:list[dict[str,float]]|np.ndarray[dict[str,float],np.dtype], initial_ambient_temperature:float|None=None, initial_ambient_pressure:float|None=None, initial_flow:float|None=None, final_ambient_temperatures:list[float]|np.ndarray[float,np.dtype]|None=None, final_ambient_pressures:list[float]|np.ndarray[float,np.dtype]|None=None, final_flows:list[float]|np.ndarray[float,np.dtype]|None=None, sample_name:str|None=None):
         """
         Registers logger with instance of this class which can be accessed via self.logger instance variable. Assigns parameters to instance variables converting lists to numpy.ndarray types.
 
@@ -36,6 +36,8 @@ class RawData():
             list of pressures of gas at the point of total flow rate measurement in Pa
         final_flows:list[float]|numpy.ndarray[float]|None (default:None)
             list of total flow rates in ml/min
+        sample_name:str|None (default:None)
+            sample name which will be used as label for plotting
         """
         self.temperatures = np.array(temperatures)
         self.init_amb_temp = initial_ambient_temperature
@@ -47,6 +49,7 @@ class RawData():
         self.fin_flows = None if final_flows is None else np.array(final_flows)
         self.init_concs = initial_concentrations
         self.concs = np.array(concentrations)
+        self.sample_name = sample_name
 
     def get_temperatures(self) -> np.ndarray[float, np.dtype]:
         """
@@ -192,3 +195,14 @@ class RawData():
             self.logger.warning(f'Did not find concentration for "{compound}" at "{temperature}". Returning zero')
             conc = 0
         return conc
+
+    def get_sample_name(self) -> str|None:
+        """
+        Get sample name
+
+        returns
+        -------
+        sample_name:str|None
+            name of sample
+        """
+        return self.sample_name
