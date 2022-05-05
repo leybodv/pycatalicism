@@ -107,7 +107,7 @@ class Selectivity():
         sorted_pairs = sorted(zipped_lists)
         tuples = zip(*sorted_pairs)
         sorted_temperatures, sorted_selectivities = [list(tuple) for tuple in tuples]
-        return Selectivity(sorted_temperatures, sorted_selectivities)
+        return Selectivity(sorted_temperatures, sorted_selectivities, self.sample_name)
 
     def get_selectivities_at(self, temperature:float) -> dict[str,float]:
         """
