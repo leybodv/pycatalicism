@@ -73,7 +73,7 @@ class CO2HydrogenationProductsBasisCalculator(CO2HydrogenationCalculator):
             alpha = (product_sum / C_CO2_i) * ((p_f * f_f * T_i) / (p_i * f_i * T_f))
             temperatures.append(temperature)
             alphas.append(alpha)
-        conversion = Conversion(temperatures, alphas)
+        conversion = Conversion(temperatures, alphas, input_data.get_sample_name())
         return conversion
 
     def _get_n(self, compound:str) -> int:
