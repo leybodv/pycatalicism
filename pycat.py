@@ -37,6 +37,8 @@ calc_parser.add_argument('--output-plot', default=None, help='path to directory 
 calc_parser.add_argument('--products-basis', action='store_true', help='calculate conversion based on products concentration instead of reactants')
 calc_parser.add_argument('--sample-name', help='sample name will be added to results data files and as a title to the result plots')
 
+furnace_parser = subparsers.add_parser('furnace', help='control furnace')
+
 if (__name__ == '__main__'):
     args = parser.parse_args()
     args.func(args)
