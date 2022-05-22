@@ -9,7 +9,6 @@ import argparse
 import pycatalicism.calc.calc as calc
 import config
 from pycatalicism.calc.calculatorexception import CalculatorException
-import pycatalicism.compare.compare as compare
 
 def calculate(args:argparse.Namespace):
     """
