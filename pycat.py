@@ -46,7 +46,7 @@ calc_parser.add_argument('--sample-name', help='sample name will be added to res
 furnace_parser = subparsers.add_parser('heat', help='control furnace')
 furnace_parser.set_defaults(func=heat)
 furnace_parser.add_argument('temperature', help='heat furnace to target temperature')
-furnace_parser.add_argument('--wait', default=0, help='time in minutes to hold furnace at the specified temperature before turning heating off')
+furnace_parser.add_argument('--wait', default=None, help='time in minutes to hold furnace at the specified temperature before turning heating off')
 furnace_parser.add_argument('--show-plot', action='store_true', help='show temperature vs. time plot')
 furnace_parser.add_argument('--export-plot', default=None, help='path to file to save plot of temperature vs. time as png image')
 furnace_parser.add_argument('--export-data', default=None, help='path to file to save temperature vs. time data')
