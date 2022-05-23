@@ -7,6 +7,7 @@ Module is a start point for the program. It parses arguments provided by user as
 import argparse
 
 import pycatalicism.calc.calc as calc
+import pycatalicism.furnace.furnace_module as furnace_module
 import config
 from pycatalicism.calc.calculatorexception import CalculatorException
 
@@ -22,7 +23,9 @@ def calculate(args:argparse.Namespace):
 
 def heat(args:argparse.Namespace):
     """
+    Set furnace controller temperature to specified value. If wait parameter is provided, hold furnace at specified temperature during wait time in minutes and turn heating off afterwards. Plot temperature vs. time plot if --show-plot is provided. Export temperature vs. time data/plot if --export-data/--export-plot arguments were provided by user.
     """
+    furnace_module.heat(temperature=args.temperature, wait=args.wait, show_plot=args.show_plot, export_plot=args.export_plot, export_data=args.export_data)
 
 parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers(required=True)
@@ -40,10 +43,13 @@ calc_parser.add_argument('--output-plot', default=None, help='path to directory 
 calc_parser.add_argument('--products-basis', action='store_true', help='calculate conversion based on products concentration instead of reactants')
 calc_parser.add_argument('--sample-name', help='sample name will be added to results data files and as a title to the result plots')
 
-furnace_parser = subparsers.add_parser('furnace', help='control furnace')
+furnace_parser = subparsers.add_parser('heat', help='control furnace')
 furnace_parser.set_defaults(func=heat)
-furnace_parser.add_argument('temperature', help='heat to target temperature and turn off heating')
-furnace_parser.add_argument('--wait', help='hold at the specified temperature before turning heating off')
+furnace_parser.add_argument('temperature', help='heat furnace to target temperature')
+furnace_parser.add_argument('--wait', default=0, help='time in minutes to hold furnace at the specified temperature before turning heating off')
+furnace_parser.add_argument('--show-plot', action='store_true', help='show temperature vs. time plot')
+furnace_parser.add_argument('--export-plot', default=None, help='path to file to save plot of temperature vs. time as png image')
+furnace_parser.add_argument('--export-data', default=None, help='path to file to save temperature vs. time data')
 
 if (__name__ == '__main__'):
     args = parser.parse_args()
