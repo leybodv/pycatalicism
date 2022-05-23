@@ -20,7 +20,7 @@ def calculate(args:argparse.Namespace):
     except CalculatorException:
         print('At least one of the flags {--conversion|--selectivity} must be provided to the program')
 
-def furnace(args:argparse.Namespace):
+def heat(args:argparse.Namespace):
     """
     """
 
@@ -41,7 +41,7 @@ calc_parser.add_argument('--products-basis', action='store_true', help='calculat
 calc_parser.add_argument('--sample-name', help='sample name will be added to results data files and as a title to the result plots')
 
 furnace_parser = subparsers.add_parser('furnace', help='control furnace')
-furnace_parser.set_defaults(func=furnace)
+furnace_parser.set_defaults(func=heat)
 furnace_parser.add_argument('temperature', help='heat to target temperature and turn off heating')
 furnace_parser.add_argument('--wait', help='hold at the specified temperature before turning heating off')
 
