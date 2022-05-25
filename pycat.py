@@ -25,7 +25,10 @@ def heat(args:argparse.Namespace):
     """
     Set furnace controller temperature to specified value. If wait parameter is provided, hold furnace at specified temperature during wait time in minutes and turn heating off afterwards. Plot temperature vs. time plot if --show-plot is provided. Export temperature vs. time data/plot if --export-data/--export-plot arguments were provided by user.
     """
-    furnace_module.heat(temperature=args.temperature, wait=args.wait, show_plot=args.show_plot, export_plot=args.export_plot, export_data=args.export_data)
+    controller_type = config.furnace_controller_type
+    plotter_type = config.furnace_plotter_type
+    exporter_type = config.furnace_exporter_type
+    furnace_module.heat(temperature=args.temperature, controller_type=controller_type, plotter_type=plotter_type, exporter_type=exporter_type, wait=args.wait, show_plot=args.show_plot, export_plot=args.export_plot, export_data=args.export_data)
 
 parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers(required=True)

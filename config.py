@@ -26,3 +26,15 @@ logging_levels = {
                     'COOxidationPlotter'                            :   logging.INFO,
                     'RawData'                                       :   logging.INFO,
                     }
+
+## furnace parameters ##
+#----------------------#
+
+# type of furnace PID controller
+furnace_controller_type = 'Owen_TPM101'
+
+# type of plotter for plotting and exporting temperature vs. time data
+furnace_plotter_type = 'simple_png'
+
+# type of exporter for temperature vs. time data export
+furnace_exporter_type = 'simple_tab-separated'
