@@ -38,4 +38,4 @@ def heat(temperature:str|int, controller_type:str, plotter_type:str, exporter_ty
             plotter.export_plot(Path(export_plot).resolve())
     if export_data:
         exporter = exporter_factory.get_exporter(exporter_type)
-        exporter.export_data(Path(export_data).resolve())
+        exporter.export_data(data, Path(export_data).resolve())
