@@ -7,9 +7,16 @@ class Controller(ABC):
     """
     """
 
-    def __init__(self):
+    def __init__(self, port:str, baudrate:int, bytesize:int, parity:str, stopbits:float, timeout:float, write_timeout:float):
         """
         """
+        self.port = port
+        self.baudrate = baudrate
+        self.bytesize = bytesize
+        self.parity = parity
+        self.stopbits = stopbits
+        self.timeout = timeout
+        self.write_timeout = write_timeout
         if not self._handshake():
             raise FurnaceException('Cannot connect to furnace controller')
 

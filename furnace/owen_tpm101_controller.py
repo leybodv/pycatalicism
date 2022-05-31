@@ -1,3 +1,5 @@
+import serial
+
 from pycatalicism.furnace.controller import Controller
 from pycatalicism.furnace.furnace_data import FurnaceData
 
