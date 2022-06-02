@@ -43,7 +43,7 @@ class Owen_TPM101_Controller(Controller):
         """
         self._write_message(message)
         receipt = self._read_message(read_timeout=50)
-        if not self._receipt_is_ok(receipt):
+        if not self._receipt_is_ok(receipt, message):
             raise FurnaceException(f'Got wrong receipt from device!')
         response = self._read_message(read_timeout=0)
         return response
@@ -78,7 +78,7 @@ class Owen_TPM101_Controller(Controller):
         """
         raise NotImplementedError()
 
-    def _receipt_is_ok(self, receipt:str) -> bool:
+    def _receipt_is_ok(self, receipt:str, message:str) -> bool:
         """
         """
         raise NotImplementedError()
