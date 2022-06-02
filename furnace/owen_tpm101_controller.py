@@ -20,6 +20,8 @@ class Owen_TPM101_Controller(Controller):
     def _handshake(self) -> bool:
         """
         """
-        with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, write_timeout=self.write_timeout) as ser:
-            pass
-        raise NotImplementedError()
+        command = 'dev'
+        message = self._prepare_message(command)
+        response = self._get_response(message)
+        device_name = self._get_device_name(response)
+        return device_name == 'ТРМ101' #NB: <- string is in russian locale, check ASCII codes!!!
