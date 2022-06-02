@@ -40,7 +40,12 @@ class Owen_TPM101_Controller(Controller):
     def _get_response(self, message:str) -> str:
         """
         """
-        raise NotImplementedError()
+        self._write_message(message)
+        receipt = self._read_message(read_timeout=50)
+        if not self.receipt_is_ok(receipt):
+            raise FurnaceException(f'Got wrong receipt from device!')
+        response = self._read_message()
+        return response
 
     def _get_device_name(self, response:str) -> str:
         """
