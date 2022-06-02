@@ -32,9 +32,9 @@ class Owen_TPM101_Controller(Controller):
     def _prepare_request(self, command:str) -> str:
         """
         """
-        command_id = _get_command_id(command)
-        command_hash = _get_command_hash(command_id)
-        message_ascii = _get_message_ascii(address=self.address, request=True, data_length=0, command_hash=command_hash, data=None)
+        command_id = self._get_command_id(command)
+        command_hash = self._get_command_hash(command_id)
+        message_ascii = self._get_message_ascii(address=self.address, request=True, data_length=0, command_hash=command_hash, data=None)
         return message_ascii
 
     def _get_response(self, message:str) -> str:
@@ -43,6 +43,21 @@ class Owen_TPM101_Controller(Controller):
         raise NotImplementedError()
 
     def _get_device_name(self, response:str) -> str:
+        """
+        """
+        raise NotImplementedError()
+
+    def _get_command_id(self, command:str) -> list[int]:
+        """
+        """
+        raise NotImplementedError()
+
+    def _get_command_hash(self, command_id:list[int]) -> int:
+        """
+        """
+        raise NotImplementedError()
+
+    def _get_message_ascii(self, address:int, request:bool, data_length:int, command_hash:int, data:None) -> str:
         """
         """
         raise NotImplementedError()
