@@ -91,7 +91,20 @@ class Owen_TPM101_Controller(Controller):
     def _get_command_hash(self, command_id:list[int]) -> int:
         """
         """
-        raise NotImplementedError()
+        command_hash = 0
+        for b in command_id:
+            b = b << 1
+            b = b & 0xff
+            for i in range(7):
+                if (b ^ (command_hash >> 8)) & 0x80:
+                    command_hash = command_hash << 1
+                    command_hash = command_hash ^ 0x8f57
+                else:
+                    command_hash = command_hash << 1
+                command_hash = command_hash & 0xffff
+                b = b << 1
+                b = b & 0xff
+        return command_hash
 
     def _get_message_ascii(self, address:int, request:bool, data_length:int, command_hash:int, data:None) -> str:
         """
