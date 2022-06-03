@@ -123,7 +123,7 @@ class Owen_TPM101_Controller(Controller):
         """
         raise NotImplementedError()
 
-    def _unpack_message(self, message:str):
+    def _unpack_message(self, message:str) -> tuple[int, int, int, int, int, int]:
         """
         """
         raise NotImplementedError()
