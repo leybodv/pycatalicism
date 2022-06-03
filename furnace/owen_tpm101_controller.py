@@ -60,7 +60,33 @@ class Owen_TPM101_Controller(Controller):
     def _get_command_id(self, command:str) -> list[int]:
         """
         """
-        raise NotImplementedError()
+        command_id = []
+        command_cap = command.upper()
+        for i in range(len(command_cap)):
+            if command_cap[i] == '.':
+                continue
+            elif command_cap[i].isdecimal():
+                ch_id = ord(command_cap[i]) - ord('0')
+            elif command_cap[i].isalpha():
+                ch_id = ord(command_cap[i]) - ord('A') + 10
+            elif command_cap[i] == '-':
+                ch_id = 36
+            elif command_cap[i] == '_':
+                ch_id = 37
+            elif command_cap[i] == '/':
+                ch_id = 38
+            else:
+                raise FurnaceException(f'Illegal char in command name: {command_cap[i]}')
+            ch_id = ch_id * 2
+            if i < len(command_cap) - 1 and command_cap[i+1] == '.':
+                ch_id = ch_id + 1
+            command_id.append(ch_id)
+        if len(command_id) > 4:
+            raise FurnaceException('Command ID cannot contain more than 4 characters!')
+        if len(command_id) < 4:
+            for i in range(4 - len(command_id)):
+                command_id.append(78)
+        return command_id
 
     def _get_command_hash(self, command_id:list[int]) -> int:
         """
@@ -93,6 +119,11 @@ class Owen_TPM101_Controller(Controller):
         raise NotImplementedError()
 
     def _decrypt_string(self, data:int) -> str:
+        """
+        """
+        raise NotImplementedError()
+
+    def _unpack_message(self, message:str):
         """
         """
         raise NotImplementedError()
