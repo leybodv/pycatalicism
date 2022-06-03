@@ -172,7 +172,16 @@ class Owen_TPM101_Controller(Controller):
     def _receipt_is_ok(self, receipt:str, message:str) -> bool:
         """
         """
-        raise NotImplementedError()
+        new_flag_tetrad = (ord(message[3]) - 0x47) & 0b1110
+        new_flag_chr = chr((new_flag_tetrad & 0xf) + 0x47)
+        message_without_request = ''
+        for i in range(len(message)):
+            if i == 3:
+                message_without_request = message_without_request + new_flag_chr
+            else:
+                message_without_request = message_without_request + message[i]
+        receipt_is_ok = message_without_request == receipt
+        return receipt_is_ok
 
     def _crc_is_ok(self, address:int, flag_byte:int, response_hash:int, data:int, crc:int) -> bool:
         """
