@@ -106,6 +106,11 @@ class Owen_TPM101_Controller(Controller):
                 b = b & 0xff
         return command_hash
 
+    def _get_crc(self, messsage_bytes:list[int]) -> int:
+        """
+        """
+        raise NotImplementedError()
+
     def _get_message_ascii(self, address:int, request:bool, data_length:int, command_hash:int, data:None) -> str:
         """
         """
