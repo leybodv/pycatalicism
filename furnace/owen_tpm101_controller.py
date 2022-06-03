@@ -109,7 +109,31 @@ class Owen_TPM101_Controller(Controller):
     def _get_message_ascii(self, address:int, request:bool, data_length:int, command_hash:int, data:None) -> str:
         """
         """
-        raise NotImplementedError()
+        message_bytes = []
+        message_bytes.append(address & 0xff)
+        # NB: if address_len is 11b flag_byte must be modified accordingly
+        flag_byte = 0
+        if request:
+            flag_byte = flag_byte | 0b00010000
+        flag_byte = flag_byte | data_length
+        message_bytes.append(flag_byte & 0xff)
+        message_bytes.append((command_hash >> 8) & 0xff)
+        message_bytes.append(command_hash & 0xff)
+        if data is not None:
+            for i in range(data_length):
+                message_bytes.append((data >> data_length - i - 1) & 0xff)
+        crc = self._get_crc(message_bytes)
+        message_bytes.append((crc >> 8) & 0xff)
+        message_bytes.append(crc & 0xff)
+        message = chr(0x23)
+        for byte in message_bytes:
+            message = message + chr(((byte >> 4) & 0xf) + 0x47)
+            message = message + chr((byte & 0xf) + 0x47)
+        message = message + chr(0x0d)
+        for ch in message:
+            if ch not in ['#', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', '\r']:
+                raise FurnaceException(f'Wrong ASCII message: "{message}"!')
+        return message
 
     def _write_message(self, message:str):
         """
