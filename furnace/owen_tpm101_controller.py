@@ -51,7 +51,11 @@ class Owen_TPM101_Controller(Controller):
     def _get_device_name(self, response:str) -> str:
         """
         """
-        raise NotImplementedError()
+        _, address, flag_byte, response_hash, data, crc = self._unpack_message(response)
+        if not self._crc_is_ok(address, flag_byte, response_hash, data, crc):
+            raise FurnaceException(f'Wrong CRC in response message!')
+        device_name = self._decrypt_string(data)
+        return device_name
 
     def _get_command_id(self, command:str) -> list[int]:
         """
