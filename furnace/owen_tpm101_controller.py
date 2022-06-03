@@ -1,4 +1,5 @@
 import serial
+import time
 
 from pycatalicism.furnace.controller import Controller
 from pycatalicism.furnace.furnace_data import FurnaceData
@@ -155,7 +156,9 @@ class Owen_TPM101_Controller(Controller):
     def _write_message(self, message:str):
         """
         """
-        raise NotImplementedError()
+        with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
+            ser.write(message)
+        time.sleep(self.rsdl / 1000)
 
     def _read_message(self, read_timeout) -> str:
         """
