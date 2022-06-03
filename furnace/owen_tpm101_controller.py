@@ -86,3 +86,13 @@ class Owen_TPM101_Controller(Controller):
         """
         """
         raise NotImplementedError()
+
+    def _crc_is_ok(self, address:int, flag_byte:int, response_hash:int, data:int, crc:int) -> bool:
+        """
+        """
+        raise NotImplementedError()
+
+    def _decrypt_string(self, data:int) -> str:
+        """
+        """
+        raise NotImplementedError()
