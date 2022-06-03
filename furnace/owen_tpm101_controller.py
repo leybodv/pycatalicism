@@ -43,10 +43,10 @@ class Owen_TPM101_Controller(Controller):
         """
         """
         self._write_message(message)
-        receipt = self._read_message(read_timeout=50)
+        receipt = self._read_message()
         if not self._receipt_is_ok(receipt, message):
             raise FurnaceException(f'Got wrong receipt from device!')
-        response = self._read_message(read_timeout=0)
+        response = self._read_message()
         return response
 
     def _get_device_name(self, response:str) -> str:
@@ -160,10 +160,14 @@ class Owen_TPM101_Controller(Controller):
             ser.write(message)
         time.sleep(self.rsdl / 1000)
 
-    def _read_message(self, read_timeout) -> str:
+    def _read_message(self) -> str:
         """
         """
-        raise NotImplementedError()
+        with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
+            message = ser.read_until(expected=chr(0x0d)).decode()
+        if message[0] != chr(0x23) or message[-1] != chr(0x0d):
+            raise FurnaceException(f'Unexpected format of message got from device: {message}')
+        return message
 
     def _receipt_is_ok(self, receipt:str, message:str) -> bool:
         """
