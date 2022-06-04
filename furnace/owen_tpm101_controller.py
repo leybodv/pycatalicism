@@ -52,7 +52,7 @@ class Owen_TPM101_Controller(Controller):
     def _get_device_name(self, response:str) -> str:
         """
         """
-        _, address, flag_byte, response_hash, data, crc = self._unpack_message(response)
+        address, flag_byte, response_hash, data, crc = self._unpack_message(response)
         if not self._crc_is_ok(address, flag_byte, response_hash, data, crc):
             raise FurnaceException(f'Wrong CRC in response message!')
         device_name = self._decrypt_string(data)
@@ -198,9 +198,11 @@ class Owen_TPM101_Controller(Controller):
         crc_is_ok = crc == crc_to_check
         return crc_is_ok
 
-    def _decrypt_string(self, data:list[int]) -> str:
+    def _decrypt_string(self, data:list[int]|None) -> str:
         """
         """
+        if data is None:
+            raise FurnaceException('Cannot decrypt empty data!')
         string = ''
         for data_byte in data:
             string = string + chr(data_byte)
