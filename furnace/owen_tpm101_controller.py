@@ -206,7 +206,27 @@ class Owen_TPM101_Controller(Controller):
             string = string + chr(data_byte)
         return string
 
-    def _unpack_message(self, message:str) -> tuple[int, int, int, int, int, int]:
+    def _unpack_message(self, message:str) -> tuple[int, int, int, list[int]|None, int]:
         """
         """
-        raise NotImplementedError()
+        if message[0] != chr(0x23) or message[-1] != chr(0x0d):
+            raise FurnaceException(f'Unexpected format of message from device: {message}')
+        start_byte = message[0]
+        message_bytes = []
+        for i in range(1, len(message) - 1, 2):
+            first_tetrad = (ord(message[i]) - 0x47) & 0xf
+            second_tetrad = (ord(message[i+1]) - 0x47) & 0xf
+            byte = ((first_tetrad << 4) | second_tetrad) & 0xff
+            message_bytes.append(byte)
+        address = message_bytes[0]
+        flag_byte = message_bytes[1]
+        response_hash = ((message_bytes[2] << 8) | message_bytes[3]) & 0xffff
+        data_length = flag_byte | 0b1111
+        if data_length != 0:
+            data = []
+            for i in range(data_length):
+                data.append(message_bytes[4 + i])
+        else:
+            data = None
+        crc = ((message_bytes[4+data_length] << 8) | message_bytes[4+data_length+1]) & 0xffff
+        return (address, flag_byte, response_hash, data, crc)
