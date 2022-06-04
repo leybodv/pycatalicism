@@ -19,6 +19,7 @@ class Owen_TPM101_Controller(Controller):
         self.address_len = address_len #NB: only 8b adress supported
         self.heating_in_progress = False
         self.port_read_write_lock = threading.Lock()
+        self.furnace_data = None
 
     def heat(self, temperature:int, wait:int|None) -> FurnaceData|None:
         """
@@ -30,7 +31,7 @@ class Owen_TPM101_Controller(Controller):
             self._set_r_S(value='RUN')
             self.heating_in_progress = True
         if wait is not None:
-            data_requester = threading.Thread(self._request_data)
+            data_requester = threading.Thread(target=self._request_temperature_data)
             data_requester.start()
             self._wait_until_target_temperature(temperature)
             timer = threading.Timer(wait * 60, self._finish_isothermal)
@@ -39,6 +40,31 @@ class Owen_TPM101_Controller(Controller):
             if not self.heating_in_progress:
                 return self.furnace_data
         return None
+
+    def _set_SP(self, value:int):
+        """
+        """
+        raise NotImplementedError()
+
+    def _set_r_S(self, value:str):
+        """
+        """
+        raise NotImplementedError()
+
+    def _request_temperature_data(self):
+        """
+        """
+        raise NotImplementedError()
+
+    def _wait_until_target_temperature(self, temperature:int):
+        """
+        """
+        raise NotImplementedError()
+
+    def _finish_isothermal(self):
+        """
+        """
+        raise NotImplementedError()
 
     def _handshake(self) -> bool:
         """
