@@ -183,7 +183,7 @@ class Owen_TPM101_Controller(Controller):
         receipt_is_ok = message_without_request == receipt
         return receipt_is_ok
 
-    def _crc_is_ok(self, address:int, flag_byte:int, response_hash:int, data:int|None, crc_to_check:int) -> bool:
+    def _crc_is_ok(self, address:int, flag_byte:int, response_hash:int, data:list[int]|None, crc_to_check:int) -> bool:
         """
         """
         message_bytes = []
@@ -191,10 +191,9 @@ class Owen_TPM101_Controller(Controller):
         message_bytes.append(flag_byte)
         message_bytes.append((response_hash >> 8) & 0xff)
         message_bytes.append(response_hash & 0xff)
-        data_length = flag_byte & 0b1111
         if data is not None:
-            for i in range(data_length):
-                message_bytes.append((data >> data_length - i - 1) & 0xff)
+            for data_byte in data:
+                message_bytes.append(data_byte & 0xff)
         crc = self._get_crc(message_bytes)
         crc_is_ok = crc == crc_to_check
         return crc_is_ok
