@@ -198,10 +198,13 @@ class Owen_TPM101_Controller(Controller):
         crc_is_ok = crc == crc_to_check
         return crc_is_ok
 
-    def _decrypt_string(self, data:int) -> str:
+    def _decrypt_string(self, data:list[int]) -> str:
         """
         """
-        raise NotImplementedError()
+        string = ''
+        for data_byte in data:
+            string = string + chr(data_byte)
+        return string
 
     def _unpack_message(self, message:str) -> tuple[int, int, int, int, int, int]:
         """
