@@ -124,7 +124,7 @@ class Owen_TPM101_Controller(Controller):
                 b = b & 0xff
         return crc
 
-    def _get_message_ascii(self, address:int, request:bool, data_length:int, command_hash:int, data:None) -> str:
+    def _get_message_ascii(self, address:int, request:bool, data_length:int, command_hash:int, data:list[int]|None) -> str:
         """
         """
         message_bytes = []
@@ -138,8 +138,8 @@ class Owen_TPM101_Controller(Controller):
         message_bytes.append((command_hash >> 8) & 0xff)
         message_bytes.append(command_hash & 0xff)
         if data is not None:
-            for i in range(data_length):
-                message_bytes.append((data >> data_length - i - 1) & 0xff)
+            for data_byte in data:
+                message_bytes.append(data_byte & 0xff)
         crc = self._get_crc(message_bytes)
         message_bytes.append((crc >> 8) & 0xff)
         message_bytes.append(crc & 0xff)
