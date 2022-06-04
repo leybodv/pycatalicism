@@ -1,5 +1,6 @@
 import serial
 import time
+import threading
 
 from pycatalicism.furnace.controller import Controller
 from pycatalicism.furnace.furnace_data import FurnaceData
@@ -16,11 +17,28 @@ class Owen_TPM101_Controller(Controller):
         self.address = address
         self.rsdl = rsdl
         self.address_len = address_len #NB: only 8b adress supported
+        self.heating_in_progress = False
+        self.port_read_write_lock = threading.Lock()
 
-    def heat(self, temperature:int, wait:int|None) -> FurnaceData:
+    def heat(self, temperature:int, wait:int|None) -> FurnaceData|None:
         """
         """
-        raise NotImplementedError()
+        self._set_SP(value=temperature)
+        if temperature == 0:
+            self._set_r_S(value='STOP')
+        else:
+            self._set_r_S(value='RUN')
+            self.heating_in_progress = True
+        if wait is not None:
+            data_requester = threading.Thread(self._request_data)
+            data_requester.start()
+            self._wait_until_target_temperature(temperature)
+            timer = threading.Timer(wait * 60, self._finish_isothermal)
+            timer.start()
+            timer.join()
+            if not self.heating_in_progress:
+                return self.furnace_data
+        return None
 
     def _handshake(self) -> bool:
         """
@@ -156,18 +174,20 @@ class Owen_TPM101_Controller(Controller):
     def _write_message(self, message:str):
         """
         """
-        with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
-            ser.write(message)
-        time.sleep(self.rsdl / 1000)
+        with self.port_read_write_lock:
+            with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
+                ser.write(message)
+            time.sleep(self.rsdl / 1000)
 
     def _read_message(self) -> str:
         """
         """
-        with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
-            message = ser.read_until(expected=chr(0x0d)).decode()
-        if message[0] != chr(0x23) or message[-1] != chr(0x0d):
-            raise FurnaceException(f'Unexpected format of message got from device: {message}')
-        return message
+        with self.port_read_write_lock:
+            with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
+                message = ser.read_until(expected=chr(0x0d)).decode()
+            if message[0] != chr(0x23) or message[-1] != chr(0x0d):
+                raise FurnaceException(f'Unexpected format of message got from device: {message}')
+            return message
 
     def _receipt_is_ok(self, receipt:str, message:str) -> bool:
         """
@@ -213,7 +233,6 @@ class Owen_TPM101_Controller(Controller):
         """
         if message[0] != chr(0x23) or message[-1] != chr(0x0d):
             raise FurnaceException(f'Unexpected format of message from device: {message}')
-        start_byte = message[0]
         message_bytes = []
         for i in range(1, len(message) - 1, 2):
             first_tetrad = (ord(message[i]) - 0x47) & 0xf
