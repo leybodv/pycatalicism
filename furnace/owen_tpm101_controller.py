@@ -83,7 +83,14 @@ class Owen_TPM101_Controller(Controller):
     def _wait_until_target_temperature(self, temperature:int):
         """
         """
-        raise NotImplementedError()
+        command = 'pv'
+        message = self._prepare_request(command)
+        while self.heating_in_progress:
+            response = self._get_response(message)
+            measured_temperature = self._get_temperature(response)
+            if abs((temperature - measured_temperature) / temperature) < 0.05:
+                break
+            time.sleep(10)
 
     def _finish_isothermal(self):
         """
