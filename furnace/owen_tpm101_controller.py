@@ -132,6 +132,11 @@ class Owen_TPM101_Controller(Controller):
         """
         raise NotImplementedError()
 
+    def _decrypt_PIC(self, data:list[int]|None) -> float:
+        """
+        """
+        raise NotImplementedError()
+
     def _handshake(self) -> bool:
         """
         """
