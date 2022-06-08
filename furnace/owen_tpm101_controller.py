@@ -102,7 +102,16 @@ class Owen_TPM101_Controller(Controller):
     def _prepare_parameter_change_request(self, command:str, value, value_type:str) -> str:
         """
         """
-        raise NotImplementedError()
+        command_id = self._get_command_id(command)
+        command_hash = self._get_command_hash(command_id)
+        if value_type == 'PIC':
+            data = self._float_to_PIC(float(value))
+        elif value_type == 'ASCII':
+            data = self._str_to_ASCII(str(value))
+        else:
+            raise FurnaceException(f'Unknown data type: {value_type}')
+        message_ascii = self._get_message_ascii(address=self.address, request=False, data_length=len(data), command_hash=command_hash, data=data)
+        return message_ascii
 
     def _get_temperature(self, response:str) -> float:
         """
@@ -214,6 +223,8 @@ class Owen_TPM101_Controller(Controller):
     def _get_message_ascii(self, address:int, request:bool, data_length:int, command_hash:int, data:list[int]|None) -> str:
         """
         """
+        if data_length > 4:
+            raise FurnaceException('Data length cannot be larger than 4')
         message_bytes = []
         message_bytes.append(address & 0xff)
         # NB: if address_len is 11b flag_byte must be modified accordingly
