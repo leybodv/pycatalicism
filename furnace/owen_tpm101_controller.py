@@ -118,6 +118,16 @@ class Owen_TPM101_Controller(Controller):
         """
         raise NotImplementedError()
 
+    def _float_to_PIC(self, value:float) -> list[int]:
+        """
+        """
+        raise NotImplementedError()
+
+    def _str_to_ASCII(self, value:str) -> list[int]:
+        """
+        """
+        raise NotImplementedError()
+
     def _handshake(self) -> bool:
         """
         """
