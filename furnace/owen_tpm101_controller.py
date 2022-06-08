@@ -66,7 +66,19 @@ class Owen_TPM101_Controller(Controller):
     def _request_temperature_data(self):
         """
         """
-        raise NotImplementedError()
+        times = []
+        temperatures = []
+        start_time = time.time()
+        command = 'pv'
+        message = self._prepare_request(command)
+        while self.heating_in_progress:
+            response = self._get_response(message)
+            temperature = self._get_temperature(response)
+            current_time = time.time()
+            times.append((current_time - start_time) / 60.0)
+            temperatures.append(temperature)
+            time.sleep(30)
+        self.furnace_data = FurnaceData(times, temperatures)
 
     def _wait_until_target_temperature(self, temperature:int):
         """
@@ -79,6 +91,11 @@ class Owen_TPM101_Controller(Controller):
         raise NotImplementedError()
 
     def _prepare_parameter_change_request(self, command:str, value, value_type:str) -> str:
+        """
+        """
+        raise NotImplementedError()
+
+    def _get_temperature(self, response:str) -> float:
         """
         """
         raise NotImplementedError()
