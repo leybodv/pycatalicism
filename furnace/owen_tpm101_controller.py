@@ -51,12 +51,17 @@ class Owen_TPM101_Controller(Controller):
         self._write_message(message)
         receipt = self._read_message()
         if not self._receipt_is_ok(receipt, message):
-            raise FurnaceException('Got wrong receiptt from device!')
+            raise FurnaceException('Got wrong receipt from device!')
 
     def _set_r_S(self, value:str):
         """
         """
-        raise NotImplementedError()
+        command = 'r-s'
+        message = self._prepare_parameter_change_request(command, value, value_type='ASCII')
+        self._write_message(message)
+        receipt = self._read_message()
+        if not self._receipt_is_ok(receipt=receipt, message=message):
+            raise FurnaceException('Got wrong receipt from device!')
 
     def _request_temperature_data(self):
         """
