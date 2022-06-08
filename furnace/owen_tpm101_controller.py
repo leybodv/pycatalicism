@@ -46,7 +46,12 @@ class Owen_TPM101_Controller(Controller):
     def _set_SP(self, value:int):
         """
         """
-        raise NotImplementedError()
+        command = 'sp'
+        message = self._prepare_parameter_change_request(command, value, value_type='PIC')
+        self._write_message(message)
+        receipt = self._read_message()
+        if not self._receipt_is_ok(receipt, message):
+            raise FurnaceException('Got wrong receiptt from device!')
 
     def _set_r_S(self, value:str):
         """
@@ -64,6 +69,11 @@ class Owen_TPM101_Controller(Controller):
         raise NotImplementedError()
 
     def _finish_isothermal(self):
+        """
+        """
+        raise NotImplementedError()
+
+    def _prepare_parameter_change_request(self, command:str, value, value_type:str) -> str:
         """
         """
         raise NotImplementedError()
