@@ -116,7 +116,11 @@ class Owen_TPM101_Controller(Controller):
     def _get_temperature(self, response:str) -> float:
         """
         """
-        raise NotImplementedError()
+        address, flag_byte, response_hash, data, crc = self._unpack_message(response)
+        if not self._crc_is_ok(address, flag_byte, response_hash, data, crc):
+            raise FurnaceException('Wrong CRC in response message!')
+        temperature = self._decrypt_PIC(data)
+        return temperature
 
     def _float_to_PIC(self, value:float) -> list[int]:
         """
