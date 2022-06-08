@@ -95,7 +95,9 @@ class Owen_TPM101_Controller(Controller):
     def _finish_isothermal(self):
         """
         """
-        raise NotImplementedError()
+        self._set_SP(value=0)
+        self._set_r_S(value='STOP')
+        self.heating_in_progress = False
 
     def _prepare_parameter_change_request(self, command:str, value, value_type:str) -> str:
         """
