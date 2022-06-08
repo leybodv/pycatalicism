@@ -27,19 +27,21 @@ class Owen_TPM101_Controller(Controller):
         self._set_SP(value=temperature)
         if temperature == 0:
             self._set_r_S(value='STOP')
+            self.heating_in_progress = False
+            return None
         else:
             self._set_r_S(value='RUN')
             self.heating_in_progress = True
-        if wait is not None:
             data_requester = threading.Thread(target=self._request_temperature_data)
             data_requester.start()
             self._wait_until_target_temperature(temperature)
-            timer = threading.Timer(wait * 60, self._finish_isothermal)
-            timer.start()
-            timer.join()
-            if not self.heating_in_progress:
-                return self.furnace_data
-        return None
+            if wait is not None:
+                timer = threading.Timer(wait * 60, self._finish_isothermal)
+                timer.start()
+                timer.join()
+            self.heating_in_progress = False
+            data_requester.join()
+            return self.furnace_data
 
     def _set_SP(self, value:int):
         """
