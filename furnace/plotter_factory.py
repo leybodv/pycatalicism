@@ -1,4 +1,6 @@
 from pycatalicism.furnace.plotter import Plotter
+from pycatalicism.furnace.simple_temp_time_plotter import SimpleTempTimePlotter
+from pycatalicism.furnace.plotter_exception import PlotterException
 
 def get_plotter(plotter_type:str) -> Plotter:
     """
