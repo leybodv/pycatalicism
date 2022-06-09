@@ -143,7 +143,15 @@ class Owen_TPM101_Controller(Controller):
     def _decrypt_PIC(self, data:list[int]|None) -> float:
         """
         """
-        raise NotImplementedError()
+        if data is None:
+            raise FurnaceException('Cannot decrypt empty data')
+        if len(data) > 3:
+            raise FurnaceException('Unexpected size of data to convert to PIC float')
+        data_str = b''
+        for b in data:
+            data_str = data_str + b.to_bytes(1, 'big')
+        pic = struct.unpack('>f', data_str)[0]
+        return pic
 
     def _handshake(self) -> bool:
         """
