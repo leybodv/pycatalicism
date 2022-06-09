@@ -1,0 +1,3 @@
+class PlotterException(Exception):
+    """
+    """
