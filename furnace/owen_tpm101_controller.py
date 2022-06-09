@@ -27,11 +27,11 @@ class Owen_TPM101_Controller(Controller):
         """
         self._set_SP(value=temperature)
         if temperature == 0:
-            self._set_r_S(value='STOP')
+            self._set_r_S(value='StoP')
             self.heating_in_progress = False
             return None
         else:
-            self._set_r_S(value='RUN')
+            self._set_r_S(value='rUn')
             self.heating_in_progress = True
             data_requester = threading.Thread(target=self._request_temperature_data)
             data_requester.start()
@@ -97,7 +97,7 @@ class Owen_TPM101_Controller(Controller):
         """
         """
         self._set_SP(value=0)
-        self._set_r_S(value='STOP')
+        self._set_r_S(value='StoP')
         self.heating_in_progress = False
 
     def _prepare_parameter_change_request(self, command:str, value, value_type:str) -> str:
@@ -135,7 +135,10 @@ class Owen_TPM101_Controller(Controller):
     def _str_to_ASCII(self, value:str) -> list[int]:
         """
         """
-        raise NotImplementedError()
+        ascii_bytes = []
+        for ch in value[::-1]:
+            ascii_bytes.append(ord(ch))
+        return ascii_bytes
 
     def _decrypt_PIC(self, data:list[int]|None) -> float:
         """
