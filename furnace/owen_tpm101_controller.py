@@ -331,7 +331,7 @@ class Owen_TPM101_Controller(Controller):
         if data is None:
             raise FurnaceException('Cannot decrypt empty data!')
         string = ''
-        for data_byte in data:
+        for data_byte in data[::-1]:
             string = string + chr(data_byte)
         return string
 
