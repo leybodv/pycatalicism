@@ -1,6 +1,7 @@
 import serial
 import time
 import threading
+import struct
 
 from pycatalicism.furnace.controller import Controller
 from pycatalicism.furnace.furnace_data import FurnaceData
@@ -125,7 +126,11 @@ class Owen_TPM101_Controller(Controller):
     def _float_to_PIC(self, value:float) -> list[int]:
         """
         """
-        raise NotImplementedError()
+        pic_bytes = []
+        ieee = struct.pack('>f', value)
+        for i in range(3):
+            pic_bytes.append(ieee[i])
+        return pic_bytes
 
     def _str_to_ASCII(self, value:str) -> list[int]:
         """
