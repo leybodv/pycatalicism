@@ -1,4 +1,6 @@
-class SimpleTempTimePlotter():
+from pycatalicism.furnace.plotter import Plotter
+
+class SimpleTempTimePlotter(Plotter):
     """
     """
 
