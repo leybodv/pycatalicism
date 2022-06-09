@@ -2,7 +2,8 @@ class FurnaceData():
     """
     """
 
-    def __init__(self):
+    def __init__(self, times:list[float], temperatures:list[float]):
         """
         """
-        raise NotImplementedError()
+        self.times = times
+        self.temperatures = temperatures
