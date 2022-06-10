@@ -2,6 +2,7 @@
 
 import matplotlib.pylab as plt
 import threading
+import time
 
 def plot_fig():
     x = [1,2,3,4,5]
@@ -9,7 +10,9 @@ def plot_fig():
 
     fig, ax = plt.subplots()
     ax.plot(x,y)
-    plt.show(block=False)
+    plt.show()
+    while True:
+        time.sleep(60)
 
 print('Hello world')
 thread = threading.Thread(target=plot_fig)
