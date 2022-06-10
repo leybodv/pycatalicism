@@ -23,10 +23,16 @@ class SimpleTempTimePlotter(Plotter):
         ax = self._get_ax(data, ax)
         plt.show(block=True)
 
-    def export_plot(self, path:Path):
+    def export_plot(self, data:FurnaceData, path:Path, fig_dpi:float, fig_height:float, fig_width:float):
         """
         """
-        raise NotImplementedError()
+        fig, ax = plt.subplots()
+        ax = self._get_ax(data, ax)
+        fig.set_dpi(fig_dpi)
+        fig.set_figheight(fig_height)
+        fig.set_figwidth(fig_width)
+        fig.set_tight_layout(True)
+        fig.savefig(fname=path)
 
     def _get_ax(self, data:FurnaceData, ax:matplotlib.axes.Axes) -> matplotlib.axes.Axes:
         """
