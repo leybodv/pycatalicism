@@ -14,7 +14,7 @@ class Plotter(ABC):
         pass
 
     @abstractmethod
-    def export_plot(self, path:Path):
+    def export_plot(self, data:FurnaceData, path:Path):
         """
         """
         pass
