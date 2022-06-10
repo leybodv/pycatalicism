@@ -7,3 +7,13 @@ class FurnaceData():
         """
         self.times = times
         self.temperatures = temperatures
+
+    def get_times(self) -> list[float]:
+        """
+        """
+        return self.times
+
+    def get_temperatures(self) -> list[float]:
+        """
+        """
+        return self.temperatures
