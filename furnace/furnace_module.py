@@ -1,3 +1,7 @@
+"""
+Module is an entry point for package. It performs all operations relevant for furnace control.
+"""
+
 from pathlib import Path
 
 import pycatalicism.furnace.controller_factory as controller_factory
