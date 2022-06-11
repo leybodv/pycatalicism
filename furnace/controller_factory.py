@@ -14,24 +14,24 @@ def get_controller(controller_type:str, port:str, baudrate:int, bytesize:int, pa
     ----------
     controller_type:str
         type of furnace controller
-        port:str
-            COMM port through which connection with controller is made
-        baudrate:int
-            Data exchange rate, must match the one at the controller device
-        bytesize:int
-            Size of byte of information to be sent to the controller
-        parity:str
-            Whether to control parity
-        stopbits:float
-            How many stopbits to use when sending information to the device
-        timeout:float
-            Read timeout in seconds. See pyserial documentation for details (https://pyserial.readthedocs.io/en/latest/pyserial_api.html)
-        write_timeout:float
-            Write timeout in seconds. See pyserial documentation for details (https://pyserial.readthedocs.io/en/latest/pyserial_api.html)
-        rtscts:bool
-            Enable hardware flow control. See pyserial documentation for details (https://pyserial.readthedocs.io/en/latest/pyserial_api.html)
-        kwargs:dict
-            Other argument relevant for concrete implementation of controller class
+    port:str
+        COMM port through which connection with controller is made
+    baudrate:int
+        Data exchange rate, must match the one at the controller device
+    bytesize:int
+        Size of byte of information to be sent to the controller
+    parity:str
+        Whether to control parity
+    stopbits:float
+        How many stopbits to use when sending information to the device
+    timeout:float
+        Read timeout in seconds. See pyserial documentation for details (https://pyserial.readthedocs.io/en/latest/pyserial_api.html)
+    write_timeout:float
+        Write timeout in seconds. See pyserial documentation for details (https://pyserial.readthedocs.io/en/latest/pyserial_api.html)
+    rtscts:bool
+        Enable hardware flow control. See pyserial documentation for details (https://pyserial.readthedocs.io/en/latest/pyserial_api.html)
+    kwargs:dict
+        Other argument relevant for concrete implementation of controller class
 
     returns
     -------
