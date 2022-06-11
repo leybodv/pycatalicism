@@ -1,4 +1,4 @@
 class FurnaceException(Exception):
     """
-    Class represents furnace package errors.
+    Class represents furnace controller errors.
     """
