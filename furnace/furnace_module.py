@@ -4,11 +4,12 @@ Module is an entry point for package. It performs all operations relevant for fu
 
 from pathlib import Path
 
+import pycatalicism.furnace.furnace_config as config
 import pycatalicism.furnace.controller_factory as controller_factory
 import pycatalicism.furnace.plotter_factory as plotter_factory
 import pycatalicism.furnace.exporter_factory as exporter_factory
 
-def heat(temperature:str|int, controller_type:str, plotter_type:str, exporter_type:str, port:str, baudrate:int, bytesize:int, parity:str, stopbits:float, timeout:float, write_timeout:float, rtscts:bool, fig_dpi:float, fig_height:float, fig_width:float, wait:str|int|None=None, show_plot:bool=False, export_plot:str|Path|None=None, export_data:str|Path|None=None, **kwargs:dict):
+def heat(temperature:str|int, wait:str|int|None=None, show_plot:bool=False, export_plot:str|Path|None=None, export_data:str|Path|None=None):
     """
     Set furnace controller temperature to target temperature, wait for specified time in min, show plot, export plot as png image and export data of temperature vs. time if corresponding parameters were provided by user
 
@@ -55,6 +56,16 @@ def heat(temperature:str|int, controller_type:str, plotter_type:str, exporter_ty
     kwargs:dict
         Other arguments relevant for concrete implementation of furnace controller class
     """
+    controller_type = config.controller_type
+    port = config.port
+    baudrate = config.baudrate
+    bytesize = config.bytesize
+    parity = config.parity
+    stopbits = config.stopbits
+    timeout = config.timeout
+    write_timeout = config.write_timeout
+    rtscts = config.rtscts
+    kwargs = {'address':config.address, 'rsdl':config.rsdl, 'address_len':config.address_len}
     controller = controller_factory.get_controller(controller_type=controller_type, port=port, baudrate=baudrate, bytesize=bytesize, parity=parity, stopbits=stopbits, timeout=timeout, write_timeout=write_timeout, rtscts=rtscts, kwargs=kwargs)
     wait = None if wait is None else int(wait)
     data = controller.heat(int(temperature), wait)
