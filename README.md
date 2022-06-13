@@ -130,8 +130,7 @@
 <p>If flow rate measurement data is not provided, conversion is calculated based solely on concentrations and warning is logged to console in this case.</p>
 <h2>ToDo</h2>
 <ul>
-  <li>implement abstract classes in "pythonic" way</li>
-  <li>implement factory design in "pythonic" way?</li>
+  <li>implement abstract classes in "pythonic" way (calc package)</li>
   <li>convert p, T, f data from gas clock to SI units before usage</li>
-  <li>add "compare" command to compare calculation results</li>
+  <li>add description of furnace package to this readme after tests</li>
 </ul>
