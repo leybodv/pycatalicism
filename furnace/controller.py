@@ -44,7 +44,7 @@ class Controller(ABC):
         self.timeout = timeout
         self.write_timeout = write_timeout
         self.rtscts = rtscts
-        if not self._handshake():
+        if not self.handshake():
             raise FurnaceException('Cannot connect to furnace controller')
 
     @abstractmethod
@@ -67,7 +67,7 @@ class Controller(ABC):
         pass
 
     @abstractmethod
-    def _handshake(self) -> bool:
+    def handshake(self) -> bool:
         """
         Method to check proper connection with device
 
