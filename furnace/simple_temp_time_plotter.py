@@ -8,16 +8,18 @@ from pycatalicism.furnace.furnace_data import FurnaceData
 
 class SimpleTempTimePlotter(Plotter):
     """
+    Class for plotting temperature vs. time data.
     """
-
-    def __init__(self):
-        """
-        """
-        raise NotImplementedError()
 
     def plot(self, data:FurnaceData):
         """
+        Plots temperature vs. time data in a separate window.
         NB: this will block main thread!
+
+        parameters
+        ----------
+        data:FurnaceData
+            Wrapper of temperature vs. time data
         """
         fig, ax = plt.subplots()
         ax = self._get_ax(data, ax)
@@ -25,6 +27,20 @@ class SimpleTempTimePlotter(Plotter):
 
     def export_plot(self, data:FurnaceData, path:Path, fig_dpi:float, fig_height:float, fig_width:float):
         """
+        Saves temperature vs. time plot.
+
+        parameters
+        ----------
+        data:FurnaceData
+            Wrapper of temperature vs. time data
+        path:Path
+            Path to save plot
+        fig_dpi:float
+            Figure dpi in dots per inch
+        fig_height:float
+            Figure height in inches
+        fig_width:float
+            Figure width in inches
         """
         fig, ax = plt.subplots()
         ax = self._get_ax(data, ax)
@@ -36,6 +52,19 @@ class SimpleTempTimePlotter(Plotter):
 
     def _get_ax(self, data:FurnaceData, ax:matplotlib.axes.Axes) -> matplotlib.axes.Axes:
         """
+        Constructs matplotlib.axes.Axes with temperature vs. time plot.
+
+        parameters
+        ----------
+        data:FurnaceData
+            Wrapper of temperature vs. time data
+        ax:matplotlib.axes.Axes
+            Axes to plot data to
+
+        returns
+        -------
+        ax:matplotlib.axes.Axes
+            Axes with plotted data
         """
         x = data.get_times()
         y = data.get_temperatures()
