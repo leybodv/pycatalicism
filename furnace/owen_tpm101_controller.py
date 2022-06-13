@@ -6,6 +6,7 @@ import struct
 from pycatalicism.furnace.controller import Controller
 from pycatalicism.furnace.furnace_data import FurnaceData
 from pycatalicism.furnace.furnace_exception import FurnaceException
+import pycatalicism.furnace.furnace_logging as logging
 
 class Owen_TPM101_Controller(Controller):
     """
@@ -48,6 +49,7 @@ class Owen_TPM101_Controller(Controller):
         self.heating_in_progress = False
         self.port_read_write_lock = threading.Lock()
         self.furnace_data = None
+        self.logger = logging.get_logger(self.__class__.__name__)
 
     def heat(self, temperature:int, wait:int|None) -> FurnaceData|None:
         """
@@ -67,16 +69,19 @@ class Owen_TPM101_Controller(Controller):
         """
         self._set_SP(value=temperature)
         if temperature == 0:
+            self.logger.info('Turning heating off')
             self._set_r_S(value='StoP')
             self.heating_in_progress = False
             return None
         else:
+            self.logger.info(f'Heating furnace to {temperature}°C')
             self._set_r_S(value='rUn')
             self.heating_in_progress = True
             data_requester = threading.Thread(target=self._request_temperature_data)
             data_requester.start()
             self._wait_until_target_temperature(temperature)
             if wait is not None:
+                self.logger.info(f'Starting isothermal step for {wait} min')
                 time.sleep(wait * 60.0)
                 self._finish_isothermal()
             self.heating_in_progress = False
@@ -316,6 +321,7 @@ class Owen_TPM101_Controller(Controller):
         success:bool
             True if device name is ТРМ101
         """
+        self.logger.info('Handshaking with the controller')
         command = 'dev'
         message = self._prepare_request(command)
         response = self._get_response(message)
