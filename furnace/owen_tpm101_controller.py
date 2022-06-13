@@ -312,7 +312,7 @@ class Owen_TPM101_Controller(Controller):
         pic = struct.unpack('>f', data_str)[0]
         return pic
 
-    def _handshake(self) -> bool:
+    def handshake(self) -> bool:
         """
         Performs handshake with the device. Method sends 'dev' command to the device and checks if it returns expected value corresponding to the device name.
 
