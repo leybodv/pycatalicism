@@ -1,3 +1,5 @@
+import pycatalicism.furnace.furnace_logging as logging
+
 class FurnaceData():
     """
     Wrapper class representing time-temperature dependence data
@@ -16,6 +18,7 @@ class FurnaceData():
         """
         self.times = times
         self.temperatures = temperatures
+        self.logger = logging.get_logger(self.__class__.__name__)
 
     def __str__(self) -> str:
         """
@@ -32,6 +35,7 @@ class FurnaceData():
         string = 'Time, min\tTemperature, °C\n'
         for time, temperature in zip(self.times, self.temperatures):
             string = string + f'{time}\t{temperature}\n'
+        self.logger.debug(f'{string = }')
         return string
 
     def get_times(self) -> list[float]:
