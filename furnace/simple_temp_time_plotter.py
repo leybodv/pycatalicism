@@ -5,11 +5,18 @@ import matplotlib.axes
 
 from pycatalicism.furnace.plotter import Plotter
 from pycatalicism.furnace.furnace_data import FurnaceData
+import pycatalicism.furnace.furnace_logging as logging
 
 class SimpleTempTimePlotter(Plotter):
     """
     Class for plotting temperature vs. time data.
     """
+
+    def __init__(self):
+        """
+        Registers logger
+        """
+        self.logger = logging.get_logger(self.__class__.__name__)
 
     def plot(self, data:FurnaceData):
         """
@@ -21,6 +28,7 @@ class SimpleTempTimePlotter(Plotter):
         data:FurnaceData
             Wrapper of temperature vs. time data
         """
+        self.logger.info('Plotting temperature vs. time data')
         fig, ax = plt.subplots()
         ax = self._get_ax(data, ax)
         plt.show(block=True)
@@ -42,6 +50,7 @@ class SimpleTempTimePlotter(Plotter):
         fig_width:float
             Figure width in inches
         """
+        self.logger.info(f'Exporting temperature vs. time plot to {path}')
         fig, ax = plt.subplots()
         ax = self._get_ax(data, ax)
         fig.set_dpi(fig_dpi)
