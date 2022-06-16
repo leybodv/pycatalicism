@@ -42,14 +42,14 @@ class Owen_TPM101_Controller(Controller):
         address_len:int
             Can be set to 8 or 11 bits on the device, however, only 8 bit is supported by this class
         """
-        super().__init__(port=port, baudrate=baudrate, bytesize=bytesize, parity=parity, stopbits=stopbits, timeout=timeout, write_timeout=write_timeout, rtscts=rtscts)
+        self.logger = logging.get_logger(self.__class__.__name__)
         self.address = address
         self.rsdl = rsdl
         self.address_len = address_len #NB: only 8b adress supported
         self.heating_in_progress = False
         self.port_read_write_lock = threading.Lock()
         self.furnace_data = None
-        self.logger = logging.get_logger(self.__class__.__name__)
+        super().__init__(port=port, baudrate=baudrate, bytesize=bytesize, parity=parity, stopbits=stopbits, timeout=timeout, write_timeout=write_timeout, rtscts=rtscts)
 
     def heat(self, temperature:int, wait:int|None) -> FurnaceData|None:
         """
