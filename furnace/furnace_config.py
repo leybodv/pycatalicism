@@ -4,7 +4,7 @@ import serial
 # Dictionary of logging levels of corresponding classes
 logging_levels = {
                 'FurnaceData'               :    logging.INFO,
-                'Owen_TPM101_Controller'    :    logging.INFO,
+                'Owen_TPM101_Controller'    :    logging.DEBUG,
                 'SimpleTempTimeExporter'    :    logging.INFO,
                 'SimpleTempTimePlotter'     :    logging.INFO
                 }
@@ -22,7 +22,7 @@ timeout = 1
 # Time in seconds to wait while message is sent to the device
 write_timeout = 1
 # Enable/disable hardware flow control
-rtscts = True
+rtscts = False
 # Address of Owen TRM101 device
 address = 0
 # Time interval between message was sent to the device and controller was sent the answer in ms

@@ -326,6 +326,7 @@ class Owen_TPM101_Controller(Controller):
         message = self._prepare_request(command)
         response = self._get_response(message)
         device_name = self._get_device_name(response)
+        self.logger.debug(f'{device_name = }')
         return device_name == 'ТРМ101' #NB: <- this is utf-8 string written in russian, so ascii answer can be different, check ASCII codes!!!
 
     def _prepare_request(self, command:str) -> str:
@@ -367,9 +368,9 @@ class Owen_TPM101_Controller(Controller):
             If receipt is wrong
         """
         self._write_message(message)
-        receipt = self._read_message()
-        if not self._receipt_is_ok(receipt, message):
-            raise FurnaceException(f'Got wrong receipt from device!')
+        # receipt = self._read_message()
+        # if not self._receipt_is_ok(receipt, message):
+            # raise FurnaceException(f'Got wrong receipt from device!')
         response = self._read_message()
         return response
 
@@ -574,8 +575,8 @@ class Owen_TPM101_Controller(Controller):
         """
         with self.port_read_write_lock:
             with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
-                ser.write(message)
-            time.sleep(self.rsdl / 1000)
+                self.logger.debug(f'Writing message: {bytes(message, encoding="ascii")}')
+                ser.write(bytes(message, encoding='ascii'))
 
     def _read_message(self) -> str:
         """
@@ -594,6 +595,7 @@ class Owen_TPM101_Controller(Controller):
         with self.port_read_write_lock:
             with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
                 message = ser.read_until(expected=chr(0x0d)).decode()
+                self.logger.debug(f'Got message: {message = }')
             if message[0] != chr(0x23) or message[-1] != chr(0x0d):
                 raise FurnaceException(f'Unexpected format of message got from device: {message}')
             return message
@@ -657,6 +659,7 @@ class Owen_TPM101_Controller(Controller):
                 message_bytes.append(data_byte & 0xff)
         crc = self._get_crc(message_bytes)
         crc_is_ok = crc == crc_to_check
+        self.logger.debug(f'{crc_is_ok = }')
         return crc_is_ok
 
     def _decrypt_string(self, data:list[int]|None) -> str:
@@ -678,6 +681,7 @@ class Owen_TPM101_Controller(Controller):
         FurnaceException
             If data is None
         """
+        self.logger.debug(f'{data = }')
         if data is None:
             raise FurnaceException('Cannot decrypt empty data!')
         string = ''
@@ -720,10 +724,16 @@ class Owen_TPM101_Controller(Controller):
             second_tetrad = (ord(message[i+1]) - 0x47) & 0xf
             byte = ((first_tetrad << 4) | second_tetrad) & 0xff
             message_bytes.append(byte)
+        self.logger.debug(f'{len(message_bytes) = }')
+        self.logger.debug(f'{message_bytes = }')
         address = message_bytes[0]
+        self.logger.debug(f'{address = }')
         flag_byte = message_bytes[1]
+        self.logger.debug(f'{flag_byte = :#b}')
         response_hash = ((message_bytes[2] << 8) | message_bytes[3]) & 0xffff
-        data_length = flag_byte | 0b1111
+        self.logger.debug(f'{response_hash = :#x}')
+        data_length = flag_byte & 0b1111
+        self.logger.debug(f'{data_length = }')
         if data_length != 0:
             data = []
             for i in range(data_length):
