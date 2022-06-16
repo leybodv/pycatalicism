@@ -35,13 +35,12 @@ def heat(temperature:str|int, wait:str|int|None=None, show_plot:bool=False, expo
     timeout = config.timeout
     write_timeout = config.write_timeout
     rtscts = config.rtscts
-    kwargs = {'address':config.address, 'rsdl':config.rsdl, 'address_len':config.address_len}
     plotter_type = config.plotter_type
     exporter_type = config.exporter_type
     fig_dpi = config.fig_dpi
     fig_height = config.fig_height
     fig_width = config.fig_width
-    controller = controller_factory.get_controller(controller_type=controller_type, port=port, baudrate=baudrate, bytesize=bytesize, parity=parity, stopbits=stopbits, timeout=timeout, write_timeout=write_timeout, rtscts=rtscts, kwargs=kwargs)
+    controller = controller_factory.get_controller(controller_type=controller_type, port=port, baudrate=baudrate, bytesize=bytesize, parity=parity, stopbits=stopbits, timeout=timeout, write_timeout=write_timeout, rtscts=rtscts, address=config.address, rsdl=config.rsdl, address_len=config.address_len)
     wait = None if wait is None else int(wait)
     data = controller.heat(int(temperature), wait)
     if export_plot or show_plot:
