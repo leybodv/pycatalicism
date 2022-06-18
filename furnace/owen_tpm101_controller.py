@@ -202,6 +202,7 @@ class Owen_TPM101_Controller(Controller):
         FurnaceException
             If unknown value type is provided
         """
+        self.logger.debug(f'Change parameter {command} to {value} of type {value_type}')
         command_id = self._get_command_id(command)
         command_hash = self._get_command_hash(command_id)
         if value_type == 'PIC':
@@ -473,6 +474,7 @@ class Owen_TPM101_Controller(Controller):
                 command_hash = command_hash & 0xffff
                 b = b << 1
                 b = b & 0xff
+        self.logger.debug(f'{command_hash = :#x}')
         return command_hash
 
     def _get_crc(self, message_bytes:list[int]) -> int:
@@ -594,7 +596,14 @@ class Owen_TPM101_Controller(Controller):
         """
         with self.port_read_write_lock:
             with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
-                message = ser.read_until(expected=chr(0x0d)).decode()
+                message = ''
+                for i in range(44):
+                    # self.logger.debug(f'Reading byte #{i}')
+                    byte = ser.read().decode()
+                    # self.logger.debug(f'Read byte: {byte}')
+                    message = message + byte
+                    if byte == chr(0x0d):
+                        break
                 self.logger.debug(f'Got message: {message = }')
             if message[0] != chr(0x23) or message[-1] != chr(0x0d):
                 raise FurnaceException(f'Unexpected format of message got from device: {message}')
@@ -616,6 +625,13 @@ class Owen_TPM101_Controller(Controller):
         receipt_is_ok:bool
             True if receipt is correct
         """
+        address, flag_byte, response_hash, data, crc = self._unpack_message(receipt)
+        self.logger.debug(f'Receipt address: {address}')
+        self.logger.debug(f'Receipt flag_byte: {flag_byte:#b}')
+        self.logger.debug(f'Receipt response_hash: {response_hash:#x}')
+        self.logger.debug(f'Receipt data: {data}')
+        self.logger.debug(f'Receipt crc: {crc}')
+        self.logger.debug(f'Receipt crc is ok: {self._crc_is_ok(address, flag_byte, response_hash, data, crc)}')
         new_flag_tetrad = (ord(message[3]) - 0x47) & 0b1110
         new_flag_chr = chr((new_flag_tetrad & 0xf) + 0x47)
         message_without_request = ''
@@ -625,6 +641,7 @@ class Owen_TPM101_Controller(Controller):
             else:
                 message_without_request = message_without_request + message[i]
         receipt_is_ok = message_without_request == receipt
+        self.logger.debug(f'Receipt is ok: {receipt_is_ok}')
         return receipt_is_ok
 
     def _crc_is_ok(self, address:int, flag_byte:int, response_hash:int, data:list[int]|None, crc_to_check:int) -> bool:
@@ -722,6 +739,9 @@ class Owen_TPM101_Controller(Controller):
         for i in range(1, len(message) - 1, 2):
             first_tetrad = (ord(message[i]) - 0x47) & 0xf
             second_tetrad = (ord(message[i+1]) - 0x47) & 0xf
+            self.logger.debug(f'ASCII letter #{i} = {message[i]}')
+            self.logger.debug(f'{first_tetrad = :#b}')
+            self.logger.debug(f'{second_tetrad = :#b}')
             byte = ((first_tetrad << 4) | second_tetrad) & 0xff
             message_bytes.append(byte)
         self.logger.debug(f'{len(message_bytes) = }')

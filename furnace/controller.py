@@ -44,8 +44,8 @@ class Controller(ABC):
         self.timeout = timeout
         self.write_timeout = write_timeout
         self.rtscts = rtscts
-        if not self.handshake():
-            raise FurnaceException('Cannot connect to furnace controller')
+        # if not self.handshake():
+            # raise FurnaceException('Cannot connect to furnace controller')
 
     @abstractmethod
     def heat(self, temperature:int, wait:int|None) -> FurnaceData:

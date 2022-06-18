@@ -13,14 +13,14 @@ logging_levels = {
 controller_type = 'Owen_TPM101'
 # Furnace controller port name and corresponding port parameters (baudrate, bytesize, parity, stopbits) which must be the same as configured on controller device
 port = '/dev/ttyUSB0'
-baudrate = 115200
+baudrate = 19200
 bytesize = serial.EIGHTBITS
 parity = serial.PARITY_NONE
 stopbits = serial.STOPBITS_ONE
 # Time in seconds to wait for the response from the device
-timeout = 1
+timeout = 0.1
 # Time in seconds to wait while message is sent to the device
-write_timeout = 1
+write_timeout = None
 # Enable/disable hardware flow control
 rtscts = False
 # Address of Owen TRM101 device
