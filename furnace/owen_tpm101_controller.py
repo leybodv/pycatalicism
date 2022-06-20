@@ -70,12 +70,12 @@ class Owen_TPM101_Controller(Controller):
         self._set_SP(value=temperature)
         if temperature == 0:
             self.logger.info('Turning heating off')
-            self._set_r_S(value='StoP')
+            self._set_r_S(value=0)
             self.heating_in_progress = False
             return None
         else:
             self.logger.info(f'Heating furnace to {temperature}°C')
-            self._set_r_S(value='rUn')
+            self._set_r_S(value=1)
             self.heating_in_progress = True
             data_requester = threading.Thread(target=self._request_temperature_data)
             data_requester.start()
@@ -104,12 +104,13 @@ class Owen_TPM101_Controller(Controller):
         """
         command = 'sp'
         message = self._prepare_parameter_change_request(command, value, value_type='PIC')
-        self._write_message(message)
-        receipt = self._read_message()
+        with self.port_read_write_lock:
+            self._write_message(message)
+            receipt = self._read_message()
         if not self._receipt_is_ok(receipt, message):
             raise FurnaceException('Got wrong receipt from device!')
 
-    def _set_r_S(self, value:str):
+    def _set_r_S(self, value:int):
         """
         Set r_S parameter of the controller. Method prepares parameter change request, sends it to the device and checks receipt
 
@@ -124,9 +125,10 @@ class Owen_TPM101_Controller(Controller):
             Iff wrong receipt was got from device
         """
         command = 'r-s'
-        message = self._prepare_parameter_change_request(command, value, value_type='ASCII')
-        self._write_message(message)
-        receipt = self._read_message()
+        message = self._prepare_parameter_change_request(command, value, value_type='unsigned_byte')
+        with self.port_read_write_lock:
+            self._write_message(message)
+            receipt = self._read_message()
         if not self._receipt_is_ok(receipt=receipt, message=message):
             raise FurnaceException('Got wrong receipt from device!')
 
@@ -148,6 +150,7 @@ class Owen_TPM101_Controller(Controller):
             response = self._get_response(message)
             temperature = self._get_temperature(response)
             current_time = time.time()
+            self.logger.debug(f'Temperature is {temperature} @ {(current_time - start_time) / 60.0} min')
             times.append((current_time - start_time) / 60.0)
             temperatures.append(temperature)
             time.sleep(30)
@@ -167,8 +170,11 @@ class Owen_TPM101_Controller(Controller):
         while self.heating_in_progress:
             response = self._get_response(message)
             measured_temperature = self._get_temperature(response)
-            if abs((temperature - measured_temperature) / temperature) < 0.05:
+            self.logger.debug(f'Temperature is {measured_temperature}°C')
+            if measured_temperature >= 0.95 * temperature:
+                self.logger.debug('Reached target temperature')
                 break
+            self.logger.debug('Waiting until target temperature')
             time.sleep(10)
 
     def _finish_isothermal(self):
@@ -176,7 +182,7 @@ class Owen_TPM101_Controller(Controller):
         Finish isothermal step. Method sets SP value to 0, r_S value to StoP and heating_in_progress instance variable to False
         """
         self._set_SP(value=0)
-        self._set_r_S(value='StoP')
+        self._set_r_S(value=0)
         self.heating_in_progress = False
 
     def _prepare_parameter_change_request(self, command:str, value, value_type:str) -> str:
@@ -209,6 +215,8 @@ class Owen_TPM101_Controller(Controller):
             data = self._float_to_PIC(float(value))
         elif value_type == 'ASCII':
             data = self._str_to_ASCII(str(value))
+        elif value_type == 'unsigned_byte':
+            data = self._int_to_unsigned_byte(int(value))
         else:
             raise FurnaceException(f'Unknown data type: {value_type}')
         message_ascii = self._get_message_ascii(address=self.address, request=False, data_length=len(data), command_hash=command_hash, data=data)
@@ -255,9 +263,20 @@ class Owen_TPM101_Controller(Controller):
         """
         pic_bytes = []
         ieee = struct.pack('>f', value)
+        self.logger.log(5, f'{[b for b in ieee] = }')
         for i in range(3):
             pic_bytes.append(ieee[i])
+        self.logger.debug(f'{pic_bytes = }')
         return pic_bytes
+
+    def _int_to_unsigned_byte(self, value:int) -> list[int]:
+        """
+        """
+        if value > 255 or value < 0:
+            raise FurnaceException(f'Got wrong value to convert to unsigned byte: {value}')
+        unsigned_bytes = [value]
+        self.logger.debug(f'{unsigned_bytes = }')
+        return unsigned_bytes
 
     def _str_to_ASCII(self, value:str) -> list[int]:
         """
@@ -310,6 +329,7 @@ class Owen_TPM101_Controller(Controller):
         data_str = b''
         for b in data:
             data_str = data_str + b.to_bytes(1, 'big')
+        data_str = data_str + int(0).to_bytes(1, 'big')
         pic = struct.unpack('>f', data_str)[0]
         return pic
 
@@ -328,7 +348,8 @@ class Owen_TPM101_Controller(Controller):
         response = self._get_response(message)
         device_name = self._get_device_name(response)
         self.logger.debug(f'{device_name = }')
-        return device_name == 'ТРМ101' #NB: <- this is utf-8 string written in russian, so ascii answer can be different, check ASCII codes!!!
+        # return device_name == 'ТРМ101' #NB: <- this is utf-8 string written in russian, so ascii answer can be different, check ASCII codes!!!
+        return device_name == 'ÒÐÌ101' # <- this string is actually returned by the device \_O_/
 
     def _prepare_request(self, command:str) -> str:
         """
@@ -344,6 +365,7 @@ class Owen_TPM101_Controller(Controller):
         message_ascii:str
             Encrypted in tetrad-to-ASCII form according to owen protocol message to be sent to the device
         """
+        self.logger.debug(f'Request {command} parameter value from device')
         command_id = self._get_command_id(command)
         command_hash = self._get_command_hash(command_id)
         message_ascii = self._get_message_ascii(address=self.address, request=True, data_length=0, command_hash=command_hash, data=None)
@@ -368,11 +390,12 @@ class Owen_TPM101_Controller(Controller):
         FurnaceException
             If receipt is wrong
         """
-        self._write_message(message)
-        # receipt = self._read_message()
-        # if not self._receipt_is_ok(receipt, message):
-            # raise FurnaceException(f'Got wrong receipt from device!')
-        response = self._read_message()
+        with self.port_read_write_lock:
+            self._write_message(message)
+            # receipt = self._read_message()
+            # if not self._receipt_is_ok(receipt, message):
+                # raise FurnaceException(f'Got wrong receipt from device!')
+            response = self._read_message()
         return response
 
     def _get_device_name(self, response:str) -> str:
@@ -474,7 +497,7 @@ class Owen_TPM101_Controller(Controller):
                 command_hash = command_hash & 0xffff
                 b = b << 1
                 b = b & 0xff
-        self.logger.debug(f'{command_hash = :#x}')
+        self.logger.log(5, f'{command_hash = :#x}')
         return command_hash
 
     def _get_crc(self, message_bytes:list[int]) -> int:
@@ -575,10 +598,9 @@ class Owen_TPM101_Controller(Controller):
         message:str
             Encrypted message to be sent to the device
         """
-        with self.port_read_write_lock:
-            with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
-                self.logger.debug(f'Writing message: {bytes(message, encoding="ascii")}')
-                ser.write(bytes(message, encoding='ascii'))
+        with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
+            self.logger.debug(f'Writing message: {bytes(message, encoding="ascii")}')
+            ser.write(bytes(message, encoding='ascii'))
 
     def _read_message(self) -> str:
         """
@@ -594,20 +616,19 @@ class Owen_TPM101_Controller(Controller):
         FurnaceException
             If message does not contain proper start and stop markers
         """
-        with self.port_read_write_lock:
-            with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
-                message = ''
-                for i in range(44):
-                    # self.logger.debug(f'Reading byte #{i}')
-                    byte = ser.read().decode()
-                    # self.logger.debug(f'Read byte: {byte}')
-                    message = message + byte
-                    if byte == chr(0x0d):
-                        break
-                self.logger.debug(f'Got message: {message = }')
-            if message[0] != chr(0x23) or message[-1] != chr(0x0d):
-                raise FurnaceException(f'Unexpected format of message got from device: {message}')
-            return message
+        with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
+            message = ''
+            for i in range(44):
+                self.logger.log(5, f'Reading byte #{i}')
+                byte = ser.read().decode()
+                self.logger.log(5, f'Read byte: {byte}')
+                message = message + byte
+                if byte == chr(0x0d):
+                    break
+            self.logger.debug(f'Got message: {message = }')
+        if message[0] != chr(0x23) or message[-1] != chr(0x0d):
+            raise FurnaceException(f'Unexpected format of message got from device: {message}')
+        return message
 
     def _receipt_is_ok(self, receipt:str, message:str) -> bool:
         """
@@ -626,12 +647,12 @@ class Owen_TPM101_Controller(Controller):
             True if receipt is correct
         """
         address, flag_byte, response_hash, data, crc = self._unpack_message(receipt)
-        self.logger.debug(f'Receipt address: {address}')
-        self.logger.debug(f'Receipt flag_byte: {flag_byte:#b}')
-        self.logger.debug(f'Receipt response_hash: {response_hash:#x}')
-        self.logger.debug(f'Receipt data: {data}')
-        self.logger.debug(f'Receipt crc: {crc}')
-        self.logger.debug(f'Receipt crc is ok: {self._crc_is_ok(address, flag_byte, response_hash, data, crc)}')
+        self.logger.log(5, f'Receipt address: {address}')
+        self.logger.log(5, f'Receipt flag_byte: {flag_byte:#b}')
+        self.logger.log(5, f'Receipt response_hash: {response_hash:#x}')
+        self.logger.log(5, f'Receipt data: {data}')
+        self.logger.log(5, f'Receipt crc: {crc}')
+        self.logger.log(5, f'Receipt crc is ok: {self._crc_is_ok(address, flag_byte, response_hash, data, crc)}')
         new_flag_tetrad = (ord(message[3]) - 0x47) & 0b1110
         new_flag_chr = chr((new_flag_tetrad & 0xf) + 0x47)
         message_without_request = ''
@@ -739,21 +760,21 @@ class Owen_TPM101_Controller(Controller):
         for i in range(1, len(message) - 1, 2):
             first_tetrad = (ord(message[i]) - 0x47) & 0xf
             second_tetrad = (ord(message[i+1]) - 0x47) & 0xf
-            self.logger.debug(f'ASCII letter #{i} = {message[i]}')
-            self.logger.debug(f'{first_tetrad = :#b}')
-            self.logger.debug(f'{second_tetrad = :#b}')
+            self.logger.log(5, f'ASCII letter #{i} = {message[i]}')
+            self.logger.log(5, f'{first_tetrad = :#b}')
+            self.logger.log(5, f'{second_tetrad = :#b}')
             byte = ((first_tetrad << 4) | second_tetrad) & 0xff
             message_bytes.append(byte)
-        self.logger.debug(f'{len(message_bytes) = }')
-        self.logger.debug(f'{message_bytes = }')
+        self.logger.log(5, f'{len(message_bytes) = }')
+        self.logger.log(5, f'{message_bytes = }')
         address = message_bytes[0]
-        self.logger.debug(f'{address = }')
+        self.logger.log(5, f'{address = }')
         flag_byte = message_bytes[1]
-        self.logger.debug(f'{flag_byte = :#b}')
+        self.logger.log(5, f'{flag_byte = :#b}')
         response_hash = ((message_bytes[2] << 8) | message_bytes[3]) & 0xffff
-        self.logger.debug(f'{response_hash = :#x}')
+        self.logger.log(5, f'{response_hash = :#x}')
         data_length = flag_byte & 0b1111
-        self.logger.debug(f'{data_length = }')
+        self.logger.log(5, f'{data_length = }')
         if data_length != 0:
             data = []
             for i in range(data_length):
