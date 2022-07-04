@@ -5,7 +5,7 @@ from pycatalicism.furnace.furnace_exception import FurnaceException
 
 class Controller(ABC):
     """
-    Abstract class representing furnace PID controller. Subclasses must implement heat and _handshake methods.
+    Abstract class representing furnace PID controller. Subclasses must implement heat and handshake methods.
     """
 
     def __init__(self, port:str, baudrate:int, bytesize:int, parity:str, stopbits:float, timeout:float, write_timeout:float, rtscts:bool):
