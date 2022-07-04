@@ -53,7 +53,7 @@ class Owen_TPM101_Controller(Controller):
 
     def heat(self, temperature:int, wait:int|None) -> FurnaceData|None:
         """
-        Heat furnace to specified temperature and wait for specified time in minutes if wait parameter is not None. Method sets SP parameter on the controller to specified temperature. If temperature is 0, r_S parameter is set to StoP value which stops temperature control at TRM101. If temperature is not 0, r_S parameter is set to rUn, thread responsible for current temperature data retreival every 30 seconds is started and method waits until the target temperature is achieved (there is 5% window for the method to decide whether this is true). If wait parameter is not None, sleep for specified time in minutes and turn off controller afterwards.
+        Heat furnace to specified temperature and wait for specified time in minutes if wait parameter is not None. Method sets SP parameter on the controller to specified temperature. If temperature is 0, r_S parameter is set to StoP value which stops temperature control at TRM101. If temperature is not 0, r_S parameter is set to rUn, thread responsible for current temperature data retreival every 30 seconds is started and method waits until the target temperature is achieved. If wait parameter is not None, sleep for specified time in minutes and turn off controller afterwards.
 
         parameters
         ----------
@@ -116,13 +116,13 @@ class Owen_TPM101_Controller(Controller):
 
         parameters
         ----------
-        value:str
-            Value of r_S parameter. Can be "rUn" to turn controller on and "StoP" to turn controller off
+        value:int
+            Value of r_S parameter. Can be 1 (rUn) to turn controller on and 0 (StoP) to turn controller off
 
         raises
         ------
         FurnaceException
-            Iff wrong receipt was got from device
+            If wrong receipt was got from device
         """
         command = 'r-s'
         message = self._prepare_parameter_change_request(command, value, value_type='unsigned_byte')
@@ -158,7 +158,7 @@ class Owen_TPM101_Controller(Controller):
 
     def _wait_until_target_temperature(self, temperature:int):
         """
-        Wait until measured temperature is inside 5% window interval in comparison to target temperature. Methods retrievs measured temperature from the device every 10 seconds and terminates when target temperature is achieved.
+        Wait until measured temperature is reached the target. Method retrieves measured temperature from the device every 10 seconds and terminates when target temperature is achieved.
 
         parameters
         ----------
@@ -171,7 +171,7 @@ class Owen_TPM101_Controller(Controller):
             response = self._get_response(message)
             measured_temperature = self._get_temperature(response)
             self.logger.debug(f'Temperature is {measured_temperature}°C')
-            if measured_temperature >= 0.95 * temperature:
+            if measured_temperature >= temperature:
                 self.logger.debug('Reached target temperature')
                 break
             self.logger.debug('Waiting until target temperature')
