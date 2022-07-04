@@ -11,12 +11,12 @@ import pycatalicism.furnace.exporter_factory as exporter_factory
 
 def heat(temperature:str|int, wait:str|int|None=None, show_plot:bool=False, export_plot:str|Path|None=None, export_data:str|Path|None=None):
     """
-    Set furnace controller temperature to target temperature, wait for specified time in min, show plot, export plot as png image and export data of temperature vs. time if corresponding parameters were provided by user
+    Set furnace controller temperature to target temperature, wait for specified time in min, show plot (NB: this will block further execution of the program), export plot as png image and export data of temperature vs. time if corresponding parameters were provided by user
 
     parameters
     ----------
     temperature:str|int
-        temperature to heat furnace to
+        temperature in °C to heat furnace to
     wait:str|int|None (default:None)
         time in minutes to hold furnace at specified temperature
     show_plot:bool (default:False)
