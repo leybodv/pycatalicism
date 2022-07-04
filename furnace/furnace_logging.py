@@ -1,9 +1,24 @@
+"""
+Module for instantiating and configuring of logger
+"""
+
 import logging
 
 from pycatalicism.furnace.furnace_config import logging_levels
 
 def get_logger(name:str) -> logging.Logger:
     """
+    Get logger with corresponding name configured to log to stdout.
+
+    parameters
+    ----------
+    name:str
+        name of returned logger
+
+    returns
+    -------
+    logger:logging.Logger
+        configured logger
     """
     logger = logging.getLogger(name)
     logger.setLevel(logging_levels[name])
