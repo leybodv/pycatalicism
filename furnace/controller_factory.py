@@ -6,7 +6,7 @@ from pycatalicism.furnace.controller import Controller
 from pycatalicism.furnace.owen_tpm101_controller import Owen_TPM101_Controller
 from pycatalicism.furnace.furnace_exception import FurnaceException
 
-def get_controller(controller_type:str, port:str, baudrate:int, bytesize:int, parity:str, stopbits:float, timeout:float, write_timeout:float, rtscts:bool, **kwargs) -> Controller:
+def get_controller(controller_type:str, port:str, baudrate:int, bytesize:int, parity:str, stopbits:float, timeout:float, write_timeout:float|None, rtscts:bool, **kwargs) -> Controller:
     """
     Get furnace controller object of corresponding type
 
@@ -26,7 +26,7 @@ def get_controller(controller_type:str, port:str, baudrate:int, bytesize:int, pa
         How many stopbits to use when sending information to the device
     timeout:float
         Read timeout in seconds. See pyserial documentation for details (https://pyserial.readthedocs.io/en/latest/pyserial_api.html)
-    write_timeout:float
+    write_timeout:float|None
         Write timeout in seconds. See pyserial documentation for details (https://pyserial.readthedocs.io/en/latest/pyserial_api.html)
     rtscts:bool
         Enable hardware flow control. See pyserial documentation for details (https://pyserial.readthedocs.io/en/latest/pyserial_api.html)
