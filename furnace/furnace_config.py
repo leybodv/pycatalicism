@@ -4,7 +4,7 @@ import serial
 # Dictionary of logging levels of corresponding classes
 logging_levels = {
                 'FurnaceData'               :    logging.INFO,
-                'Owen_TPM101_Controller'    :    logging.DEBUG,
+                'Owen_TPM101_Controller'    :    logging.INFO,
                 'SimpleTempTimeExporter'    :    logging.INFO,
                 'SimpleTempTimePlotter'     :    logging.INFO
                 }
