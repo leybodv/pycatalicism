@@ -20,12 +20,12 @@ def get_exporter(exporter_type:str) -> Exporter:
     returns
     -------
     exporter:Exporter
-        Object responsible for export of time-temperature dependence data
+        Object responsible for export of time-temperature data
 
     raises
     ------
     ExporterException
-        If inknown exporter type was provided to method
+        If unknown exporter type was provided to method
     """
     if exporter_type == 'simple_temp_time_exporter':
         return SimpleTempTimeExporter()
