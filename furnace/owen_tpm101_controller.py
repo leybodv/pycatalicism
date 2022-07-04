@@ -13,7 +13,7 @@ class Owen_TPM101_Controller(Controller):
     Class realizes basic functions of TRM101 Owen furnace PID controller using owen protocol (see owen.ru for more details).
     """
 
-    def __init__(self, port:str, baudrate:int, bytesize:int, parity:str, stopbits:float, timeout:float, write_timeout:float, rtscts:bool, address:int, rsdl:int, address_len:int):
+    def __init__(self, port:str, baudrate:int, bytesize:int, parity:str, stopbits:float, timeout:float, write_timeout:float|None, rtscts:bool, address:int, rsdl:int, address_len:int):
         """
         Assigns parameters to instance variables, calls __init__ of super class which performs handshake with the device.
 
@@ -31,7 +31,7 @@ class Owen_TPM101_Controller(Controller):
             How many stopbits to use when sending information to the device
         timeout:float
             Read timeout in seconds. See pyserial documentation for details (https://pyserial.readthedocs.io/en/latest/pyserial_api.html)
-        write_timeout:float
+        write_timeout:float|None
             Write timeout in seconds. See pyserial documentation for details (https://pyserial.readthedocs.io/en/latest/pyserial_api.html)
         rtscts:bool
             Enable hardware flow control. See pyserial documentation for details (https://pyserial.readthedocs.io/en/latest/pyserial_api.html)
