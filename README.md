@@ -128,9 +128,40 @@
   <img src="https://latex.codecogs.com/svg.image?\inline&space;T_i" title="https://latex.codecogs.com/svg.image?\inline T_i" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;T_f" title="https://latex.codecogs.com/svg.image?\inline T_f" /> - temperature of gas at point of total gas flow rate measurement before and after catalytic reactor, respectively, in K
 </p>
 <p>If flow rate measurement data is not provided, conversion is calculated based solely on concentrations and warning is logged to console in this case.</p>
+<h3>Furnace control</h3>
+<p><code>pycat heat [--wait WAIT] [--show-plot] [--export-plot EXPORT_PLOT] [--export-data EXPORT_DATA] temperature</code></p>
+<p>positional arguments:</p>
+<p>
+  <table>
+    <tr>
+      <td>temperature</td>
+      <td>temperature in °C to heat furnace to. If 0, sets set point of a controller to 0 and turns off temperature regulation</td>
+    </tr>
+  </table>
+</p>
+<p>parameters:</p>
+  <table>
+    <tr>
+      <td>--wait WAIT</td>
+      <td>wait for WAIT minutes after a furnace has reached target temperature and turn heating off afterwards</td>
+    </tr>
+    <tr>
+      <td>--show-plot</td>
+      <td>show plot of temperature vs. time. NB: this will block the program until the window with the plot is closed</td>
+    </tr>
+    <tr>
+      <td>--export-plot EXPORT_PLOT</td>
+      <td>export temperature vs. time plot to the file specified by EXPORT_PLOT path</td>
+    </tr>
+    <tr>
+      <td>--export-data</td>
+      <td>export temperature vs. time data to the file specified by EXPORT_DATA path</td>
+    </tr>
+  </table>
 <h2>ToDo</h2>
 <ul>
   <li>implement abstract classes in "pythonic" way (calc package)</li>
   <li>convert p, T, f data from gas clock to SI units before usage</li>
   <li>add description of furnace package to this readme after tests</li>
+  <li>rewrite calc module. Selectivity should be calculated automatically if applicable. There should be two separate commands to calculate activity and conversion</li>
 </ul>
