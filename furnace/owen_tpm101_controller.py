@@ -240,11 +240,13 @@ class Owen_TPM101_Controller(Controller):
         raises
         ------
         FurnaceException
-            If CRC check sum is incorrect
+            If CRC check sum is incorrect or if there is no data in the response message
         """
         address, flag_byte, response_hash, data, crc = self._unpack_message(response)
         if not self._crc_is_ok(address, flag_byte, response_hash, data, crc):
             raise FurnaceException('Wrong CRC in response message!')
+        if data is None:
+            raise FurnaceException('Did not get any data in response message')
         temperature = self._decrypt_PIC(data)
         return temperature
 
@@ -272,6 +274,22 @@ class Owen_TPM101_Controller(Controller):
 
     def _int_to_unsigned_byte(self, value:int) -> list[int]:
         """
+        Convert int value to unsigned byte according to owen protocol.
+
+        parameters
+        ----------
+        value:int
+            value to convert to byte
+
+        returns
+        -------
+        unsigned_byte:list[int]
+            list of 1 byte with converted value
+
+        raises
+        ------
+        FurnaceException
+            if value > 255 or value < 0
         """
         if value > 255 or value < 0:
             raise FurnaceException(f'Got wrong value to convert to unsigned byte: {value}')
@@ -304,7 +322,7 @@ class Owen_TPM101_Controller(Controller):
             ascii_bytes.append(ord(ch))
         return ascii_bytes
 
-    def _decrypt_PIC(self, data:list[int]|None) -> float:
+    def _decrypt_PIC(self, data:list[int]) -> float:
         """
         Decrypt float value from PIC bytes received from the device
 
@@ -341,7 +359,7 @@ class Owen_TPM101_Controller(Controller):
         returns
         -------
         success:bool
-            True if device name is ТРМ101
+            True if device name is correct
         """
         self.logger.info('Handshaking with the controller')
         command = 'dev'
@@ -349,8 +367,7 @@ class Owen_TPM101_Controller(Controller):
         response = self._get_response(message)
         device_name = self._get_device_name(response)
         self.logger.debug(f'{device_name = }')
-        # return device_name == 'ТРМ101' #NB: <- this is utf-8 string written in russian, so ascii answer can be different, check ASCII codes!!!
-        return device_name == 'ÒÐÌ101' # <- this string is actually returned by the device \_O_/
+        return device_name == 'ÒÐÌ101' # <- this string is actually returned by the device \_O_/ although should be 'TPM101' according to owen protocol
 
     def _prepare_request(self, command:str) -> str:
         """
@@ -374,7 +391,7 @@ class Owen_TPM101_Controller(Controller):
 
     def _get_response(self, message:str) -> str:
         """
-        Writes message to the device, gets receipt and checks it and, finally, gets a response from the device.
+        Writes message to the device and gets a response from the device.
 
         parameters
         ----------
@@ -385,17 +402,9 @@ class Owen_TPM101_Controller(Controller):
         -------
         response:str
             Message received from the device encrypted in tetrad-to-ASCII from according to owen protocol.
-
-        raises
-        ------
-        FurnaceException
-            If receipt is wrong
         """
         with self.port_read_write_lock:
             self._write_message(message)
-            # receipt = self._read_message()
-            # if not self._receipt_is_ok(receipt, message):
-                # raise FurnaceException(f'Got wrong receipt from device!')
             response = self._read_message()
         return response
 
@@ -592,7 +601,7 @@ class Owen_TPM101_Controller(Controller):
 
     def _write_message(self, message:str):
         """
-        Writes enctypted message over serial port. Waits rsdl ms to give time for the device to send receipt back.
+        Writes enctypted message over serial port.
 
         parameters
         ----------
