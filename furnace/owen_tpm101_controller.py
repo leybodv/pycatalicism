@@ -80,10 +80,12 @@ class Owen_TPM101_Controller(Controller):
             data_requester = threading.Thread(target=self._request_temperature_data)
             data_requester.start()
             self._wait_until_target_temperature(temperature)
+            self.logger.info('Reached target temperature')
             if wait is not None:
                 self.logger.info(f'Starting isothermal step for {wait} min')
                 time.sleep(wait * 60.0)
                 self._finish_isothermal()
+                self.logger.info('Finished isothermal step')
             self.heating_in_progress = False
             data_requester.join()
             return self.furnace_data
