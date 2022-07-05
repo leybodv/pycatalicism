@@ -174,7 +174,6 @@ class Owen_TPM101_Controller(Controller):
             measured_temperature = self._get_temperature(response)
             self.logger.debug(f'Temperature is {measured_temperature}°C')
             if measured_temperature >= temperature:
-                self.logger.debug('Reached target temperature')
                 break
             self.logger.debug('Waiting until target temperature')
             time.sleep(10)
