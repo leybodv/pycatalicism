@@ -9,11 +9,21 @@
       <p>Install git:</p>
       <p><code>pacman -S git</code></p>
       <p>Clone repository (this will create pycatalicism directory inside your current directory):</p>
-      <p><code>git clone git@github.com:leybodv/pycatalicism.git</code></p>
+      <p><code>git clone https://github.com/leybodv/pycatalicism.git</code></p>
       <p>Create alias in your .bashrc file:</p>
       <p><code>pycat='PYTHONPATH="/path/to/pycatalicism-parent-directory" /path/to/pycat.py'</code></p>
     <h3>Windows</h3>
+      <p>Install python from <a href="python.org">python.org</a></p>
+      <p>Install python libraries (better to start cmd as administrator):</p>
+      <p><code>pip install matplotlib numpy pyserial</code></p>
+      <p>Install git for windows from <a href="https://gitforwindows.org/">gitforwindows.org</a></p>
+      <p>Clone repository in git bash:</p>
+      <p><code>cd path/to/repository-storage-dir</code></p>
+      <p><code>git clone https://github.com/leybodv/pycatalicism.git</code></p>
+      <p>Add PYHTONPATH system variable with path/to/repository-storage-dir value</p>
+      <p>Download and install driver for usb -> com from <a href="https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers">silabs.com</a></p>
   <h2>Usage</h2>
+    <p>NB: on Windows <code>pycat</code> must be replaced with <code>python path/to/pycat.py</code></p>
     <h3>Calculation of catalyst functional properties</h3>
       <p><code>pycat calc --conversion|--selectivity [--output-data OUTPUT_DATA] [--show-plot] [--output-plot OUPUT_PLOT] [--products-basis] [--sample-name SAMPLE_NAME] input-data-path initial-data-path {co-oxidation|co2-hydrogenation}</code></p>
       <p>positional arguments:</p>
@@ -171,10 +181,12 @@
             <td>export temperature vs. time data to the file specified by EXPORT_DATA path</td>
           </tr>
         </table>
+        <p>Program should be configured prior use. The configuration file located in path/to/pycatalycism/furnace/furnace_config.py</p>
   <h2>ToDo</h2>
     <ul>
       <li>implement abstract classes in "pythonic" way (calc package)</li>
       <li>convert p, T, f data from gas clock to SI units before usage</li>
       <li>add description of furnace package to this readme after tests</li>
       <li>rewrite calc module. Selectivity should be calculated automatically if applicable. There should be two separate commands to calculate activity and conversion</li>
+      <li>add furnace read temperature interface</li>
     </ul>
