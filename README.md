@@ -1,5 +1,14 @@
 <h1>pycatalicism</h1>
 <p>Program controls catalytic activity of materials measurement equipment (to be developed...) as well as calculates main parameters relevant for catalyst functional properties characterization (conversion, activity, selectivity, stability, activation energy).</p>
+<h2>Installation</h2>
+<h3>Arch Linux</h3>
+<p>Install python:</p>
+<p><code>pacman -S python</code></p>
+<p>Install python libraries:</p>
+<p><code>pacman -S python-matplotlib python-numpy python-pyserial</code></p>
+<p>Install git:</p>
+<p><code>pacman -S git</code></p>
+<p>Clone repository:</p>
 <h2>Usage</h2>
 <h3>Calculation of catalyst functional properties</h3>
 <p><code>pycat calc --conversion|--selectivity [--output-data OUTPUT_DATA] [--show-plot] [--output-plot OUPUT_PLOT] [--products-basis] [--sample-name SAMPLE_NAME] input-data-path initial-data-path {co-oxidation|co2-hydrogenation}</code></p>
