@@ -8,7 +8,10 @@
 <p><code>pacman -S python-matplotlib python-numpy python-pyserial</code></p>
 <p>Install git:</p>
 <p><code>pacman -S git</code></p>
-<p>Clone repository:</p>
+<p>Clone repository (this will create pycatalicism directory inside your current directory):</p>
+<p><code>git clone git@github.com:leybodv/pycatalicism.git</code></p>
+<p>Create alias in your .bashrc file:</p>
+<p><code>pycat='PYTHONPATH="/path/to/pycatalicism-parent-directory" /path/to/pycat.py'</code></p>
 <h2>Usage</h2>
 <h3>Calculation of catalyst functional properties</h3>
 <p><code>pycat calc --conversion|--selectivity [--output-data OUTPUT_DATA] [--show-plot] [--output-plot OUPUT_PLOT] [--products-basis] [--sample-name SAMPLE_NAME] input-data-path initial-data-path {co-oxidation|co2-hydrogenation}</code></p>
