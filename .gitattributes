@@ -1,0 +1,2 @@
+config.py merge=ours
+furnace/furnace_config.py merge=ours
