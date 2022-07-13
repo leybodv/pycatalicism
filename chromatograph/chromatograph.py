@@ -1,10 +1,8 @@
 from abc import ABC, abstractmethod
 
-from pycatalicism.chromatograph.chromatograph_status import ChromatographStatus
-
 class Chromatograph(ABC):
     """
-    Abstract class representing chromatograph. Subclasses must implement methods connect, start_analysis and get_status
+    Abstract class representing chromatograph. Subclasses must implement methods connect, start_analysis and is_ready_for_analysis
     """
 
     @abstractmethod
@@ -24,12 +22,11 @@ class Chromatograph(ABC):
         """
 
     @abstractmethod
-    def get_status(self) -> ChromatographStatus:
+    def is_ready_for_analysis(self) -> bool:
         """
-        Get working status of chromatograph.
+        Check whether chromatograph is ready to start analysis
 
         returns
         -------
-        chromatograph_status:ChromatographStatus
-            status of work of chromatograph
+        True if chromatograph is ready for analysis
         """
