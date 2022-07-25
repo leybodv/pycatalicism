@@ -132,7 +132,10 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
         exception:ParserException
             if data format is wrong
         """
-        file_contents = self._replace_commas_with_dots(path)
+        try:
+            file_contents = self._replace_commas_with_dots(path)
+        except UnicodeDecodeError:
+            raise ParserException(f'Non unicode file {path}')
         T = None
         C = {}
         Ta = None
@@ -141,26 +144,30 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
         lines = file_contents.split(sep='\n')
         while lines:
             line = lines.pop(0)
+            words = line.split(sep='\t')
             self.logger.debug(f'processing line: "{line}"')
-            if line.startswith('Температура'):
-                T = float(line.split(sep='\t')[1])
-            if line.startswith('Название\tВремя. мин\tДетектор\tКонцентрация\tЕд. измерения\tПлощадь\tВысота'):
+            if 'Температура' in words:
+                T = float(words[1])
+            if 'Название' in words and 'Концентрация' in words:
+                compound_index = words.index('Название')
+                concentration_index = words.index('Концентрация')
                 while True:
                     if lines:
                         line = lines.pop(0)
+                        words = line.split(sep='\t')
                         if line == '':
                             break
                         self.logger.debug(f'processing line: "{line}"')
-                        compound = line.split(sep='\t')[0]
-                        concentration = line.split(sep='\t')[3]
+                        compound = words[compound_index]
+                        concentration = words[concentration_index]
                         C[compound] = float(concentration)
                     else:
                         break
-            if line.startswith('Темп. (газовые часы)'):
+            if 'Темп. (газовые часы)' in words:
                 Ta = float(line.split(sep='\t')[1])
-            if line.startswith('Давление (газовые часы)'):
+            if 'Давление (газовые часы)' in words:
                 Pa = float(line.split(sep='\t')[1])
-            if line.startswith('Поток'):
+            if 'Поток' in words:
                 f = float(line.split(sep='\t')[1])
         if T is None or len(C) == 0:
             raise ParserException(f'Wrong data format in file {path}')
