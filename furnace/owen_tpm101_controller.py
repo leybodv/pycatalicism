@@ -49,6 +49,7 @@ class Owen_TPM101_Controller(Controller):
         self.heating_in_progress = False
         self.port_read_write_lock = threading.Lock()
         self.furnace_data = None
+        self.io_trials = 3
         super().__init__(port=port, baudrate=baudrate, bytesize=bytesize, parity=parity, stopbits=stopbits, timeout=timeout, write_timeout=write_timeout, rtscts=rtscts)
 
     def heat(self, temperature:int, wait:int|None) -> FurnaceData|None:
@@ -106,9 +107,18 @@ class Owen_TPM101_Controller(Controller):
         """
         command = 'sp'
         message = self._prepare_parameter_change_request(command, value, value_type='PIC')
+        receipt = None
         with self.port_read_write_lock:
-            self._write_message(message)
-            receipt = self._read_message()
+            for i in range(self.io_trials):
+                try:
+                    self._write_message(message)
+                    receipt = self._read_message()
+                    break
+                except FurnaceException as ex:
+                    self.logger.warning(f'{ex}')
+                    self.logger.warning(f'Trial #{i+1}')
+        if not receipt:
+            raise FurnaceException('Failed to connect to the controller')
         if not self._receipt_is_ok(receipt, message):
             raise FurnaceException('Got wrong receipt from device!')
 
@@ -128,9 +138,18 @@ class Owen_TPM101_Controller(Controller):
         """
         command = 'r-s'
         message = self._prepare_parameter_change_request(command, value, value_type='unsigned_byte')
+        receipt = None
         with self.port_read_write_lock:
-            self._write_message(message)
-            receipt = self._read_message()
+            for i in range(self.io_trials):
+                try:
+                    self._write_message(message)
+                    receipt = self._read_message()
+                    break
+                except FurnaceException as ex:
+                    self.logger.warning(f'{ex}')
+                    self.logger.warning(f'Trial #{i+1}')
+        if not receipt:
+            raise FurnaceException('Failed to connect to the controller')
         if not self._receipt_is_ok(receipt=receipt, message=message):
             raise FurnaceException('Got wrong receipt from device!')
 
@@ -403,9 +422,18 @@ class Owen_TPM101_Controller(Controller):
         response:str
             Message received from the device encrypted in tetrad-to-ASCII from according to owen protocol.
         """
+        response = None
         with self.port_read_write_lock:
-            self._write_message(message)
-            response = self._read_message()
+            for i in range(self.io_trials):
+                try:
+                    self._write_message(message)
+                    response = self._read_message()
+                    break
+                except FurnaceException as ex:
+                    self.logger.warning(f'{ex}')
+                    self.logger.warning(f'Trial #{i+1}')
+        if not response:
+            raise FurnaceException('Failed to connect to the controller')
         return response
 
     def _get_device_name(self, response:str) -> str:
@@ -636,6 +664,8 @@ class Owen_TPM101_Controller(Controller):
                 if byte == chr(0x0d):
                     break
             self.logger.debug(f'Got message: {message = }')
+        if message == '':
+            raise FurnaceException('Empty message was received')
         if message[0] != chr(0x23) or message[-1] != chr(0x0d):
             raise FurnaceException(f'Unexpected format of message got from device: {message}')
         return message
