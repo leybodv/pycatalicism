@@ -16,6 +16,17 @@ class Chromatograph(ABC):
         """
 
     @abstractmethod
+    def set_instrument_method(self, method:str):
+        """
+        Sets instrument method to specified value
+
+        parameters
+        ----------
+        method:str
+            instrument method which will be started
+        """
+
+    @abstractmethod
     def start_analysis(self):
         """
         Start analysis. Subclasses responsible for details of analysis method.
