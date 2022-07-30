@@ -1,6 +1,6 @@
 from pycatalicism.chromatograph.chromatograph import Chromatograph
 from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
-from pycatalicism.chromatograph.chromatograph_exception import ChromatographException
+from pycatalicism.chromatograph.chromatograph_exceptions import ChromatographException
 
 """
 """
