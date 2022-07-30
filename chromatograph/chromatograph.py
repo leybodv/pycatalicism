@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class Chromatograph(ABC):
     """
-    Abstract class representing chromatograph. Subclasses must implement methods connect, start_analysis and is_ready_for_analysis
+    Abstract class representing chromatograph. Subclasses must implement methods connect, set_instrument_method, start_analysis and is_ready_for_analysis
     """
 
     @abstractmethod
