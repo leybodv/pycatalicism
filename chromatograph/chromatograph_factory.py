@@ -1,13 +1,14 @@
-from pycatalicism.chromatograph.crystal_5000_chromatec import Crystal5000Chromatec
-from pycatalicism.chromatograph.exceptions.connection_error import ConnectionError
+from pycatalicism.chromatograph.chromatograph import Chromatograph
+from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
+from pycatalicism.chromatograph.chromatograph_exception import ChromatographException
 
 """
 """
 
-def get_crystal_5000_chromatec(self, control_panel_id:int, analytics_id:int) -> Crystal5000Chromatec:
+def get_chromatograph(chromatograph_type:str) -> Chromatograph:
     """
     """
-    chromatograph = Crystal5000Chromatec(control_panel_id, analytics_id)
-    if not chromatograph.connect():
-        raise ConnectionError('Could not connect to Chromatec Crystal 5000 chromatograph')
-    return chromatograph
+    if chromatograph_type == 'chromatec_crystal_5000':
+        return ChromatecCrystal5000()
+    else:
+        raise ChromatographException(f'Unknown type of chromatograph {chromatograph_type}')
