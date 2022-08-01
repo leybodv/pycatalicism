@@ -35,6 +35,11 @@ class ChromatecCrystal5000(Chromatograph):
             raise ChromatographModbusException('Chromatograph is not connected')
         self.modbus_client.write_registers(address=self.set_method_address, values=[self.methods[method]], unit=self.control_panel_id)
 
+    def start_analysis(self):
+        """
+        """
+        raise NotImplementedError()
+
     def _get_string(self, register_type:str, address:int, count:int, unit:int) -> str:
         """
         """
