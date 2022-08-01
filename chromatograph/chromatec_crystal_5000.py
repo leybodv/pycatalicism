@@ -22,4 +22,5 @@ class ChromatecCrystal5000(Chromatograph):
         self.modbus_client.write_registers(address=self.chromatograph_command_address, values=[1], unit=self.control_panel_id) # establish connection with chromatograph
         self.modbus_client.write_registers(address=self.application_command_address, values=[1], unit=self.control_panel_id) # start control panel
         self.modbus_client.write_registers(address=self.application_command_address, values=[5], unit=self.control_panel_id) # start analytics
-        # check serial
+        serial_id = self._get_string()
+        return serial_id == self.serial_id
