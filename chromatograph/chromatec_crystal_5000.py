@@ -25,7 +25,8 @@ class ChromatecCrystal5000(Chromatograph):
         """
         self.modbus_client = ModbusTcpClient()
         self.modbus_client.write_registers(address=self.application_command_address, values=[1], unit=self.control_panel_id) # start control panel
-        serial_id = self._get_string(register_type='input', address=self.chromatograph_serial_id_address, count=15, unit=self.control_panel_id)
+        response = self.modbus_client.read_input_registers(address=self.chromatograph_serial_id_address, count=15, unit=self.control_panel_id)
+        serial_id = self._bytes_to_string(response.registers)
         return serial_id == self.serial_id
 
     def set_instrument_method(self, method:str):
@@ -38,19 +39,15 @@ class ChromatecCrystal5000(Chromatograph):
     def start_analysis(self):
         """
         """
-        raise NotImplementedError()
-
-    def _get_string(self, register_type:str, address:int, count:int, unit:int) -> str:
-        """
-        """
         if not self.modbus_client:
             raise ChromatographModbusException('Chromatograph is not connected')
-        if register_type == 'input':
-            response = self.modbus_client.read_input_registers(address=address, count=count, unit=unit)
-            string = b''
-            for b in response.registers:
-                string += b.to_bytes(2, 'big')
-            string = string.decode().rstrip('\x00')
-        else:
-            raise ChromatographModbusException(f'Unknown type of register to read from: {register_type}')
+        raise NotImplementedError()
+
+    def _bytes_to_string(self, response_bytes:list[int]) -> str:
+        """
+        """
+        string = b''
+        for b in response_bytes:
+            string += b.to_bytes(2, 'big')
+        string = string.decode().rstrip('\x00')
         return string
