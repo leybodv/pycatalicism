@@ -50,12 +50,16 @@ class ChromatecCrystal5000(Chromatograph):
         else:
             # fire warning
             pass
-            # response = self.modbus_client.read_input_registers(address=self.current_step_address, count=2, unit=self.control_panel_id)
-            # step = self._bytes_to_int(response.registers)
-            # if step == 4:
-                # break
-            # time.sleep(60)
         raise NotImplementedError()
+
+    def is_ready_for_analysis(self) -> bool:
+        """
+        """
+        if not self.modbus_client:
+            raise ChromatographModbusException('Chromatograph is not connected')
+        response = self.modbus_client.read_input_registers(address=self.current_step_address, count=2, unit=self.control_panel_id)
+        step = self._bytes_to_int(response.registers)
+        return step == 4
 
     def _bytes_to_string(self, response_bytes:list[int]) -> str:
         """
