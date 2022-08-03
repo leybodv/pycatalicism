@@ -41,6 +41,7 @@ class ChromatecCrystal5000(Chromatograph):
 
     def start_analysis(self):
         """
+        In order to start analysis we need either write 6 to chromatograph_command_address register, set method, wait until chromatograph is ready for analysis, write 6 to chromatograph_command_address again OR arrange register addresses such that set_method_address is lower than chromatograph_command_address
         """
         if not self.modbus_client:
             raise ChromatographModbusException('Chromatograph is not connected')
