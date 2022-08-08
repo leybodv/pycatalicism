@@ -101,3 +101,8 @@ class ChromatecCrystal5000(Chromatograph):
         """
         """
         raise NotImplementedError()
+
+    def _string_to_bytes(self, string:str) -> list[int]:
+        """
+        """
+        raise NotImplementedError()
