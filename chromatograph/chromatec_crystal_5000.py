@@ -9,7 +9,7 @@ class ChromatecCrystal5000(Chromatograph):
     """
     """
 
-    def __init__(self, control_panel_id:int, analytics_id:int, serial_id:str, methods:dict[str,int], chromatograph_command_address:int, application_command_address:int, chromatograph_serial_id_address:int, set_method_address:int, current_step_address:int):
+    def __init__(self, control_panel_id:int, analytics_id:int, serial_id:str, methods:dict[str,int], chromatograph_command_address:int, application_command_address:int, chromatograph_serial_id_address:int, set_method_address:int, current_step_address:int, connection_status_address:int, chromatogram_num_address:int):
         """
         """
         self.control_panel_id = control_panel_id
@@ -21,6 +21,8 @@ class ChromatecCrystal5000(Chromatograph):
         self.chromatograph_serial_id_address = chromatograph_serial_id_address
         self.set_method_address = set_method_address
         self.current_step_address = current_step_address
+        self.connection_status_address = connection_status_address
+        self.chromatogram_num_address = chromatogram_num_address
         self.modbus_client = None
 
     def connect(self) -> bool:
@@ -29,8 +31,15 @@ class ChromatecCrystal5000(Chromatograph):
         """
         self.modbus_client = ModbusTcpClient()
         self.modbus_client.write_registers(address=self.application_command_address, values=[1], unit=self.control_panel_id) # start control panel
-        response = self.modbus_client.read_input_registers(address=self.chromatograph_serial_id_address, count=15, unit=self.control_panel_id)
-        serial_id = self._bytes_to_string(response.registers)
+        while True:
+            response = self.modbus_client.read_input_registers(address=self.connection_status_address, count=1, unit=self.control_panel_id)
+            if response.registers[0] == 7:
+                break
+            time.sleep(1)
+        control_panel_response = self.modbus_client.read_input_registers(address=self.chromatograph_serial_id_address, count=15, unit=self.control_panel_id)
+        serial_id = self._bytes_to_string(control_panel_response.registers)
+        analytics_response = self.modbus_client.read_input_registers(address=self.chromatogram_num_address, count=2, unit=self.analytics_id) # NB: check count!!!
+        self._bytes_to_int(analytics_response.registers) # will throw an exception if there is something wrong with modbus settings at analytics. Better to find another way to check this
         return serial_id == self.serial_id
 
     def set_instrument_method(self, method:str):
@@ -71,3 +80,8 @@ class ChromatecCrystal5000(Chromatograph):
             string += b.to_bytes(2, 'big')
         string = string.decode().rstrip('\x00')
         return string
+
+    def _bytes_to_int(self, response_bytes:list[int]) -> int:
+        """
+        """
+        raise NotImplementedError()
