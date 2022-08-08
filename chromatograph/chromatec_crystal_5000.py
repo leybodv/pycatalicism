@@ -25,6 +25,7 @@ class ChromatecCrystal5000(Chromatograph):
 
     def connect(self) -> bool:
         """
+        check some register from chromatograph analytics also!
         """
         self.modbus_client = ModbusTcpClient()
         self.modbus_client.write_registers(address=self.application_command_address, values=[1], unit=self.control_panel_id) # start control panel
