@@ -1,4 +1,5 @@
 import time
+import struct
 
 from pymodbus.client.sync import ModbusTcpClient
 
@@ -104,10 +105,17 @@ class ChromatecCrystal5000(Chromatograph):
         """
         return response_bytes[0]
 
-    def _string_to_bytes(self, string:str) -> list[int]:
+    def _string_to_bytes(self, string:str) -> tuple[int]:
         """
         """
-        raise NotImplementedError()
+        if len(string) > 30:
+            # log warning, string will be cut down to 30 chars
+            string = string[0:30]
+        if len(string) % 2 != 0:
+            string += '\x00'
+        string_bytes = bytes(string.encode())
+        message = struct.unpack('>'+'H'*int(len(string_bytes)/2), string_bytes)
+        return message
 
     def _int_to_bytes(self, integer:int) -> list[int]:
         """
