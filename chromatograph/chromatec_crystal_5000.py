@@ -10,7 +10,7 @@ class ChromatecCrystal5000(Chromatograph):
     """
     """
 
-    def __init__(self, control_panel_id:int, analytics_id:int, serial_id:str, lab_name:str, methods:dict[str,int], chromatograph_command_address:int, application_command_address:int, chromatograph_serial_id_address:int, set_method_address:int, current_step_address:int, connection_status_address:int, chromatogram_lab_name_address:int, chromatogram_name_address:int, chromatogram_purpose_address:int, chromatogram_sample_volume_address:int, chromatogram_sample_dilution_address:int, chromatogram_operator_address:int, chromatogram_column_address:int):
+    def __init__(self, control_panel_id:int, analytics_id:int, serial_id:str, lab_name:str, methods:dict[str,int], chromatograph_command_address:int, application_command_address:int, chromatograph_serial_id_address:int, set_method_address:int, current_step_address:int, connection_status_address:int, chromatogram_lab_name_address:int, chromatogram_name_address:int, chromatogram_sample_volume_address:int, chromatogram_sample_dilution_address:int, chromatogram_operator_address:int, chromatogram_column_address:int):
         """
         """
         self.control_panel_id = control_panel_id
@@ -26,7 +26,6 @@ class ChromatecCrystal5000(Chromatograph):
         self.connection_status_address = connection_status_address
         self.chromatogram_lab_name_address = chromatogram_lab_name_address
         self.chromatogram_name_address = chromatogram_name_address
-        self.chromatogram_purpose_address = chromatogram_purpose_address
         self.chromatogram_sample_volume_address = chromatogram_sample_volume_address
         self.chromatogram_sample_dilution_address = chromatogram_sample_dilution_address
         self.chromatogram_operator_address = chromatogram_operator_address
@@ -75,7 +74,6 @@ class ChromatecCrystal5000(Chromatograph):
                 break
             time.sleep(60)
         self.modbus_client.write_registers(address=self.chromatogram_name_address, values=self._string_to_bytes(chromatogram_name), unit=self.analytics_id)
-        self.modbus_client.write_registers(address=self.chromatogram_purpose_address, values=self._int_to_bytes(chromatogram_purpose), unit=self.analytics_id)
         self.modbus_client.write_registers(address=self.chromatogram_sample_volume_address, values=self._double_to_bytes(chromatogram_sample_volume), unit=self.analytics_id)
         self.modbus_client.write_registers(address=self.chromatogram_sample_dilution_address, values=self._double_to_bytes(chromatogram_sample_dilution), unit=self.analytics_id)
         self.modbus_client.write_registers(address=self.chromatogram_operator_address, values=self._string_to_bytes(chromatogram_operator), unit=self.analytics_id)
@@ -116,11 +114,6 @@ class ChromatecCrystal5000(Chromatograph):
         string_bytes = bytes(string.encode())
         message = struct.unpack('>'+'H'*int(len(string_bytes)/2), string_bytes)
         return message
-
-    def _int_to_bytes(self, integer:int) -> list[int]:
-        """
-        """
-        raise NotImplementedError()
 
     def _double_to_bytes(self, double:float) -> list[int]:
         """
