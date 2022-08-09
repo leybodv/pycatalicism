@@ -115,7 +115,9 @@ class ChromatecCrystal5000(Chromatograph):
         message = struct.unpack('>'+'H'*int(len(string_bytes)/2), string_bytes)
         return message
 
-    def _double_to_bytes(self, double:float) -> list[int]:
+    def _double_to_bytes(self, double:float) -> tuple[int]:
         """
         """
-        raise NotImplementedError()
+        double_bytes = struct.pack('<d', double)
+        message = struct.unpack('<HHHH', double_bytes)
+        return message
