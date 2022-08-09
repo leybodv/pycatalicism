@@ -79,6 +79,7 @@ class ChromatecCrystal5000(Chromatograph):
         self.modbus_client.write_registers(address=self.chromatogram_sample_dilution_address, values=self._double_to_bytes(chromatogram_sample_dilution), unit=self.analytics_id)
         self.modbus_client.write_registers(address=self.chromatogram_operator_address, values=self._string_to_bytes(chromatogram_operator), unit=self.analytics_id)
         self.modbus_client.write_registers(address=self.chromatogram_column_address, values=self._string_to_bytes(chromatogram_column), unit=self.analytics_id)
+        self.modbus_client.write_registers(address=self.chromatogram_lab_name_address, values=self._string_to_bytes(self.lab_name), unit=self.analytics_id)
 
     def is_ready_for_analysis(self) -> bool:
         """
