@@ -221,6 +221,17 @@ class ChromatecCrystal5000(Chromatograph):
 
     def _bytes_to_string(self, response_bytes:list[int]) -> str:
         """
+        Converts bytes received from chromatograph to string.
+
+        parameters
+        ----------
+        response_bytes:list[int]
+            bytes received from chromatograph
+
+        returns
+        -------
+        string:str
+            decoded string
         """
         if self.logger:
             self.logger.debug(f'Converting bytes: {response_bytes} to string')
