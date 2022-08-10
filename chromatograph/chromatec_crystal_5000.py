@@ -195,6 +195,16 @@ class ChromatecCrystal5000(Chromatograph):
 
     def is_ready_for_analysis(self) -> bool:
         """
+        Check whether chromatograph is ready for analysis.
+
+        returns
+        -------
+        True if chromatograph is ready for analysis
+
+        raises
+        ------
+        ChromatographStateException
+            if connect method was not called or if connection was unsuccessful
         """
         if not self.modbus_client:
             raise ChromatographStateException('Chromatograph is not connected')
