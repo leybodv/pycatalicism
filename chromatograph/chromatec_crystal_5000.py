@@ -177,6 +177,12 @@ class ChromatecCrystal5000(Chromatograph):
     def _double_to_bytes(self, double:float) -> tuple[int]:
         """
         """
+        if self.logger:
+            self.logger.debug(f'Converting double {double} to bytes')
         double_bytes = struct.pack('<d', double)
+        if self.logger:
+            self.logger.log(5, f'{double_bytes = }')
         message = struct.unpack('<HHHH', double_bytes)
+        if self.logger:
+            self.logger.log(5, f'{message = }')
         return message
