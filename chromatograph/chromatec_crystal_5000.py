@@ -5,7 +5,7 @@ from logging import Logger
 from pymodbus.client.sync import ModbusTcpClient
 
 from pycatalicism.chromatograph.chromatograph import Chromatograph
-from pycatalicism.chromatograph.chromatograph_exceptions import ChromatographModbusException
+from pycatalicism.chromatograph.chromatograph_exceptions import ChromatographStateException
 
 class ChromatecCrystal5000(Chromatograph):
     """
@@ -73,6 +73,7 @@ class ChromatecCrystal5000(Chromatograph):
         self.chromatogram_operator_address = chromatogram_operator_address
         self.chromatogram_column_address = chromatogram_column_address
         self.modbus_client = None
+        self.current_method = None
         if logger:
             self.logger = logger
 
@@ -128,21 +129,42 @@ class ChromatecCrystal5000(Chromatograph):
 
         raises
         ------
-        ChromatographModbusException
+        ChromatographStateException
             if connect method was not called or if connection was unsuccessful
         """
         if not self.modbus_client:
-            raise ChromatographModbusException('Chromatograph is not connected')
+            raise ChromatographStateException('Chromatograph is not connected')
         if self.logger:
             self.logger.info(f'Setting instrument method to {method}')
         self.modbus_client.write_registers(address=self.set_method_address, values=[self.methods[method]], unit=self.control_panel_id)
+        self.current_method = method
 
     def start_analysis(self, chromatogram_name:str, chromatogram_sample_volume:float, chromatogram_sample_dilution:float, chromatogram_operator:str, chromatogram_column:str):
         """
-        In order to start analysis we need either write 6 to chromatograph_command_address register, set method, wait until chromatograph is ready for analysis, write 6 to chromatograph_command_address again OR arrange register addresses such that set_method_address is lower than chromatograph_command_address
+        Start instrumental method. Method waits until chromatograph is ready for analysis, starts analysis, waits until it is completed and writes relevant information to chromatogram passport. NB: method blocks calling thread until it terminates.
+
+        parameters
+        ----------
+        chromatogram_name:str
+            name of chromatogram which will be written in passport
+        chromatogram_sample_volume:float
+            sample volume which will be written in passport
+        chromatogram_sample_dilution:float
+            sample dilution which will be written in passport
+        chromatogram_operator:str
+            operator's name which will be written in passport
+        chromatogram_column:str
+            column name which will be written in passport
+
+        raises
+        ------
+        ChromatographStateException
+            if connect method was not called or if connection was unsuccessful or if instrumental method was not set before
         """
         if not self.modbus_client:
-            raise ChromatographModbusException('Chromatograph is not connected')
+            raise ChromatographStateException('Chromatograph is not connected')
+        if not self.current_method:
+            raise ChromatographStateException('Set method before starting the analysis')
         if self.logger:
             self.logger.info('Waiting while chromatograph is ready to start analysis')
         while True:
@@ -175,7 +197,7 @@ class ChromatecCrystal5000(Chromatograph):
         """
         """
         if not self.modbus_client:
-            raise ChromatographModbusException('Chromatograph is not connected')
+            raise ChromatographStateException('Chromatograph is not connected')
         if self.logger:
             self.logger.info('Checking if chromatograph is ready for analysis')
         response = self.modbus_client.read_input_registers(address=self.current_step_address, count=2, unit=self.control_panel_id)
