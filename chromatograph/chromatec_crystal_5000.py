@@ -38,6 +38,7 @@ class ChromatecCrystal5000(Chromatograph):
     def connect(self) -> bool:
         """
         check some register from chromatograph analytics also!
+        check if control panel and analytic is already started
         """
         if self.logger:
             self.logger.info('Connecting to Chromatec Crystal 5000 chromatograph')
