@@ -111,12 +111,25 @@ class ChromatecCrystal5000(Chromatograph):
         if self.logger:
             self.logger.debug(f'Laboratory name received from analytics software: {lab_name}')
         connection_is_successful = serial_id == self.serial_id and lab_name == self.lab_name
+        if not connection_is_successful:
+            self.modbus_client = None
         if self.logger:
             self.logger.info(f'Connection successful: {connection_is_successful}')
         return connection_is_successful
 
     def set_instrument_method(self, method:str):
         """
+        Sets instrument method to specified value. Method changes the state of chromatograph to 'preparing' status.
+
+        parameters
+        ----------
+        method:str
+            instrument method to set for chromatograph, must be in self.methods instance variable
+
+        raises
+        ------
+        ChromatographModbusException
+            if connect method was not called or if connection was unsuccessful
         """
         if not self.modbus_client:
             raise ChromatographModbusException('Chromatograph is not connected')
