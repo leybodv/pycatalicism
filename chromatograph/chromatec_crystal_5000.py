@@ -11,7 +11,7 @@ class ChromatecCrystal5000(Chromatograph):
     """
     """
 
-    def __init__(self, control_panel_id:int, analytics_id:int, serial_id:str, lab_name:str, methods:dict[str,int], chromatograph_command_address:int, application_command_address:int, chromatograph_serial_id_address:int, set_method_address:int, current_step_address:int, connection_status_address:int, chromatogram_lab_name_address:int, chromatogram_name_address:int, chromatogram_sample_volume_address:int, chromatogram_sample_dilution_address:int, chromatogram_operator_address:int, chromatogram_column_address:int, logger:Logger):
+    def __init__(self, control_panel_id:int, analytics_id:int, serial_id:str, lab_name:str, methods:dict[str,int], chromatograph_command_address:int, application_command_address:int, chromatograph_serial_id_address:int, set_method_address:int, current_step_address:int, connection_status_address:int, chromatogram_lab_name_address:int, chromatogram_name_address:int, chromatogram_sample_volume_address:int, chromatogram_sample_dilution_address:int, chromatogram_operator_address:int, chromatogram_column_address:int, logger:Logger|None):
         """
         """
         self.control_panel_id = control_panel_id
@@ -75,6 +75,8 @@ class ChromatecCrystal5000(Chromatograph):
         """
         if not self.modbus_client:
             raise ChromatographModbusException('Chromatograph is not connected')
+        if self.logger:
+            self.logger.info(f'Setting instrument method to {method}')
         self.modbus_client.write_registers(address=self.set_method_address, values=[self.methods[method]], unit=self.control_panel_id)
 
     def start_analysis(self, chromatogram_name:str, chromatogram_sample_volume:float, chromatogram_sample_dilution:float, chromatogram_operator:str, chromatogram_column:str):
