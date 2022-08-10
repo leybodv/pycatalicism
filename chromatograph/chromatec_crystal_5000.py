@@ -100,7 +100,7 @@ class ChromatecCrystal5000(Chromatograph):
             response = self.modbus_client.read_input_registers(address=self.current_step_address, count=2, unit=self.control_panel_id)
             step = self._bytes_to_int(response.registers)
             if self.logger:
-                self.logger.debug(f'Current step of analysis: {step}')
+                self.logger.debug(f'Current chromatograph status: {step}')
             if step != 9:
                 break
             time.sleep(60)
@@ -118,9 +118,16 @@ class ChromatecCrystal5000(Chromatograph):
         """
         if not self.modbus_client:
             raise ChromatographModbusException('Chromatograph is not connected')
+        if self.logger:
+            self.logger.info('Checking if chromatograph is ready for analysis')
         response = self.modbus_client.read_input_registers(address=self.current_step_address, count=2, unit=self.control_panel_id)
         step = self._bytes_to_int(response.registers)
-        return step == 4
+        if self.logger:
+            self.logger.debug(f'Current chromatograph status: {step}')
+        is_ready_for_analysis = step == 4
+        if self.logger:
+            self.logger.debug(f'Chromatograph is ready for analysis: {is_ready_for_analysis}')
+        return is_ready_for_analysis
 
     def _bytes_to_string(self, response_bytes:list[int]) -> str:
         """
