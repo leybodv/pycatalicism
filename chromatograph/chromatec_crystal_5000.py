@@ -9,10 +9,51 @@ from pycatalicism.chromatograph.chromatograph_exceptions import ChromatographMod
 
 class ChromatecCrystal5000(Chromatograph):
     """
+    Class represents Chromatec Crystal 5000 chromatograph communitacting through modbus protocol.
     """
 
     def __init__(self, control_panel_id:int, analytics_id:int, serial_id:str, lab_name:str, methods:dict[str,int], chromatograph_command_address:int, application_command_address:int, chromatograph_serial_id_address:int, set_method_address:int, current_step_address:int, connection_status_address:int, chromatogram_lab_name_address:int, chromatogram_name_address:int, chromatogram_sample_volume_address:int, chromatogram_sample_dilution_address:int, chromatogram_operator_address:int, chromatogram_column_address:int, logger:Logger|None):
         """
+        Initializes instance variables based on the provided parameters.
+
+        parameters
+        ----------
+        control_panel_id:int
+            modbus slave id of control panel software
+        analytics_id:int
+            modbux slave id of analytics software
+        serial_id:str
+            serial number of chromatograph (used to ensure successful connection to control panel via modbus)
+        lab_name:str
+            lab name as must be written in every chromatogram passport (used to ensure successful connection to analytics via modbus)
+        methods:dict[str,int]
+            dictionary of instrumental methods used in control panel software with their corresponding number counted from 0, as they appear in a control panel
+        chromatograph_command_address:int
+            modbus address for chromatograph commands (see chromatec modbus manual for details)
+        application_command_address:int
+            modbus address for application commands (see chromatec modbus manual for details)
+        chromatograph_serial_id_address:int
+            modbus address with chromatograph serial number
+        set_method_address:int
+            modbus address for setting instrumental methods
+        current_step_address:int
+            modbus address of current chromatograph status (analysis, purging, preparing etc.)
+        connection_status_address:int
+            modbus address for chromatograph and its applications connection status
+        chromatogram_lab_name_address:int
+            modbus address for lab name as written in the passport of chromatogram
+        chromatogram_name_address:int
+            modbus address for chromatogram name as written in the passport of chromatogram
+        chromatogram_sample_volume_address:int
+            modbus address for sample volume as written in the passport of chromatogram
+        chromatogram_sample_dilution_address:int
+            modbus address for sample dilution as written in the passport of chromatogram
+        chromatogram_operator_address:int
+            modbus address for operator as written in the passport of chromatogram
+        chromatogram_column_address:int
+            modbus address for column as written in the passport of chromatogram
+        logger:Logger|None
+            logger for logging relevant information or None to disable logging
         """
         self.control_panel_id = control_panel_id
         self.analytics_id = analytics_id
