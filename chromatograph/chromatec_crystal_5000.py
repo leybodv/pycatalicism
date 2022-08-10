@@ -298,6 +298,17 @@ class ChromatecCrystal5000(Chromatograph):
 
     def _double_to_bytes(self, double:float) -> tuple[int]:
         """
+        Encodes double value into bytes to be sent to chromatograph.
+
+        parameters
+        ----------
+        double:float
+            value to encode
+
+        returns
+        -------
+        message:tuple[int]
+            bytes to sent to chromatograph
         """
         if self.logger:
             self.logger.debug(f'Converting double {double} to bytes')
