@@ -5,5 +5,5 @@ class ChromatographException(Exception):
 
 class ChromatographStateException(ChromatographException):
     """
-    Exceptions related chromatograph state
+    Exceptions related to chromatograph state
     """
