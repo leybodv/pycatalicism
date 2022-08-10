@@ -133,10 +133,16 @@ class ChromatecCrystal5000(Chromatograph):
     def _bytes_to_string(self, response_bytes:list[int]) -> str:
         """
         """
+        if self.logger:
+            self.logger.debug(f'Converting bytes: {response_bytes} to string')
         string = b''
         for b in response_bytes:
             string += b.to_bytes(2, 'big')
+        if self.logger:
+            self.logger.log(5, f'String bytes: {string = }')
         string = string.decode().rstrip('\x00')
+        if self.logger:
+            self.logger.log(5, f'{string = }')
         return string
 
     def _bytes_to_int(self, response_bytes:list[int]) -> int:
