@@ -51,6 +51,15 @@ furnace_parser.add_argument('--show-plot', action='store_true', help='show tempe
 furnace_parser.add_argument('--export-plot', default=None, help='path to file to save plot of temperature vs. time as png image')
 furnace_parser.add_argument('--export-data', default=None, help='path to file to save temperature vs. time data')
 
+chromatograph_parser = subparsers.add_parser('start-analysis')
+chromatograph_parser.set_defaults(func=start_analysis)
+chromatograph_parser.add_argument('--instrument-method', required=True, help='instrumental method to set before starting the analysis')
+chromatograph_parser.add_argument('--name', required=True, help='name of chromatogram will be saved in passport')
+chromatograph_parser.add_argument('--sample-volume', required=True, help='sample volume will be saved in passport')
+chromatograph_parser.add_argument('--sample-dilution', required=True, help='sample dilution will be saved in passport')
+chromatograph_parser.add_argument('--operator', required=True, help='operator name will be saved in passport')
+chromatograph_parser.add_argument('--column', required=True, help='column name will be saved in passport')
+
 if (__name__ == '__main__'):
     args = parser.parse_args()
     args.func(args)
