@@ -148,7 +148,12 @@ class ChromatecCrystal5000(Chromatograph):
     def _bytes_to_int(self, response_bytes:list[int]) -> int:
         """
         """
-        return response_bytes[0]
+        if self.logger:
+            self.logger.debug(f'Converting bytes: {response_bytes} to int')
+        integer = response_bytes[0]
+        if self.logger:
+            self.logger.log(5, f'{integer = }')
+        return integer
 
     def _string_to_bytes(self, string:str) -> tuple[int]:
         """
