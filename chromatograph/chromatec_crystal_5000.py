@@ -1,5 +1,6 @@
 import time
 import struct
+from logging import Logger
 
 from pymodbus.client.sync import ModbusTcpClient
 
@@ -10,7 +11,7 @@ class ChromatecCrystal5000(Chromatograph):
     """
     """
 
-    def __init__(self, control_panel_id:int, analytics_id:int, serial_id:str, lab_name:str, methods:dict[str,int], chromatograph_command_address:int, application_command_address:int, chromatograph_serial_id_address:int, set_method_address:int, current_step_address:int, connection_status_address:int, chromatogram_lab_name_address:int, chromatogram_name_address:int, chromatogram_sample_volume_address:int, chromatogram_sample_dilution_address:int, chromatogram_operator_address:int, chromatogram_column_address:int):
+    def __init__(self, control_panel_id:int, analytics_id:int, serial_id:str, lab_name:str, methods:dict[str,int], chromatograph_command_address:int, application_command_address:int, chromatograph_serial_id_address:int, set_method_address:int, current_step_address:int, connection_status_address:int, chromatogram_lab_name_address:int, chromatogram_name_address:int, chromatogram_sample_volume_address:int, chromatogram_sample_dilution_address:int, chromatogram_operator_address:int, chromatogram_column_address:int, logger:Logger):
         """
         """
         self.control_panel_id = control_panel_id
@@ -31,23 +32,43 @@ class ChromatecCrystal5000(Chromatograph):
         self.chromatogram_operator_address = chromatogram_operator_address
         self.chromatogram_column_address = chromatogram_column_address
         self.modbus_client = None
+        if logger:
+            self.logger = logger
 
     def connect(self) -> bool:
         """
         check some register from chromatograph analytics also!
         """
+        if self.logger:
+            self.logger.info('Connecting to Chromatec Crystal 5000 chromatograph')
         self.modbus_client = ModbusTcpClient()
+        if self.logger:
+            self.logger.info('Starting control panel and analytic software')
         self.modbus_client.write_registers(address=self.application_command_address, values=[1], unit=self.control_panel_id)
+        if self.logger:
+            self.logger.info('Waiting for control panel and analytic software to start...')
         while True:
             response = self.modbus_client.read_input_registers(address=self.connection_status_address, count=1, unit=self.control_panel_id)
+            if self.logger:
+                self.logger.debug(f'Response from modbus: {response.registers}')
             if response.registers[0] == 7:
                 break
             time.sleep(1)
+        if self.logger:
+            self.logger.info('Checking chromatograph serial number')
         control_panel_response = self.modbus_client.read_input_registers(address=self.chromatograph_serial_id_address, count=15, unit=self.control_panel_id)
         serial_id = self._bytes_to_string(control_panel_response.registers)
+        if self.logger:
+            self.logger.debug(f'Serial number received from chromatograph: {serial_id}')
+            self.logger.info('Checking lab name from analytics software')
         analytics_response = self.modbus_client.read_input_registers(address=self.chromatogram_lab_name_address, count=15, unit=self.analytics_id)
         lab_name = self._bytes_to_string(analytics_response.registers)
-        return serial_id == self.serial_id and lab_name == self.lab_name
+        if self.logger:
+            self.logger.debug(f'Laboratory name received from analytics software: {lab_name}')
+        connection_is_successful = serial_id == self.serial_id and lab_name == self.lab_name
+        if self.logger:
+            self.logger.info(f'Connection successful: {connection_is_successful}')
+        return connection_is_successful
 
     def set_instrument_method(self, method:str):
         """
