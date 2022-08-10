@@ -3,7 +3,7 @@ class ChromatographException(Exception):
     Common cromatograph exceptions
     """
 
-class ChromatographModbusException(ChromatographException):
+class ChromatographStateException(ChromatographException):
     """
-    Exceptions related to modbus protocol
+    Exceptions related chromatograph state
     """
