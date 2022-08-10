@@ -158,13 +158,20 @@ class ChromatecCrystal5000(Chromatograph):
     def _string_to_bytes(self, string:str) -> tuple[int]:
         """
         """
+        if self.logger:
+            self.logger.debug(f'Converting string {string} to bytes')
         if len(string) > 30:
-            # log warning, string will be cut down to 30 chars
+            if self.logger:
+                self.logger.warning(f'String cannot be > 30 chars long due to modbus limitation. Will be cut to 30 chars')
             string = string[0:30]
         if len(string) % 2 != 0:
             string += '\x00'
         string_bytes = bytes(string.encode())
+        if self.logger:
+            self.logger.log(5, f'{string_bytes = }')
         message = struct.unpack('>'+'H'*int(len(string_bytes)/2), string_bytes)
+        if self.logger:
+            self.logger.log(5, f'{message = }')
         return message
 
     def _double_to_bytes(self, double:float) -> tuple[int]:
