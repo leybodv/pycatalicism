@@ -85,17 +85,27 @@ class ChromatecCrystal5000(Chromatograph):
         """
         if not self.modbus_client:
             raise ChromatographModbusException('Chromatograph is not connected')
+        if self.logger:
+            self.logger.info('Waiting while chromatograph is ready to start analysis')
         while True:
             if self.is_ready_for_analysis():
                 break
             time.sleep(60)
+        if self.logger:
+            self.logger.info('Starting analysis')
         self.modbus_client.write_registers(address=self.chromatograph_command_address, values=[6], unit=self.control_panel_id)
+        if self.logger:
+            self.logger.info('Waiting until analysis is finished')
         while True:
             response = self.modbus_client.read_input_registers(address=self.current_step_address, count=2, unit=self.control_panel_id)
             step = self._bytes_to_int(response.registers)
+            if self.logger:
+                self.logger.debug(f'Current step of analysis: {step}')
             if step != 9:
                 break
             time.sleep(60)
+        if self.logger:
+            self.logger.info('Writing information about chromatogram')
         self.modbus_client.write_registers(address=self.chromatogram_name_address, values=self._string_to_bytes(chromatogram_name), unit=self.analytics_id)
         self.modbus_client.write_registers(address=self.chromatogram_sample_volume_address, values=self._double_to_bytes(chromatogram_sample_volume), unit=self.analytics_id)
         self.modbus_client.write_registers(address=self.chromatogram_sample_dilution_address, values=self._double_to_bytes(chromatogram_sample_dilution), unit=self.analytics_id)
