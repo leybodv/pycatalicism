@@ -247,6 +247,17 @@ class ChromatecCrystal5000(Chromatograph):
 
     def _bytes_to_int(self, response_bytes:list[int]) -> int:
         """
+        Converts bytes received from chromatograph to integer.
+
+        parameters
+        ----------
+        response_bytes:list[int]
+            bytes received from chromatograph
+
+        returns
+        -------
+        integer:int
+            decoded integer
         """
         if self.logger:
             self.logger.debug(f'Converting bytes: {response_bytes} to int')
