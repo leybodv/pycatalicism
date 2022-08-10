@@ -268,6 +268,17 @@ class ChromatecCrystal5000(Chromatograph):
 
     def _string_to_bytes(self, string:str) -> tuple[int]:
         """
+        Encodes string into bytes to be sent to chromatograph. NB: if string is more than 30 chars long, it will be concatenated to 30 chars due to the modbus limitations. A warning is logged in this case.
+
+        parameters
+        ----------
+        string:str
+            string to encode
+
+        returns
+        -------
+        message:tuple[int]
+            bytes to sent to chromatograph
         """
         if self.logger:
             self.logger.debug(f'Converting string {string} to bytes')
