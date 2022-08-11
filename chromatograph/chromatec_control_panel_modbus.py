@@ -6,6 +6,7 @@ import chromatograph_logging
 
 class WorkingStatus(Enum):
     """
+    Working status of chromatograph and corresponding values in modbus protocol
     """
     PURGING = 5
     ANALYSIS = 9
@@ -14,6 +15,7 @@ class WorkingStatus(Enum):
 
 class ConnectionStatus(Enum):
     """
+    Connection status of chromatograph and corresponding values in modbus protocol
     """
     CP_ON_CONNECTED = 7
     CP_ON_NOT_CONNECTED = 1
@@ -21,20 +23,41 @@ class ConnectionStatus(Enum):
 
 class ChromatographCommand(Enum):
     """
+    Commands for chromatograph control and corresponding values in modbus protocol
     """
     START_ANALYSIS = 6
 
 class ApplicationCommand(Enum):
     """
+    Commands for application control and corresponding values in modbus protocol
     """
     START_CONTROL_PANEL = 1
 
 class ChromatecControlPanelModbus():
     """
+    Class represents simplified version of modbus protocol for connection with chromatec control panel modbus slave.
     """
 
     def __init__(self, modbus_id:int, working_status_input_address:int, serial_number_input_address:int, connection_status_input_address:int, method_holding_address:int, chromatograph_command_holding_address:int, application_command_holding_address:int):
         """
+        Initializes instance private variables, creates modbus client and registers logger.
+
+        parameters
+        ----------
+        modbus_id:int
+            modbus slave id of control panel software
+        working_status_input_address:int
+            modbus address of current chromatograph status (analysis, purging, preparing etc.)
+        serial_number_input_address:int
+            modbus address with chromatograph serial number
+        connection_status_input_address:int
+            modbus address for chromatograph and its applications connection status
+        method_holding_address:int
+            modbus address for setting instrumental methods
+        chromatograph_command_holding_address:int
+            modbus address for chromatograph commands (see chromatec modbus manual for details)
+        application_command_holding_address:int
+            modbus address for application commands (see chromatec modbus manual for details)
         """
         self._modbus_id = modbus_id
         self._working_status_input_address = working_status_input_address
