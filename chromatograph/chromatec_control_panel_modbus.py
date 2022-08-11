@@ -109,8 +109,10 @@ class ChromatecControlPanelModbus():
         connection_status:ConnectionStatus
             one of the constants defined in ConnectionStatus enum
         """
+        self._logger.debug('Getting chromatograph and control panel connection status')
         response = self._modbus_client.read_input_registers(address=self._connection_status_input_address, count=1, unit=self._modbus_id)
         connection_status = ConnectionStatus(response.registers[0])
+        self._logger.log(5, f'{connection_status = }')
         return connection_status
 
     def set_instrument_method(self, method_id:int):
