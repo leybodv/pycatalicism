@@ -79,7 +79,7 @@ class ChromatecControlPanelModbus():
     def send_application_command(self, command:ApplicationCommand):
         """
         """
-        raise NotImplementedError()
+        self._modbus_client.write_registers(address=self._application_command_holding_address, values=[command.value], unit=self._modbus_id)
 
     def _bytes_to_int(self, response_bytes:list[int]) -> int:
         """
