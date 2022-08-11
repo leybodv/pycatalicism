@@ -26,6 +26,7 @@ class ChromatographCommand(Enum):
     """
     Commands for chromatograph control and corresponding values in modbus protocol
     """
+    CONNECT_CHROMATOGRAPH = 1
     START_ANALYSIS = 6
 
 class ApplicationCommand(Enum):
