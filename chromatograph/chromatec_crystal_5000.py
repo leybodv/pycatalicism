@@ -12,3 +12,28 @@ class ChromatecCrystal5000():
         self._control_panel = control_panel
         self._analytic = analytic
         self._logger = chromatograph_logging.get_logger(self.__class__.__name__)
+
+    def connect(self):
+        """
+        """
+        raise NotImplementedError()
+
+    def set_method(self, method:str):
+        """
+        """
+        raise NotImplementedError()
+
+    def is_ready_for_analysis(self) -> bool:
+        """
+        """
+        raise NotImplementedError()
+
+    def start_analysis(self):
+        """
+        """
+        raise NotImplementedError()
+
+    def set_passport(self):
+        """
+        """
+        raise NotImplementedError()
