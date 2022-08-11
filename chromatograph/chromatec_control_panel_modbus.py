@@ -122,6 +122,12 @@ class ChromatecControlPanelModbus():
 
     def send_chromatograph_command(self, command:ChromatographCommand):
         """
+        Send command to chromatograph.
+
+        parameters
+        ----------
+        command:ChromatographCommand
+            one of the constants defined in ChromatographCommand enum
         """
         self._modbus_client.write_registers(address=self._chromatograph_command_holding_address, values=[command.value], unit=self._modbus_id)
 
