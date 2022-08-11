@@ -99,3 +99,26 @@ class ChromatecControlPanelModbus():
         integer = response_bytes[0]
         self._logger.log(5, f'{integer = }')
         return integer
+
+    def _bytes_to_string(self, response_bytes:list[int]) -> str:
+        """
+        Converts bytes received from chromatograph to string.
+
+        parameters
+        ----------
+        response_bytes:list[int]
+            bytes received from chromatograph
+
+        returns
+        -------
+        string:str
+            decoded string
+        """
+        self._logger.debug(f'Converting bytes: {response_bytes} to string')
+        string = b''
+        for b in response_bytes:
+            string += b.to_bytes(2, 'big')
+        self._logger.log(5, f'String bytes: {string = }')
+        string = string.decode().rstrip('\x00')
+        self._logger.log(5, f'{string = }')
+        return string
