@@ -111,6 +111,12 @@ class ChromatecControlPanelModbus():
 
     def set_instrument_method(self, method_id:int):
         """
+        Sets instrumental method to specified method id.
+
+        parameters
+        ----------
+        method_id:int
+            sequential number of instrumental method
         """
         self._modbus_client.write_registers(address=self._method_holding_address, values=[method_id], unit=self._modbus_id)
 
