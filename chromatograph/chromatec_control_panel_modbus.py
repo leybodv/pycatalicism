@@ -69,7 +69,7 @@ class ChromatecControlPanelModbus():
     def set_instrument_method(self, method_id:int):
         """
         """
-        raise NotImplementedError()
+        self._modbus_client.write_registers(address=self._method_holding_address, values=[method_id], unit=self._modbus_id)
 
     def send_chromatograph_command(self, command:ChromatographCommand):
         """
