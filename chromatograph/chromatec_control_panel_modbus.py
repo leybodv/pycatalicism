@@ -42,6 +42,7 @@ class ChromatecControlPanelModbus():
         self._chromatograph_command_holding_address = chromatograph_command_holding_address
         self._application_command_holding_address = application_command_holding_address
         self._modbus_client = ModbusTcpClient()
+        self._logger = chromatograph_logging.get_logger(self.__class__.__name__)
 
     def get_current_working_status(self) -> WorkingStatus:
         """
@@ -75,3 +76,22 @@ class ChromatecControlPanelModbus():
         """
         """
         raise NotImplementedError()
+
+    def _bytes_to_int(self, response_bytes:list[int]) -> int:
+        """
+        Converts bytes received from chromatograph to integer.
+
+        parameters
+        ----------
+        response_bytes:list[int]
+            bytes received from chromatograph
+
+        returns
+        -------
+        integer:int
+            decoded integer
+        """
+        self._logger.debug(f'Converting bytes: {response_bytes} to int')
+        integer = response_bytes[0]
+        self._logger.log(5, f'{integer = }')
+        return integer
