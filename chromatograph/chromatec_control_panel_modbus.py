@@ -3,6 +3,7 @@ from enum import Enum
 from pymodbus.client.sync import ModbusTcpClient
 
 import pycatalicism.chromatograph.chromatograph_logging as chromatograph_logging
+import pycatalicism.chromatograph.modbus_converter as convert
 
 class WorkingStatus(Enum):
     """
@@ -80,7 +81,7 @@ class ChromatecControlPanelModbus():
         """
         self._logger.debug('Getting current working status of chromatograph')
         response = self._modbus_client.read_input_registers(address=self._working_status_input_address, count=2, unit=self._modbus_id)
-        current_status_id = self._bytes_to_int(response.registers)
+        current_status_id = convert.bytes_to_int(response.registers)
         current_status = WorkingStatus(current_status_id)
         self._logger.log(5, f'{current_status = }')
         return current_status
@@ -96,7 +97,7 @@ class ChromatecControlPanelModbus():
         """
         self._logger.debug('Getting chromatograph serial number')
         response = self._modbus_client.read_input_registers(address=self._serial_number_input_address, count=15, unit=self._modbus_id)
-        serial_number = self._bytes_to_string(response.registers)
+        serial_number = convert.bytes_to_string(response.registers)
         self._logger.log(5, f'{serial_number = }')
         return serial_number
 
@@ -150,45 +151,3 @@ class ChromatecControlPanelModbus():
         """
         self._logger.debug(f'Sending command to control panel: {command}')
         self._modbus_client.write_registers(address=self._application_command_holding_address, values=[command.value], unit=self._modbus_id)
-
-    def _bytes_to_int(self, response_bytes:list[int]) -> int:
-        """
-        Converts bytes received from chromatograph to integer.
-
-        parameters
-        ----------
-        response_bytes:list[int]
-            bytes received from chromatograph
-
-        returns
-        -------
-        integer:int
-            decoded integer
-        """
-        self._logger.debug(f'Converting bytes: {response_bytes} to int')
-        integer = response_bytes[0]
-        self._logger.log(5, f'{integer = }')
-        return integer
-
-    def _bytes_to_string(self, response_bytes:list[int]) -> str:
-        """
-        Converts bytes received from chromatograph to string.
-
-        parameters
-        ----------
-        response_bytes:list[int]
-            bytes received from chromatograph
-
-        returns
-        -------
-        string:str
-            decoded string
-        """
-        self._logger.debug(f'Converting bytes: {response_bytes} to string')
-        string = b''
-        for b in response_bytes:
-            string += b.to_bytes(2, 'big')
-        self._logger.log(5, f'String bytes: {string = }')
-        string = string.decode().rstrip('\x00')
-        self._logger.log(5, f'{string = }')
-        return string
