@@ -92,3 +92,11 @@ def double_to_bytes(double:float) -> tuple[int]:
     message = struct.unpack('<HHHH', double_bytes)
     _logger.log(5, f'{message = }')
     return message
+
+def int_to_bytes(integer:int) -> list[int]:
+    """
+    """
+    _logger.debug(f'Converting integer {integer} to bytes')
+    integer_bytes = [integer]
+    _logger.log(5, f'{integer_bytes = }')
+    return integer_bytes
