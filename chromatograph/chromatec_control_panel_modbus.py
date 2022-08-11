@@ -2,6 +2,8 @@ from enum import Enum
 
 from pymodbus.client.sync import ModbusTcpClient
 
+import chromatograph_logging
+
 class WorkingStatus(Enum):
     """
     """
@@ -55,7 +57,9 @@ class ChromatecControlPanelModbus():
     def get_serial_number(self) -> str:
         """
         """
-        raise NotImplementedError()
+        response = self._modbus_client.read_input_registers(address=self._serial_number_input_address, count=15, unit=self._modbus_id)
+        serial_number = self._bytes_to_string(response.registers)
+        return serial_number
 
     def get_connection_status(self) -> ConnectionStatus:
         """
