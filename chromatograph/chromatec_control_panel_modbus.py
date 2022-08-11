@@ -99,7 +99,9 @@ class ChromatecControlPanelModbus():
     def get_connection_status(self) -> ConnectionStatus:
         """
         """
-        raise NotImplementedError()
+        response = self._modbus_client.read_input_registers(address=self._connection_status_input_address, count=1, unit=self._modbus_id)
+        connection_status = ConnectionStatus(response.registers[0])
+        return connection_status
 
     def set_instrument_method(self, method_id:int):
         """
