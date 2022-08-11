@@ -94,8 +94,10 @@ class ChromatecControlPanelModbus():
         serial_number:str
             serial number of chromatograph
         """
+        self._logger.debug('Getting chromatograph serial number')
         response = self._modbus_client.read_input_registers(address=self._serial_number_input_address, count=15, unit=self._modbus_id)
         serial_number = self._bytes_to_string(response.registers)
+        self._logger.log(5, f'{serial_number = }')
         return serial_number
 
     def get_connection_status(self) -> ConnectionStatus:
