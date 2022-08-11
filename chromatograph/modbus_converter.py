@@ -95,6 +95,17 @@ def double_to_bytes(double:float) -> tuple[int]:
 
 def int_to_bytes(integer:int) -> list[int]:
     """
+    Convert integer to bytes to be sent to chromatograph.
+
+    parameters
+    ----------
+    integer:int
+        value to encode
+
+    returns
+    -------
+    message:list[int]
+        bytes to sent to chromatograph
     """
     _logger.debug(f'Converting integer {integer} to bytes')
     integer_bytes = [integer]
