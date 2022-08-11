@@ -2,7 +2,7 @@ from enum import Enum
 
 from pymodbus.client.sync import ModbusTcpClient
 
-import chromatograph_logging
+import pycatalicism.chromatograph.chromatograph_logging as chromatograph_logging
 
 class WorkingStatus(Enum):
     """
@@ -85,6 +85,12 @@ class ChromatecControlPanelModbus():
 
     def get_serial_number(self) -> str:
         """
+        Get serial number of chromatograph.
+
+        returns
+        -------
+        serial_number:str
+            serial number of chromatograph
         """
         response = self._modbus_client.read_input_registers(address=self._serial_number_input_address, count=15, unit=self._modbus_id)
         serial_number = self._bytes_to_string(response.registers)
