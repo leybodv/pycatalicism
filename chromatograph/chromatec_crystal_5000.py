@@ -3,10 +3,12 @@ import time
 import pycatalicism.chromatograph.chromatograph_logging as chromatograph_logging
 from pycatalicism.chromatograph.chromatec_control_panel_modbus import ChromatecControlPanelModbus
 from pycatalicism.chromatograph.chromatec_control_panel_modbus import ConnectionStatus
+from pycatalicism.chromatograph.chromatec_control_panel_modbus import WorkingStatus
 from pycatalicism.chromatograph.chromatec_control_panel_modbus import ChromatographCommand
 from pycatalicism.chromatograph.chromatec_control_panel_modbus import ApplicationCommand
 from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatecAnalyticModbus
 from pycatalicism.chromatograph.chromatograph_exceptions import ChromatographException
+from pycatalicism.chromatograph.chromatograph_exceptions import ChromatographStateException
 
 class ChromatecCrystal5000():
     """
@@ -56,10 +58,15 @@ class ChromatecCrystal5000():
             self._logger.info('Chromatograph connected already')
         else:
             raise ChromatographException(f'Unknown connection status: {self._connection_status}')
+        self._working_status = self._control_panel.get_current_working_status()
 
     def set_method(self, method:str):
         """
         """
+        if self._connection_status is not ConnectionStatus.CP_ON_CONNECTED:
+            raise ChromatographStateException('Connect to chromatograph first!')
+        if self._connection_status is WorkingStatus.ANALYSIS:
+            raise ChromatographStateException('Analysis is in progress!')
         raise NotImplementedError()
 
     def is_ready_for_analysis(self) -> bool:
