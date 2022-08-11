@@ -133,6 +133,12 @@ class ChromatecControlPanelModbus():
 
     def send_application_command(self, command:ApplicationCommand):
         """
+        Send command to control panel application.
+
+        parameters
+        ----------
+        command:ApplicationCommand
+            one of the constants defined in ApplicationCommand enum
         """
         self._modbus_client.write_registers(address=self._application_command_holding_address, values=[command.value], unit=self._modbus_id)
 
