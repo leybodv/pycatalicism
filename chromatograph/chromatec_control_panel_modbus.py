@@ -78,9 +78,11 @@ class ChromatecControlPanelModbus():
         current_status:WorkingStatus
             one of the constants defined in WorkingStatus enum
         """
+        self._logger.debug('Getting current working status of chromatograph')
         response = self._modbus_client.read_input_registers(address=self._working_status_input_address, count=2, unit=self._modbus_id)
         current_status_id = self._bytes_to_int(response.registers)
         current_status = WorkingStatus(current_status_id)
+        self._logger.log(5, f'{current_status = }')
         return current_status
 
     def get_serial_number(self) -> str:
