@@ -1,3 +1,13 @@
+from enum import Enum
+
+class CurrentStep(Enum):
+    """
+    """
+    PURGING = 5
+    ANALYSIS = 9
+    PREPARATION = 1
+    READY_FOR_ANALYSIS = 4
+
 class ChromatecControlPanelModbus():
     """
     """
