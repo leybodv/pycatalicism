@@ -1,6 +1,14 @@
+from enum import Enum
+
 from pymodbus.client.sync import ModbusTcpClient
 
 import pycatalicism.chromatograph.chromatograph_logging as chromatograph_logging
+
+class ChromatogramPurpose(Enum):
+    """
+    """
+    ANALYSIS = 0
+    GRADUATION = 1
 
 class ChromatecAnalyticModbus():
     """
