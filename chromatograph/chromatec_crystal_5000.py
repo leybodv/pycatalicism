@@ -14,14 +14,15 @@ class ChromatecCrystal5000():
     """
     """
 
-    def __init__(self, control_panel:ChromatecControlPanelModbus, analytic:ChromatecAnalyticModbus):
+    def __init__(self, control_panel:ChromatecControlPanelModbus, analytic:ChromatecAnalyticModbus, methods:dict[str, int]):
         """
         """
         self._control_panel = control_panel
         self._analytic = analytic
+        self._methods = methods
         self._logger = chromatograph_logging.get_logger(self.__class__.__name__)
-        self._connection_status = control_panel.get_connection_status()
-        self._working_status = control_panel.get_current_working_status()
+        self._connection_status = self._control_panel.get_connection_status()
+        self._working_status = self._control_panel.get_current_working_status()
 
     def connect(self):
         """
@@ -32,6 +33,8 @@ class ChromatecCrystal5000():
         ChromatographException
             if unknown connection status was get from chromatograph
         """
+        self._connection_status = self._control_panel.get_connection_status()
+        self._working_status = self._control_panel.get_current_working_status()
         if self._connection_status is ConnectionStatus.CP_OFF_NOT_CONNECTED:
             self._logger.info('Starting control panel application')
             self._control_panel.send_application_command(ApplicationCommand.START_CONTROL_PANEL)
@@ -62,12 +65,26 @@ class ChromatecCrystal5000():
 
     def set_method(self, method:str):
         """
+        Set chromatograph instrument method. Chromatograph start to prepare itself for analysis accordingly.
+
+        parameters
+        ----------
+        method:str
+            method to send to chromatograph
+
+        raises
+        ------
+        ChromatographStateException
+            if connection to chromatograph is not established or analysis is in progress now
         """
+        self._connection_status = self._control_panel.get_connection_status()
+        self._working_status = self._control_panel.get_current_working_status()
         if self._connection_status is not ConnectionStatus.CP_ON_CONNECTED:
             raise ChromatographStateException('Connect to chromatograph first!')
-        if self._connection_status is WorkingStatus.ANALYSIS:
+        if self._working_status is WorkingStatus.ANALYSIS:
             raise ChromatographStateException('Analysis is in progress!')
-        raise NotImplementedError()
+        self._logger.info(f'Setting method to {method}')
+        self._control_panel.set_instrument_method(self._methods[method])
 
     def is_ready_for_analysis(self) -> bool:
         """
