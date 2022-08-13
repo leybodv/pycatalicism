@@ -88,8 +88,26 @@ class ChromatecCrystal5000():
 
     def is_ready_for_analysis(self) -> bool:
         """
+        Check if chromatograph is ready for analysis.
+
+        returns
+        -------
+        is_ready_for_analysis:bool
+            True if chromatograph is ready for analysis
+
+        raises
+        ------
+        ChromatographStateException
+            if connection to chromatograph is not established
         """
-        raise NotImplementedError()
+        self._connection_status = self._control_panel.get_connection_status()
+        self._working_status = self._control_panel.get_current_working_status()
+        if self._connection_status is not ConnectionStatus.CP_ON_CONNECTED:
+            raise ChromatographStateException('Connect to chromatograph first!')
+        self._logger.info('Checking if chromatograph is ready for analysis')
+        is_ready_for_analysis = self._working_status is WorkingStatus.READY_FOR_ANALYSIS
+        self._logger.info(f'Chromatograph is ready for analysis: {is_ready_for_analysis}')
+        return is_ready_for_analysis
 
     def start_analysis(self):
         """
