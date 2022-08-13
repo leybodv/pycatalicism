@@ -111,8 +111,24 @@ class ChromatecCrystal5000():
 
     def start_analysis(self):
         """
+        Start analysis.
+
+        raises
+        ------
+        ChromatographStateException
+            if chromatograph is not connected or instrumental method was not started yet or chromatograph is not ready to start analysis
         """
-        raise NotImplementedError()
+        self._connection_status = self._control_panel.get_connection_status()
+        self._working_status = self._control_panel.get_current_working_status()
+        if self._connection_status is not ConnectionStatus.CP_ON_CONNECTED:
+            raise ChromatographStateException('Connect to chromatograph first!')
+        if self._working_status is WorkingStatus.NULL:
+            raise ChromatographStateException('Start some instrumental method first!')
+        if self._working_status is not WorkingStatus.READY_FOR_ANALYSIS:
+            raise ChromatographStateException('Chromatograph is not ready to start analysis')
+        else:
+            self._logger.info('Starting analysis')
+            self._control_panel.send_chromatograph_command(ChromatographCommand.START_ANALYSIS)
 
     def set_passport(self):
         """
