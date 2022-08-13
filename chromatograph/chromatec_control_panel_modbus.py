@@ -13,6 +13,7 @@ class WorkingStatus(Enum):
     ANALYSIS = 9
     PREPARATION = 1
     READY_FOR_ANALYSIS = 4
+    NULL = 0
 
 class ConnectionStatus(Enum):
     """
