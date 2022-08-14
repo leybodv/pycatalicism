@@ -13,10 +13,12 @@ from pycatalicism.chromatograph.chromatograph_exceptions import ChromatographSta
 
 class ChromatecCrystal5000():
     """
+    Class represents chromatec crystal 5000 chromatograph. Communication is done via modbus protocol.
     """
 
     def __init__(self, control_panel:ChromatecControlPanelModbus, analytic:ChromatecAnalyticModbus, methods:dict[str, int]):
         """
+        Initializes instance variables, registers logger, checks chromatograph status.
         """
         self._control_panel = control_panel
         self._analytic = analytic
