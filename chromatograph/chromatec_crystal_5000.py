@@ -6,6 +6,7 @@ from pycatalicism.chromatograph.chromatec_control_panel_modbus import Connection
 from pycatalicism.chromatograph.chromatec_control_panel_modbus import WorkingStatus
 from pycatalicism.chromatograph.chromatec_control_panel_modbus import ChromatographCommand
 from pycatalicism.chromatograph.chromatec_control_panel_modbus import ApplicationCommand
+from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatogramPurpose
 from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatecAnalyticModbus
 from pycatalicism.chromatograph.chromatograph_exceptions import ChromatographException
 from pycatalicism.chromatograph.chromatograph_exceptions import ChromatographStateException
@@ -130,7 +131,44 @@ class ChromatecCrystal5000():
             self._logger.info('Starting analysis')
             self._control_panel.send_chromatograph_command(ChromatographCommand.START_ANALYSIS)
 
-    def set_passport(self):
+    def set_passport(self, name:str, volume:float, dilution:float, purpose:ChromatogramPurpose, operator:str, column:str, lab_name:str):
         """
+        Set passport values for chromatogram. Method should be called after the analysis is finished otherwise previous chromatogram's passport will be changed.
+
+        parameters
+        ----------
+        name:str
+            name of chromatogram
+        volume:float
+            volume of sample
+        dilution:float
+            dilution of sample
+        purpose:ChromatogramPurpose
+            analysis or graduation
+        operator:str
+            name of operator
+        column:str
+            name of column
+        lab_name:str
+            name of laboratory
+
+        raises
+        ------
+        ChromatographStateException
+            if chromatograph is not connected or method was not started yet or analysis is in progress
         """
-        raise NotImplementedError()
+        self._connection_status = self._control_panel.get_connection_status()
+        self._working_status = self._control_panel.get_current_working_status()
+        if self._connection_status is not ConnectionStatus.CP_ON_CONNECTED:
+            raise ChromatographStateException('Connect chromatograph first!')
+        if self._working_status is WorkingStatus.NULL:
+            raise ChromatographStateException('Start some instrumental method first!')
+        if self._working_status is WorkingStatus.ANALYSIS:
+            raise ChromatographStateException('Analysis is in progress, cannot set passport for currently running chromatogram, wait until analysis is over!')
+        self._analytic.set_sample_name(name)
+        self._analytic.set_sample_volume(volume)
+        self._analytic.set_sample_dilution(dilution)
+        self._analytic.set_chromatogram_purpose(purpose)
+        self._analytic.set_operator(operator)
+        self._analytic.set_column(column)
+        self._analytic.set_lab_name(lab_name)
