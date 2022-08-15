@@ -8,10 +8,11 @@ import argparse
 
 import pycatalicism.calc.calc as calc
 import pycatalicism.furnace.furnace_module as furnace_module
-import config
+import pycatalicism.config as config
 from pycatalicism.calc.calculatorexception import CalculatorException
 from pycatalicism.chromatograph.chromatec_control_panel_modbus import ChromatecControlPanelModbus
 from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatecAnalyticModbus
+from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatogramPurpose
 from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
 
 def calculate(args:argparse.Namespace):
@@ -30,9 +31,39 @@ def heat(args:argparse.Namespace):
     """
     furnace_module.heat(temperature=args.temperature, wait=args.wait, show_plot=args.show_plot, export_plot=args.export_plot, export_data=args.export_data)
 
-control_panel_modbus = ChromatecControlPanelModbus(modbus_id=control_panel_modbus_id, working_status_input_address=working_status_input_address, serial_number_input_address=serial_number_input_address, connection_status_input_address=connection_status_input_address, method_holding_address=method_holding_address, chromatograph_command_holding_address=chromatograph_command_holding_address, application_command_holding_address=application_command_holding_address)
-analytic_modbus = ChromatecAnalyticModbus(modbus_id=analytic_modbus_id, sample_name_holding_address=sample_name_holding_address, chromatogram_purpose_holding_address=chromatogram_purpose_holding_address, sample_volume_holding_address=sample_volume_holding_address, sample_dilution_holding_address=sample_dilution_holding_address, operator_holding_address=operator_holding_address, column_holding_address=column_holding_address, lab_name_holding_address=lab_name_holding_address)
-chromatograph = ChromatecCrystal5000(control_panel_modbus, analytic_modbus, methods)
+def chromatograph_connect(args:argparse.Namespace):
+    """
+    Connect to chromatograph
+    """
+    chromatograph.connect()
+
+def chromatograph_set_method(args:argparse.Namespace):
+    """
+    Set chromatograph instrument method
+    """
+    chromatograph.set_method(method=args.method)
+
+def chromatograph_start_analysis(args:argparse.Namespace):
+    """
+    Start chromatograph analysis
+    """
+    chromatograph.start_analysis()
+
+def chromatograph_set_passport(args:argparse.Namespace):
+    """
+    Set values of chromatogram passport. Should be run after analysis is complete.
+    """
+    if args.purpose == 'analysis':
+        purpose = ChromatogramPurpose.ANALYSIS
+    elif args.purpose == 'graduation':
+        purpose = ChromatogramPurpose.GRADUATION
+    else:
+        raise Exception(f'Unknown chromatogram purpose: {args.purpose}')
+    chromatograph.set_passport(name=args.name, volume=float(args.volume), dilution=float(args.dilution), purpose=purpose, operator=args.operator, column=args.column, lab_name=args.lab_name)
+
+control_panel_modbus = ChromatecControlPanelModbus(modbus_id=config.control_panel_modbus_id, working_status_input_address=config.working_status_input_address, serial_number_input_address=config.serial_number_input_address, connection_status_input_address=config.connection_status_input_address, method_holding_address=config.method_holding_address, chromatograph_command_holding_address=config.chromatograph_command_holding_address, application_command_holding_address=config.application_command_holding_address)
+analytic_modbus = ChromatecAnalyticModbus(modbus_id=config.analytic_modbus_id, sample_name_holding_address=config.sample_name_holding_address, chromatogram_purpose_holding_address=config.chromatogram_purpose_holding_address, sample_volume_holding_address=config.sample_volume_holding_address, sample_dilution_holding_address=config.sample_dilution_holding_address, operator_holding_address=config.operator_holding_address, column_holding_address=config.column_holding_address, lab_name_holding_address=config.lab_name_holding_address)
+chromatograph = ChromatecCrystal5000(control_panel_modbus, analytic_modbus, config.methods)
 
 parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers(required=True)
@@ -58,14 +89,24 @@ furnace_parser.add_argument('--show-plot', action='store_true', help='show tempe
 furnace_parser.add_argument('--export-plot', default=None, help='path to file to save plot of temperature vs. time as png image')
 furnace_parser.add_argument('--export-data', default=None, help='path to file to save temperature vs. time data')
 
-chromatograph_parser = subparsers.add_parser('start-analysis')
-chromatograph_parser.set_defaults(func=start_analysis)
-chromatograph_parser.add_argument('--instrument-method', required=True, help='instrumental method to set before starting the analysis')
-chromatograph_parser.add_argument('--name', required=True, help='name of chromatogram will be saved in passport')
-chromatograph_parser.add_argument('--sample-volume', required=True, help='sample volume will be saved in passport')
-chromatograph_parser.add_argument('--sample-dilution', required=True, help='sample dilution will be saved in passport')
-chromatograph_parser.add_argument('--operator', required=True, help='operator name will be saved in passport')
-chromatograph_parser.add_argument('--column', required=True, help='column name will be saved in passport')
+chromatograph_parser = subparsers.add_parser('chromatograph')
+chromatograph_subparser = chromatograph_parser.add_subparsers(required=True)
+chromatograph_connect_parser = chromatograph_subparser.add_parser('connect', help='connect to chromatograph')
+chromatograph_connect_parser.set_defaults(func=chromatograph_connect)
+chromatograph_setmethod_parser = chromatograph_subparser.add_parser('set-method', help='set instrumental method of chromatograph')
+chromatograph_setmethod_parser.set_defaults(func=chromatograph_set_method)
+chromatograph_setmethod_parser.add_argument('method', help='method name')
+chromatograph_start_analysis_parser = chromatograph_subparser.add_parser('start-analysis', help='start analysis by chromatograph')
+chromatograph_start_analysis_parser.set_defaults(func=chromatograph_start_analysis)
+chromatograph_set_passport_parser = chromatograph_subparser.add_parser('set-passport', help='set chromatogram passport parameters (should be run after the analysis is over)')
+chromatograph_set_passport_parser.set_defaults(func=chromatograph_set_passport)
+chromatograph_set_passport_parser.add_argument('--name', required=True, help='name of chromatograpm')
+chromatograph_set_passport_parser.add_argument('--volume', default=0.5, help='sample volume')
+chromatograph_set_passport_parser.add_argument('--dilution', default=1, help='sample dilution')
+chromatograph_set_passport_parser.add_argument('--purpose', default='analysis', choises=['analysis', 'graduation'], help='purpose of chromatogram')
+chromatograph_set_passport_parser.add_argument('--operator', required=True, help='operator\'s name')
+chromatograph_set_passport_parser.add_argument('--column', required=True, help='column\'s name')
+chromatograph_set_passport_parser.add_argument('--lab-name', default='Неорганические наноматериалы', help='lab name')
 
 if (__name__ == '__main__'):
     args = parser.parse_args()
