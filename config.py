@@ -26,3 +26,30 @@ logging_levels = {
                     'COOxidationPlotter'                            :   logging.INFO,
                     'RawData'                                       :   logging.INFO,
                     }
+
+## chromatograph configuration ##
+control_panel_modbus_id = 1
+working_status_input_address = 0
+serial_number_input_address = 2
+connection_status_input_address = 17
+method_holding_address = 0
+chromatograph_command_holding_address = 2
+application_command_holding_address = 3
+analytic_modbus_id = 2
+sample_name_holding_address = 0
+chromatogram_purpose_holding_address = 15
+sample_volume_holding_address = 17
+sample_dilution_holding_address = 21
+operator_holding_address = 25
+column_holding_address = 40
+lab_name_holding_address = 55
+methods = {
+        '0'						:		0,
+        'co2-hydrogenation'		:		1,
+        '2'						:		2,
+        '3'						:		3,
+        '4'						:		4,
+        '5'						:		5,
+        '6'						:		6,
+        'purge'					:		7,
+        }
