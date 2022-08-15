@@ -12,6 +12,7 @@ import config
 from pycatalicism.calc.calculatorexception import CalculatorException
 from pycatalicism.chromatograph.chromatec_control_panel_modbus import ChromatecControlPanelModbus
 from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatecAnalyticModbus
+from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
 
 def calculate(args:argparse.Namespace):
     """
@@ -31,6 +32,7 @@ def heat(args:argparse.Namespace):
 
 control_panel_modbus = ChromatecControlPanelModbus(modbus_id=control_panel_modbus_id, working_status_input_address=working_status_input_address, serial_number_input_address=serial_number_input_address, connection_status_input_address=connection_status_input_address, method_holding_address=method_holding_address, chromatograph_command_holding_address=chromatograph_command_holding_address, application_command_holding_address=application_command_holding_address)
 analytic_modbus = ChromatecAnalyticModbus(modbus_id=analytic_modbus_id, sample_name_holding_address=sample_name_holding_address, chromatogram_purpose_holding_address=chromatogram_purpose_holding_address, sample_volume_holding_address=sample_volume_holding_address, sample_dilution_holding_address=sample_dilution_holding_address, operator_holding_address=operator_holding_address, column_holding_address=column_holding_address, lab_name_holding_address=lab_name_holding_address)
+chromatograph = ChromatecCrystal5000(control_panel_modbus, analytic_modbus, methods)
 
 parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers(required=True)
