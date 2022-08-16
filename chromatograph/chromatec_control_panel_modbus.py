@@ -4,6 +4,7 @@ from pymodbus.client.sync import ModbusTcpClient
 
 import pycatalicism.chromatograph.chromatograph_logging as chromatograph_logging
 import pycatalicism.chromatograph.modbus_converter as convert
+from pycatalicism.chromatograph.chromatograph_exceptions import ChromatographException
 
 class WorkingStatus(Enum):
     """
@@ -41,7 +42,7 @@ class ChromatecControlPanelModbus():
     Class represents simplified version of modbus protocol for connection with chromatec control panel modbus slave.
     """
 
-    def __init__(self, modbus_id:int, working_status_input_address:int, serial_number_input_address:int, connection_status_input_address:int, method_holding_address:int, chromatograph_command_holding_address:int, application_command_holding_address:int):
+    def __init__(self, modbus_id:int, working_status_input_address:int, serial_number_input_address:int, connection_status_input_address:int, method_holding_address:int, chromatograph_command_holding_address:int, application_command_holding_address:int, request_trials:int=3):
         """
         Initializes instance private variables, creates modbus client and registers logger.
 
@@ -63,6 +64,7 @@ class ChromatecControlPanelModbus():
             modbus address for application commands (see chromatec modbus manual for details)
         """
         self._modbus_id = modbus_id
+        self._request_trials = request_trials
         self._working_status_input_address = working_status_input_address
         self._serial_number_input_address = serial_number_input_address
         self._connection_status_input_address = connection_status_input_address
@@ -81,9 +83,19 @@ class ChromatecControlPanelModbus():
         current_status:WorkingStatus
             one of the constants defined in WorkingStatus enum
         """
-        self._logger.debug('Getting current working status of chromatograph')
-        response = self._modbus_client.read_input_registers(address=self._working_status_input_address, count=2, unit=self._modbus_id)
-        current_status_id = convert.bytes_to_int(response.registers)
+        count = 0
+        while True:
+            self._logger.debug(f'Getting current working status of chromatograph. Trial #{count}')
+            try:
+                response = self._modbus_client.read_input_registers(address=self._working_status_input_address, count=2, unit=self._modbus_id)
+                response_registers = response.registers
+                break
+            except AttributeError:
+                if count == self._request_trials-1:
+                    raise ChromatographException('Cannot get working status!')
+                else:
+                    count += 1
+        current_status_id = convert.bytes_to_int(response_registers)
         current_status = WorkingStatus(current_status_id)
         self._logger.log(5, f'{current_status = }')
         return current_status
@@ -97,9 +109,19 @@ class ChromatecControlPanelModbus():
         serial_number:str
             serial number of chromatograph
         """
-        self._logger.debug('Getting chromatograph serial number')
-        response = self._modbus_client.read_input_registers(address=self._serial_number_input_address, count=15, unit=self._modbus_id)
-        serial_number = convert.bytes_to_string(response.registers)
+        count = 0
+        while True:
+            self._logger.debug(f'Getting chromatograph serial number. Trial #{count}')
+            try:
+                response = self._modbus_client.read_input_registers(address=self._serial_number_input_address, count=15, unit=self._modbus_id)
+                response_registers = response.registers
+                break
+            except AttributeError:
+                if count == self._request_trials-1:
+                    raise ChromatographException('Cannot get serial number!')
+                else:
+                    count += 1
+        serial_number = convert.bytes_to_string(response_registers)
         self._logger.log(5, f'{serial_number = }')
         return serial_number
 
@@ -112,9 +134,19 @@ class ChromatecControlPanelModbus():
         connection_status:ConnectionStatus
             one of the constants defined in ConnectionStatus enum
         """
-        self._logger.debug('Getting chromatograph and control panel connection status')
-        response = self._modbus_client.read_input_registers(address=self._connection_status_input_address, count=1, unit=self._modbus_id)
-        connection_status = ConnectionStatus(response.registers[0])
+        count = 0
+        while True:
+            self._logger.debug(f'Getting chromatograph and control panel connection status. Trial #{count}')
+            try:
+                response = self._modbus_client.read_input_registers(address=self._connection_status_input_address, count=1, unit=self._modbus_id)
+                response_registers = response.registers
+                break
+            except AttributeError:
+                if count == self._request_trials-1:
+                    raise ChromatographException('Cannot get connection status!')
+                else:
+                    count += 1
+        connection_status = ConnectionStatus(response_registers[0])
         self._logger.log(5, f'{connection_status = }')
         return connection_status
 
