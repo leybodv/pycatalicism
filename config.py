@@ -44,12 +44,15 @@ operator_holding_address = 25
 column_holding_address = 40
 lab_name_holding_address = 55
 methods = {
-        '0'						:		0,
-        'co2-hydrogenation'		:		1,
-        '2'						:		2,
-        '3'						:		3,
-        '4'						:		4,
-        '5'						:		5,
-        '6'						:		6,
-        'purge'					:		7,
+        '20220415_O2-N2-CO2-CO-C1,5HxAlkanes_2levels'	:		0,
+        'co2-hydrogenation'								:		1,
+        'co-oxidation'									:		2,
+        'crm'											:		3,
+        'Marusya method'								:		4,
+        'NaX-conditioning'								:		5,
+        'NaX-HaesepN-conditioning'						:		6,
+        'purge'											:		7,
+        'purge-overnight'								:		8,
+        'zero'											:		9,
+        'Водка-Маруся'									:		10,
         }
