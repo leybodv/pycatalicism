@@ -106,7 +106,7 @@ chromatograph_set_passport_parser.add_argument('--dilution', default=1, help='sa
 chromatograph_set_passport_parser.add_argument('--purpose', default='analysis', choices=['analysis', 'graduation'], help='purpose of chromatogram')
 chromatograph_set_passport_parser.add_argument('--operator', required=True, help='operator\'s name')
 chromatograph_set_passport_parser.add_argument('--column', required=True, help='column\'s name')
-chromatograph_set_passport_parser.add_argument('--lab-name', default='Неорганические наноматериалы', help='lab name')
+chromatograph_set_passport_parser.add_argument('--lab-name', default='Inorganic Nanomaterials', help='lab name')
 
 if (__name__ == '__main__'):
     args = parser.parse_args()
