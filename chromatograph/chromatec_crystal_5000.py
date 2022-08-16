@@ -58,7 +58,7 @@ class ChromatecCrystal5000():
                 self._logger.debug(f'{self._connection_status = }')
                 if self._connection_status is ConnectionStatus.CP_ON_CONNECTED:
                     break
-                time.sleep(1)
+                time.sleep(10)
             self._logger.info('Connection established')
         elif self._connection_status is ConnectionStatus.CP_ON_CONNECTED:
             self._logger.info('Chromatograph connected already')
