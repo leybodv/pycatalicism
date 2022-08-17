@@ -6,6 +6,7 @@
       <p><code>pacman -S python</code></p>
       <p>Install python libraries:</p>
       <p><code>pacman -S python-matplotlib python-numpy python-pyserial</code></p>
+      <p><code>pip install pymodbus</code></p>
       <p>Install git:</p>
       <p><code>pacman -S git</code></p>
       <p>Clone repository (this will create pycatalicism directory inside your current directory):</p>
@@ -15,7 +16,7 @@
     <h3>Windows</h3>
       <p>Install python from <a href="python.org">python.org</a></p>
       <p>Install python libraries (better to start cmd as administrator):</p>
-      <p><code>pip install matplotlib numpy pyserial</code></p>
+      <p><code>pip install matplotlib numpy pyserial pymodbus</code></p>
       <p>Install git for windows from <a href="https://gitforwindows.org/">gitforwindows.org</a></p>
       <p>Clone repository in git bash:</p>
       <p><code>cd path/to/repository-storage-dir</code></p>
@@ -182,6 +183,63 @@
           </tr>
         </table>
         <p>Program should be configured prior use. The configuration file located in path/to/pycatalycism/furnace/furnace_config.py</p>
+      <h3>Chromatograph control</h3>
+      <p>Chromatec Crystal 5000 chromatograph can be controled via modbus protocol. The protocol requires modbus server to be run. Chromatec Control Panel and Chromatec Analytic with special module from chromatec installation media surve modbus server (see chromatec documentation for details). Before using this python program, modbus server must be configured at Control Panel and Analytic software and relevant holding and input registers must be added. For the list of required registers see config.py file at the root of pycatalycism package.</p>
+      <p><code>pycat chromatograph connect</code></p>
+      <p>Opens Control Panel. Connection to chromatograph is istablished automatically. Analytic software is also automatically opened. Program waits for succsessful connection establishment, so, if chromatograph is not on, program will be hang forever.</p>
+      <p><code>pycat chromatograph set-method method</code></p>
+      <p>Sets instrumental method to the specified one and starts preparation to analysis step. The list of methods must be in a config.py file.</p>
+      <p>positional arguments:</p>
+      <p>
+        <table>
+          <tr>
+            <td>method</td>
+            <td>instrumental method</td>
+          </tr>
+        </table>
+      </p>
+      <p><code>pycat chromatograph start-analysis</code></p>
+      <p>Starts measurement.</p>
+      <p><code>pycat chromatograph set-passport --name NAME [--volume VOL] [--dilution DIL] [--purpose {analysis|graduation}] --operator OP --column COL [--lab-name LN]</code></p>
+      <p>Set parameters to a passport of chromatogram. This method should be run only after the analysis step is over and before next analysis is started.</p>
+      <p>required parameters:</p>
+      <p>
+        <table>
+          <tr>
+            <td>--name NAME</td>
+            <td>name of chromatogram</td>
+          </tr>
+          <tr>
+            <td>--operator OP</td>
+            <td>name of operator</td>
+          </tr>
+          <tr>
+            <td>--column COL</td>
+            <td>name of column</td>
+          </tr>
+        </table>
+      </p>
+      <p>optional parameters:</p>
+      <p>
+        <table>
+          <tr>
+            <td>--volume VOL</td>
+            <td>sample's volume, 0.5 by default</td>
+          </tr>
+          <tr>
+            <td>--dilution DIL</td>
+            <td>sample's dilution, 1 by default</td>
+          </tr>
+          <tr>
+            <td>--purpose {analysis|graduation}</td>
+            <td>purpose of chromatogram, analysis by default</td>
+          </tr>
+          <tr>
+            <td>--lab-name LN</td>
+            <td>name of lab, Inorganic Nanomaterials by default</td>
+          </tr>
+        </table>
+      </p>
   <h2>ToDo</h2>
     <ul>
       <li>implement abstract classes in "pythonic" way (calc package)</li>
