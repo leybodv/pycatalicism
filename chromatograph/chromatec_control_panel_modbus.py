@@ -10,11 +10,12 @@ class WorkingStatus(Enum):
     """
     Working status of chromatograph and corresponding values in modbus protocol
     """
-    PURGING = 6
-    ANALYSIS = 9
+    NULL = 0
     PREPARATION = 1
     READY_FOR_ANALYSIS = 4
-    NULL = 0
+    PURGING = 6
+    COOLING = 8
+    ANALYSIS = 9
 
 class ConnectionStatus(Enum):
     """
