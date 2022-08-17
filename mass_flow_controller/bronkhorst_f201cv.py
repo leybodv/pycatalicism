@@ -1,5 +1,7 @@
 import propar
 
+from pycatalicism.mass_flow_controller.mfc_exceptions import MFCConnectionException
+
 class BronkhorstF201CV():
     """
     """
