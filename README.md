@@ -191,7 +191,7 @@
       <p>Program should be configured prior use. The configuration file located in path/to/pycatalycism/furnace/furnace_config.py</p>
     <h2 id="chromatograph-control">Chromatograph control</h2>
     <p>Chromatec Crystal 5000 chromatograph can be controled via modbus protocol. The protocol requires modbus server to be run. Chromatec Control Panel and Chromatec Analytic with special module from chromatec installation media surve as modbus server (see chromatec documentation for details). Before using this python program, modbus server must be configured at Control Panel and Analytic software and relevant holding and input registers must be added. For the list of required registers see config.py file at the root of pycatalycism package.</p>
-    <h3>Commands:</h3>
+    <p><b>Commands:</b></p>
     <p><code>pycat chromatograph connect</code></p>
     <p>Opens Control Panel. Connection to chromatograph is istablished automatically. Analytic software is also automatically opened. Program waits for succsessful connection establishment, so, if chromatograph is not on, program will be hang forever.</p>
     <p><code>pycat chromatograph set-method method</code></p>
