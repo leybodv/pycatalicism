@@ -28,21 +28,37 @@ logging_levels = {
                     }
 
 ## chromatograph configuration ##
+# slave id in control panel modbus configuration
 control_panel_modbus_id = 1
+# register with working status of chromatograph
 working_status_input_address = 0
+# register with resial number of chromatograph
 serial_number_input_address = 2
+# register with connection status
 connection_status_input_address = 17
+# register with current instrumental method
 method_holding_address = 0
+# register with chromatograph command
 chromatograph_command_holding_address = 2
+# register with control panel application command
 application_command_holding_address = 3
+# slave id in analytic modbus configuration
 analytic_modbus_id = 2
+# register with chromatogram nams
 sample_name_holding_address = 0
+# register with chromatogram purpose
 chromatogram_purpose_holding_address = 15
+# register with sample's volume
 sample_volume_holding_address = 17
+# register with sample's dilution
 sample_dilution_holding_address = 21
+# register with operator's name
 operator_holding_address = 25
+# register with column name
 column_holding_address = 40
+# register with lab name
 lab_name_holding_address = 55
+# list of methods with their order number at control panel software
 methods = {
         '20220415_O2-N2-CO2-CO-C1,5HxAlkanes_2levels'	:		0,
         'co2-hydrogenation'								:		1,
@@ -57,7 +73,8 @@ methods = {
         'Водка-Маруся'									:		10,
         }
 
-## furnace configuration ##
+## furnace configuration (only used by co2-hydrogenation.py right now ##
+## for pycat.py use furnace_config.py for configuration ##
 import serial
 
 # Dictionary of logging levels of corresponding classes
