@@ -1,0 +1,18 @@
+#!/usr/bin/python
+
+import pycatalicism.config as config
+from pycatalicism.furnace.owen_tpm101_controller import Owen_TPM101_Controller
+from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
+from pycatalicism.chromatograph.chromatec_control_panel_modbus import ChromatecControlPanelModbus
+from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatecAnalyticModbus
+
+furnace = Owen_TPM101_Controller(port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts, address=config.furnace_address, rsdl=config.furnace_rsdl, address_len=config.furnace_address_len)
+chromatograph_control_panel = ChromatecControlPanelModbus(modbus_id=config.control_panel_modbus_id, working_status_input_address=config.working_status_input_address, serial_number_input_address=config.serial_number_input_address, connection_status_input_address=config.connection_status_input_address, method_holding_address=config.method_holding_address, chromatograph_command_holding_address=config.chromatograph_command_holding_address, application_command_holding_address=config.application_command_holding_address)
+chromatograph_analytic = ChromatecAnalyticModbus(modbus_id=config.analytic_modbus_id, sample_name_holding_address=config.sample_name_holding_address, chromatogram_purpose_holding_address=config.chromatogram_purpose_holding_address, sample_volume_holding_address=config.sample_volume_holding_address, sample_dilution_holding_address=config.sample_dilution_holding_address, operator_holding_address=config.operator_holding_address, column_holding_address=config.column_holding_address, lab_name_holding_address=config.lab_name_holding_address)
+chromatograph = ChromatecCrystal5000(control_panel=chromatograph_control_panel, analytic=chromatograph_analytic, methods=config.methods)
+
+furnace.handshake()
+chromatograph.connect()
+
+chromatograph.set_method(method='co2-hydrogenation')
+furnace.heat(temperature=temperatures[0])
