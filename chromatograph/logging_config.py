@@ -2,8 +2,8 @@ import logging
 
 # Dictionary of logging levels of corresponding classes
 logging_levels = {
-                'ChromatecControlPanelModbus'               	:		5,
-                'ChromatecAnalyticModbus'						:		5,
-                'ChromatecCrystal5000'							:		5,
-                'pycatalicism.chromatograph.modbus_converter'	:		5,
+                'ChromatecControlPanelModbus'               	:		logging.INFO,
+                'ChromatecAnalyticModbus'						:		logging.INFO,
+                'ChromatecCrystal5000'							:		logging.INFO,
+                'pycatalicism.chromatograph.modbus_converter'	:		logging.INFO,
                 }
