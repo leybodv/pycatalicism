@@ -1,6 +1,13 @@
 <h1>pycatalicism</h1>
 <p>Program controls catalytic activity of materials measurement equipment (to be developed...) as well as calculates main parameters relevant for catalyst functional properties characterization (conversion, activity, selectivity, stability, activation energy).</p>
-  <h2>Installation</h2>
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#furnace-control">Furnace control</a></li>
+    <li><a href="#chromatograph-control">Chromatograph control</a></li>
+  </ol>
+  <h2 id="installation">Installation</h2>
     <h3>Arch Linux</h3>
       <p>Install python:</p>
       <p><code>pacman -S python</code></p>
@@ -23,7 +30,7 @@
       <p><code>git clone https://github.com/leybodv/pycatalicism.git</code></p>
       <p>Add PYHTONPATH system variable with path/to/repository-storage-dir value</p>
       <p>Download and install driver for usb -> com from <a href="https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers">silabs.com</a></p>
-  <h2>Usage</h2>
+  <h2 id="usage">Usage</h2>
     <p>NB: on Windows <code>pycat</code> must be replaced with <code>python path/to/pycat.py</code></p>
     <h3>Calculation of catalyst functional properties</h3>
       <p><code>pycat calc --conversion|--selectivity [--output-data OUTPUT_DATA] [--show-plot] [--output-plot OUPUT_PLOT] [--products-basis] [--sample-name SAMPLE_NAME] input-data-path initial-data-path {co-oxidation|co2-hydrogenation}</code></p>
@@ -152,99 +159,99 @@
         <img src="https://latex.codecogs.com/svg.image?\inline&space;T_i" title="https://latex.codecogs.com/svg.image?\inline T_i" />, <img src="https://latex.codecogs.com/svg.image?\inline&space;T_f" title="https://latex.codecogs.com/svg.image?\inline T_f" /> - temperature of gas at point of total gas flow rate measurement before and after catalytic reactor, respectively, in K
       </p>
       <p>If flow rate measurement data is not provided, conversion is calculated based solely on concentrations and warning is logged to console in this case.</p>
-    <h3>Furnace control</h3>
-      <p><code>pycat heat [--wait WAIT] [--show-plot] [--export-plot EXPORT_PLOT] [--export-data EXPORT_DATA] temperature</code></p>
-      <p>positional arguments:</p>
-      <p>
-        <table>
-          <tr>
-            <td>temperature</td>
-            <td>temperature in °C to heat furnace to. If 0, sets set point of a controller to 0 and turns off temperature regulation</td>
-          </tr>
-        </table>
-      </p>
-      <p>parameters:</p>
-        <table>
-          <tr>
-            <td>--wait WAIT</td>
-            <td>wait for WAIT minutes after a furnace has reached target temperature and turn heating off afterwards</td>
-          </tr>
-          <tr>
-            <td>--show-plot</td>
-            <td>show plot of temperature vs. time. NB: this will block the program until the window with the plot is closed</td>
-          </tr>
-          <tr>
-            <td>--export-plot EXPORT_PLOT</td>
-            <td>export temperature vs. time plot to the file specified by EXPORT_PLOT path</td>
-          </tr>
-          <tr>
-            <td>--export-data</td>
-            <td>export temperature vs. time data to the file specified by EXPORT_DATA path</td>
-          </tr>
-        </table>
-        <p>Program should be configured prior use. The configuration file located in path/to/pycatalycism/furnace/furnace_config.py</p>
-      <h3>Chromatograph control</h3>
-      <p>Chromatec Crystal 5000 chromatograph can be controled via modbus protocol. The protocol requires modbus server to be run. Chromatec Control Panel and Chromatec Analytic with special module from chromatec installation media surve modbus server (see chromatec documentation for details). Before using this python program, modbus server must be configured at Control Panel and Analytic software and relevant holding and input registers must be added. For the list of required registers see config.py file at the root of pycatalycism package.</p>
-      <p><code>pycat chromatograph connect</code></p>
-      <p>Opens Control Panel. Connection to chromatograph is istablished automatically. Analytic software is also automatically opened. Program waits for succsessful connection establishment, so, if chromatograph is not on, program will be hang forever.</p>
-      <p><code>pycat chromatograph set-method method</code></p>
-      <p>Sets instrumental method to the specified one and starts preparation to analysis step. The list of methods must be in a config.py file.</p>
-      <p>positional arguments:</p>
-      <p>
-        <table>
-          <tr>
-            <td>method</td>
-            <td>instrumental method</td>
-          </tr>
-        </table>
-      </p>
-      <p><code>pycat chromatograph start-analysis</code></p>
-      <p>Starts measurement.</p>
-      <p><code>pycat chromatograph set-passport --name NAME [--volume VOL] [--dilution DIL] [--purpose {analysis|graduation}] --operator OP --column COL [--lab-name LN]</code></p>
-      <p>Set parameters to a passport of chromatogram. This method should be run only after the analysis step is over and before next analysis is started.</p>
-      <p>required parameters:</p>
-      <p>
-        <table>
-          <tr>
-            <td>--name NAME</td>
-            <td>name of chromatogram</td>
-          </tr>
-          <tr>
-            <td>--operator OP</td>
-            <td>name of operator</td>
-          </tr>
-          <tr>
-            <td>--column COL</td>
-            <td>name of column</td>
-          </tr>
-        </table>
-      </p>
-      <p>optional parameters:</p>
-      <p>
-        <table>
-          <tr>
-            <td>--volume VOL</td>
-            <td>sample's volume, 0.5 by default</td>
-          </tr>
-          <tr>
-            <td>--dilution DIL</td>
-            <td>sample's dilution, 1 by default</td>
-          </tr>
-          <tr>
-            <td>--purpose {analysis|graduation}</td>
-            <td>purpose of chromatogram, analysis by default</td>
-          </tr>
-          <tr>
-            <td>--lab-name LN</td>
-            <td>name of lab, Inorganic Nanomaterials by default</td>
-          </tr>
-        </table>
-      </p>
+  <h2 id="furnace-control">Furnace control</h2>
+    <p><code>pycat heat [--wait WAIT] [--show-plot] [--export-plot EXPORT_PLOT] [--export-data EXPORT_DATA] temperature</code></p>
+    <p>positional arguments:</p>
+    <p>
+      <table>
+        <tr>
+          <td>temperature</td>
+          <td>temperature in °C to heat furnace to. If 0, sets set point of a controller to 0 and turns off temperature regulation</td>
+        </tr>
+      </table>
+    </p>
+    <p>parameters:</p>
+      <table>
+        <tr>
+          <td>--wait WAIT</td>
+          <td>wait for WAIT minutes after a furnace has reached target temperature and turn heating off afterwards</td>
+        </tr>
+        <tr>
+          <td>--show-plot</td>
+          <td>show plot of temperature vs. time. NB: this will block the program until the window with the plot is closed</td>
+        </tr>
+        <tr>
+          <td>--export-plot EXPORT_PLOT</td>
+          <td>export temperature vs. time plot to the file specified by EXPORT_PLOT path</td>
+        </tr>
+        <tr>
+          <td>--export-data</td>
+          <td>export temperature vs. time data to the file specified by EXPORT_DATA path</td>
+        </tr>
+      </table>
+      <p>Program should be configured prior use. The configuration file located in path/to/pycatalycism/furnace/furnace_config.py</p>
+    <h2 id="chromatograph-control">Chromatograph control</h2>
+    <p>Chromatec Crystal 5000 chromatograph can be controled via modbus protocol. The protocol requires modbus server to be run. Chromatec Control Panel and Chromatec Analytic with special module from chromatec installation media surve as modbus server (see chromatec documentation for details). Before using this python program, modbus server must be configured at Control Panel and Analytic software and relevant holding and input registers must be added. For the list of required registers see config.py file at the root of pycatalycism package.</p>
+    <h3>Commands:</h3>
+    <p><code>pycat chromatograph connect</code></p>
+    <p>Opens Control Panel. Connection to chromatograph is istablished automatically. Analytic software is also automatically opened. Program waits for succsessful connection establishment, so, if chromatograph is not on, program will be hang forever.</p>
+    <p><code>pycat chromatograph set-method method</code></p>
+    <p>Sets instrumental method to the specified one and starts preparation to analysis step. The list of methods must be in a config.py file.</p>
+    <p>positional arguments:</p>
+    <p>
+      <table>
+        <tr>
+          <td>method</td>
+          <td>instrumental method</td>
+        </tr>
+      </table>
+    </p>
+    <p><code>pycat chromatograph start-analysis</code></p>
+    <p>Starts measurement.</p>
+    <p><code>pycat chromatograph set-passport --name NAME [--volume VOL] [--dilution DIL] [--purpose {analysis|graduation}] --operator OP --column COL [--lab-name LN]</code></p>
+    <p>Set parameters to a passport of chromatogram. This method should be run only after the analysis step is over and before next analysis is started.</p>
+    <p>required parameters:</p>
+    <p>
+      <table>
+        <tr>
+          <td>--name NAME</td>
+          <td>name of chromatogram</td>
+        </tr>
+        <tr>
+          <td>--operator OP</td>
+          <td>name of operator</td>
+        </tr>
+        <tr>
+          <td>--column COL</td>
+          <td>name of column</td>
+        </tr>
+      </table>
+    </p>
+    <p>optional parameters:</p>
+    <p>
+      <table>
+        <tr>
+          <td>--volume VOL</td>
+          <td>sample's volume, 0.5 by default</td>
+        </tr>
+        <tr>
+          <td>--dilution DIL</td>
+          <td>sample's dilution, 1 by default</td>
+        </tr>
+        <tr>
+          <td>--purpose {analysis|graduation}</td>
+          <td>purpose of chromatogram, analysis by default</td>
+        </tr>
+        <tr>
+          <td>--lab-name LN</td>
+          <td>name of lab, Inorganic Nanomaterials by default</td>
+        </tr>
+      </table>
+    </p>
   <h2>ToDo</h2>
     <ul>
-      <li>implement abstract classes in "pythonic" way (calc package)</li>
-      <li>convert p, T, f data from gas clock to SI units before usage</li>
-      <li>add description of furnace package to this readme after tests</li>
+      <li>add mass flow controllers package</li>
       <li>rewrite calc module. Selectivity should be calculated automatically if applicable. There should be two separate commands to calculate activity and conversion</li>
       <li>add furnace read temperature interface</li>
+      <li>convert p, T, f data from gas clock to SI units before usage</li>
     </ul>
