@@ -1,6 +1,8 @@
 import propar
 
 from pycatalicism.mass_flow_controller.mfc_exceptions import MFCConnectionException
+from pycatalicism.mass_flow_controller.mfc_exceptions import MFCStateException
+from pycatalicism.mass_flow_controller.bronkhorst_mfc_calibration import BronkhorstMFCCalibration
 
 class BronkhorstF201CV():
     """
@@ -32,12 +34,14 @@ class BronkhorstF201CV():
         percent_setpoint = flow_rate * 100 / self._calibrations[self._current_calibration].get_max_flow_rate()
         propar_setpoint = int(percent_setpoint * 32000 / 100)
         self._propar_instrument.setpoint = propar_setpoint
-        raise NotImplementedError()
 
-    def set_calibration(self):
+    def set_calibration(self, calibration_num:int):
         """
         """
-        raise NotImplementedError()
+        if not self._connected:
+            raise MFCStateException(f'Mass flow controller {self._serial_id} is not connected!')
+        self._propar_instrument.writeParameter(dde_nr=24, data=calibration_num)
+        self._current_calibration = calibration_num
 
     def get_flow_rate(self):
         """
