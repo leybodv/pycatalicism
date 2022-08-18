@@ -49,6 +49,7 @@ class BronkhorstF201CV():
         """
         if not self._connected:
             raise MFCStateException(f'Mass flow controller {self._serial_id} is not connected!')
+        self._logger.info(f'Setting calibration to {self._calibrations[calibration_num]}')
         self._propar_instrument.writeParameter(dde_nr=24, data=calibration_num)
         self._current_calibration = calibration_num
 
