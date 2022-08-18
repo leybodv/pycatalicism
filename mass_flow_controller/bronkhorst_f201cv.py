@@ -3,6 +3,7 @@ import propar
 from pycatalicism.mass_flow_controller.mfc_exceptions import MFCConnectionException
 from pycatalicism.mass_flow_controller.mfc_exceptions import MFCStateException
 from pycatalicism.mass_flow_controller.bronkhorst_mfc_calibration import BronkhorstMFCCalibration
+import pycatalicism.mass_flow_controller.mass_flow_controller_logging as mfc_logging
 
 class BronkhorstF201CV():
     """
@@ -16,14 +17,19 @@ class BronkhorstF201CV():
         self._calibrations = calibrations
         self._current_calibration = None
         self._connected = False
+        self._logger = mfc_logging.get_logger(self.__class__.__name__)
 
     def connect(self):
         """
         """
+        self._logger.info(f'Connecting to mass flow controller {self._serial_id}')
         serial_id_response = self._propar_instrument.readParameter(dde_nr=92)
+        self._logger.log(5, f'{serial_id_response = }')
         if not serial_id_response == self._serial_id:
             raise MFCConnectionException(f'Wrong serial {serial_id_response} was received from the device {self._serial_id}')
         self._current_calibration = self._propar_instrument.readParameter(dde_nr=24)
+        self._logger.log(5, f'{self._current_calibration = }')
+        self._logger.info(f'Current calibration: {self._calibrations[self._current_calibration]}')
         self._connected = True
 
     def set_flow_rate(self, flow_rate:float):
@@ -60,6 +66,5 @@ class BronkhorstF201CV():
         """
         if not self._connected:
             raise MFCStateException(f'Mass flow controller {self._serial_id} is not connected!')
-        calibration_num = self._current_calibration
-        calibration = self._calibrations[calibration_num]
+        calibration = self._calibrations[self._current_calibration]
         return calibration
