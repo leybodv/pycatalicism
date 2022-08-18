@@ -32,6 +32,12 @@ class BronkhorstF201CV():
 
     def connect(self):
         """
+        Connect to mass flow controller. Method requests serial number of the device and compares it with the one, provided at object creation. Also method requests current calibration number. This method must be run before any other method of the class.
+
+        raises
+        ------
+        MFCConnectionException
+            if wrong serial id was received from the device
         """
         self._logger.info(f'Connecting to mass flow controller {self._serial_id}')
         serial_id_response = self._propar_instrument.readParameter(dde_nr=92)
@@ -45,6 +51,17 @@ class BronkhorstF201CV():
 
     def set_flow_rate(self, flow_rate:float):
         """
+        Sets flow rate to specified value.
+
+        parameters
+        ----------
+        flow_rate:float
+            flow rate in the units of mass flow controller
+
+        raises
+        ------
+        MFCStateException
+            if mass flow controller is not connected
         """
         if not self._connected:
             raise MFCStateException(f'Mass flow controller {self._serial_id} is not connected!')
@@ -57,6 +74,17 @@ class BronkhorstF201CV():
 
     def set_calibration(self, calibration_num:int):
         """
+        Set calibration to specified calibration number.
+
+        parameters
+        ----------
+        calibration_num:int
+            the number of calibration. NB: the numbering is started from 0, so calibration for fluid1 has 0th order.
+
+        raises
+        ------
+        MFCStateException
+            if mass flow controller is not connected
         """
         if not self._connected:
             raise MFCStateException(f'Mass flow controller {self._serial_id} is not connected!')
@@ -66,6 +94,17 @@ class BronkhorstF201CV():
 
     def get_flow_rate(self) -> float:
         """
+        Get current flow rate from mass flow controller.
+
+        returns
+        -------
+        flow_rate:float
+            flow rate in the units of mass flow controller
+
+        raises
+        ------
+        MFCStateException
+            if mass flow controller is not connected
         """
         if not self._connected:
             raise MFCStateException(f'Mass flow controller {self._serial_id} is not connected!')
@@ -82,6 +121,17 @@ class BronkhorstF201CV():
 
     def get_calibration(self) -> BronkhorstMFCCalibration:
         """
+        Get current calibration set in mass flow controller.
+
+        returns
+        -------
+        calibration:BronkhorstMFCCalibration
+            wrapper with calibration data
+
+        raises
+        ------
+        MFCStateException
+            if mass flow controller is not connected
         """
         if not self._connected:
             raise MFCStateException(f'Mass flow controller {self._serial_id} is not connected!')
