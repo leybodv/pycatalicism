@@ -43,10 +43,17 @@ class BronkhorstF201CV():
         self._propar_instrument.writeParameter(dde_nr=24, data=calibration_num)
         self._current_calibration = calibration_num
 
-    def get_flow_rate(self):
+    def get_flow_rate(self) -> float:
         """
         """
-        raise NotImplementedError()
+        if not self._connected:
+            raise MFCStateException(f'Mass flow controller {self._serial_id} is not connected!')
+        flow_rate_propar = self._propar_instrument.measure
+        if not flow_rate_propar:
+            raise MFCConnectionException(f'Failed to get flow rate from the instrument {self._serial_id}')
+        flow_rate_percent = flow_rate_propar / 32000.0
+        flow_rate = flow_rate_percent * self._calibrations[self._current_calibration].get_max_flow_rate()
+        return flow_rate
 
     def get_calibration(self):
         """
