@@ -14,6 +14,7 @@ from pycatalicism.chromatograph.chromatec_control_panel_modbus import ChromatecC
 from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatecAnalyticModbus
 from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatogramPurpose
 from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
+from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
 
 def calculate(args:argparse.Namespace):
     """
@@ -61,9 +62,33 @@ def chromatograph_set_passport(args:argparse.Namespace):
         raise Exception(f'Unknown chromatogram purpose: {args.purpose}')
     chromatograph.set_passport(name=args.name, volume=float(args.volume), dilution=float(args.dilution), purpose=purpose, operator=args.operator, column=args.column, lab_name=args.lab_name)
 
+def mfc_set_flow_rate(args:argparse.Namespace):
+    """
+    Set flow rate of mfc to specified value.
+    """
+    gas = args.gas
+    flow_rate = float(args.flow_rate)
+    if gas == 'He':
+        mfc_He.connect()
+        mfc_He.set_flow_rate(flow_rate)
+    elif gas == 'CO2' or gas == 'O2':
+        mfc_CO2.connect()
+        mfc_CO2.set_flow_rate(flow_rate)
+    elif gas == 'H2' or gas == 'CO' or gas == 'CH4':
+        mfc_H2.connect()
+        mfc_H2.set_flow_rate(flow_rate)
+    else:
+        raise Exception(f'Unknown gas {gas}!')
+
+# initialize chromatograph
 control_panel_modbus = ChromatecControlPanelModbus(modbus_id=config.control_panel_modbus_id, working_status_input_address=config.working_status_input_address, serial_number_input_address=config.serial_number_input_address, connection_status_input_address=config.connection_status_input_address, method_holding_address=config.method_holding_address, chromatograph_command_holding_address=config.chromatograph_command_holding_address, application_command_holding_address=config.application_command_holding_address)
 analytic_modbus = ChromatecAnalyticModbus(modbus_id=config.analytic_modbus_id, sample_name_holding_address=config.sample_name_holding_address, chromatogram_purpose_holding_address=config.chromatogram_purpose_holding_address, sample_volume_holding_address=config.sample_volume_holding_address, sample_dilution_holding_address=config.sample_dilution_holding_address, operator_holding_address=config.operator_holding_address, column_holding_address=config.column_holding_address, lab_name_holding_address=config.lab_name_holding_address)
 chromatograph = ChromatecCrystal5000(control_panel_modbus, analytic_modbus, config.methods)
+
+# initialize mass flow controllers
+mfc_He = BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations)
+mfc_CO2 = BronkhorstF201CV(serial_address=config.mfc_CO2_serial_address, serial_id=config.mfc_CO2_serial_id, calibrations=mfc_CO2_calibrations)
+mfc_H2 = BronkhorstF201CV(serial_address=config.mfc_H2_serial_address, serial_id=config.mfc_H2_serial_id, calibrations=config.mfc_H2_calibrations)
 
 parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers(required=True)
@@ -107,6 +132,20 @@ chromatograph_set_passport_parser.add_argument('--purpose', default='analysis', 
 chromatograph_set_passport_parser.add_argument('--operator', required=True, help='operator\'s name')
 chromatograph_set_passport_parser.add_argument('--column', required=True, help='column\'s name')
 chromatograph_set_passport_parser.add_argument('--lab-name', default='Inorganic Nanomaterials', help='lab name')
+
+mfc_parser = subparsers.add_parser('mfc', help='commands to control mass flow controllers')
+mfc_subparser = mfc_parser.add_subparsers(required=True)
+mfc_set_flow_parser = mfc_subparser.add_parser('set-flow-rate', help='set gas flow rate')
+mfc_set_flow_parser.set_defaults(func=mfc_set_flow_rate)
+mfc_set_flow_parser.add_argument('--gas', required=True, choices=['He', 'CO2', 'O2', 'H2', 'CO', 'CH4'], help='which gas to set flow rate for')
+mfc_set_flow_parser.add_argument('--flow-rate', required=True, help='flow rate in nml/min')
+mfc_set_calibration_parser = mfc_subparser.add_parser('set-calibration', help='set calibration')
+mfc_set_calibration_parser.set_defaults(func=mfc_set_calibration)
+mfc_set_calibration_parser.add_argument('--gas', required=True, choices=['He', 'CO2', 'O2', 'H2', 'CO', 'CH4'], help='which gas to set calibration for')
+mfc_set_calibration_parser.add_argument('--calibration-number', required=True, help='number of calibration as written in calibraion document')
+mfc_print_flow_rate_parser = mfc_subparser.add_parser('print-flow-rate', help='print current flow rate')
+mfc_print_flow_rate_parser.set_defaults(func=mfc_print_flow_rate)
+mfc_print_flow_rate_parser.add_argument('--gas', required=True, choices=['He', 'CO2', 'O2', 'H2', 'CO', 'CH4'], help='which gas to print flow rate for')
 
 if (__name__ == '__main__'):
     args = parser.parse_args()
