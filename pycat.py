@@ -98,6 +98,23 @@ def mfc_set_calibration(args:argparse.Namespace):
     else:
         raise Exception(f'Unknown gas {gas}!')
 
+def mfc_print_flow_rate(args:argparse.Namespace):
+    """
+    Print current flow rate.
+    """
+    gas = args.gas
+    if gas == 'He':
+        mfc_He.connect()
+        print(f'{mfc_He.get_flow_rate()} nml/min')
+    elif gas in ['CO2', 'O2']:
+        mfc_CO2.connect()
+        print(f'{mfc_CO2.get_flow_rate()} nml/min')
+    elif gas in ['H2', 'CO', 'CH4']:
+        mfc_H2.connect()
+        print(f'{mfc_H2.get_flow_rate()} nml/min')
+    else:
+        raise Exception(f'Unknown gas {gas}!')
+
 # initialize chromatograph
 control_panel_modbus = ChromatecControlPanelModbus(modbus_id=config.control_panel_modbus_id, working_status_input_address=config.working_status_input_address, serial_number_input_address=config.serial_number_input_address, connection_status_input_address=config.connection_status_input_address, method_holding_address=config.method_holding_address, chromatograph_command_holding_address=config.chromatograph_command_holding_address, application_command_holding_address=config.application_command_holding_address)
 analytic_modbus = ChromatecAnalyticModbus(modbus_id=config.analytic_modbus_id, sample_name_holding_address=config.sample_name_holding_address, chromatogram_purpose_holding_address=config.chromatogram_purpose_holding_address, sample_volume_holding_address=config.sample_volume_holding_address, sample_dilution_holding_address=config.sample_dilution_holding_address, operator_holding_address=config.operator_holding_address, column_holding_address=config.column_holding_address, lab_name_holding_address=config.lab_name_holding_address)
