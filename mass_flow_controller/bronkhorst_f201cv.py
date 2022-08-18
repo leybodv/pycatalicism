@@ -65,6 +65,9 @@ class BronkhorstF201CV():
         """
         if not self._connected:
             raise MFCStateException(f'Mass flow controller {self._serial_id} is not connected!')
+        if flow_rate > self._calibrations[self._current_calibration].get_max_flow_rate():
+            self._logger.warning('Cannot set flow rate bigger than maximum value in calibraion! Flow rate will be set to maximum value.')
+            flow_rate = self._calibrations[self._current_calibration].get_max_flow_rate()
         self._logger.info(f'Setting flow rate to {flow_rate} nml/min')
         percent_setpoint = flow_rate * 100 / self._calibrations[self._current_calibration].get_max_flow_rate()
         self._logger.log(5, f'{percent_setpoint = }')
