@@ -10,7 +10,7 @@ class BronkhorstMFCCalibration():
         self._p_in = p_in
         self._p_out = p_out
 
-    def get_max_flow_rate(self):
+    def get_max_flow_rate(self) -> float:
         """
         """
-        raise NotImplementedError()
+        return self._max_flow_rate
