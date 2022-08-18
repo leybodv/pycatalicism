@@ -7,10 +7,21 @@ import pycatalicism.mass_flow_controller.mass_flow_controller_logging as mfc_log
 
 class BronkhorstF201CV():
     """
+    Class represents Bronkhorst F201CV mass flow controller.
     """
 
     def __init__(self, serial_address:str, serial_id:str, calibrations:dict[int, BronkhorstMFCCalibration]):
         """
+        Initializes instance variables, registers logger.
+
+        parameters
+        ----------
+        serial_address:str
+            serial address of this controller (COM or /dev/ttyUSB)
+        serial_id:str
+            serial number of this controller (e.g. M111202123A, see documentation)
+        calibrations:dict[int, BronkhorstMFCCalibration]
+            set of calibrations written in the memory of the device with corresponding calibration number. NB: calibration number is for propar protocol, numbering is started from 0, so fluid1 has 0th number
         """
         self._propar_instrument = propar.instrument(comport=serial_address)
         self._serial_id = serial_id
