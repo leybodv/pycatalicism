@@ -249,7 +249,8 @@
     </p>
   <h2>ToDo</h2>
     <ul>
-      <li>add mass flow controllers package</li>
+      <li>add configurations for mass flow controllers</li>
+      <li>test mass_flow_controller package</li>
       <li>rewrite calc module. Selectivity should be calculated automatically if applicable. There should be two separate commands to calculate activity and conversion</li>
       <li>add furnace read temperature interface</li>
       <li>convert p, T, f data from gas clock to SI units before usage</li>
