@@ -114,7 +114,7 @@ class BronkhorstF201CV():
         self._logger.info('Reading current flow rate')
         flow_rate_propar = self._propar_instrument.measure
         self._logger.log(5, f'{flow_rate_propar = }')
-        if not flow_rate_propar:
+        if flow_rate_propar is None:
             raise MFCConnectionException(f'Failed to get flow rate from the instrument {self._serial_id}')
         flow_rate_percent = flow_rate_propar / 32000.0
         self._logger.log(5, f'{flow_rate_percent = }')
