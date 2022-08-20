@@ -14,7 +14,7 @@
       <p><code>pacman -S python</code></p>
       <p>Install python libraries:</p>
       <p><code>pacman -S python-matplotlib python-numpy python-pyserial</code></p>
-      <p><code>pip install pymodbus</code></p>
+      <p><code>pip install pymodbus bronkhorst-propar</code></p>
       <p>Install git:</p>
       <p><code>pacman -S git</code></p>
       <p>Clone repository (this will create pycatalicism directory inside your current directory):</p>
@@ -24,7 +24,7 @@
     <h3>Windows</h3>
       <p>Install python from <a href="python.org">python.org</a></p>
       <p>Install python libraries (better to start cmd as administrator):</p>
-      <p><code>pip install matplotlib numpy pyserial pymodbus</code></p>
+      <p><code>pip install matplotlib numpy pyserial pymodbus bronkhorst-propar</code></p>
       <p>Install git for windows from <a href="https://gitforwindows.org/">gitforwindows.org</a></p>
       <p>Clone repository in git bash:</p>
       <p><code>cd path/to/repository-storage-dir</code></p>
