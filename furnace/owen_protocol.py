@@ -1,5 +1,6 @@
 import threading
 import serial
+import struct
 
 import pycatalicism.furnace.furnace_logging as furnace_logging
 from pycatalicism.furnace.furnace_exceptions import FurnaceProtocolException
@@ -8,9 +9,10 @@ class OwenProtocol():
     """
     """
 
-    def __init__(self, port:str, baudrate:int, parity:str, stopbits:float, timeout:float, write_timeout:float|None, rtscts:bool):
+    def __init__(self, address:int, port:str, baudrate:int, bytesize:int, parity:str, stopbits:float, timeout:float, write_timeout:float|None, rtscts:bool):
         """
         """
+        self._address = address
         self._port = port
         self._baudrate = baudrate
         self._bytesize = bytesize
@@ -119,7 +121,7 @@ class OwenProtocol():
         FurnaceException
             If message does not contain proper start and stop markers
         """
-        with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
+        with serial.Serial(port=self._port, baudrate=self._baudrate, bytesize=self._bytesize, parity=self._parity, stopbits=self._stopbits, timeout=self._timeout, rtscts=self._rtscts, write_timeout=self._write_timeout) as ser:
             message = ''
             for i in range(44):
                 self.logger.log(5, f'Reading byte #{i}')
@@ -130,7 +132,7 @@ class OwenProtocol():
                     break
             self.logger.debug(f'Got message: {message = }')
         if message[0] != chr(0x23) or message[-1] != chr(0x0d):
-            raise FurnaceException(f'Unexpected format of message got from device: {message}')
+            raise FurnaceProtocolException(f'Unexpected format of message got from device: {message}')
         return message
 
     ## Encrypt data to bytes ##
@@ -177,7 +179,7 @@ class OwenProtocol():
             if value > 255 or value < 0
         """
         if value > 255 or value < 0:
-            raise FurnaceException(f'Got wrong value to convert to unsigned byte: {value}')
+            raise FurnaceProtocolException(f'Got wrong value to convert to unsigned byte: {value}')
         unsigned_bytes = [value]
         self.logger.debug(f'{unsigned_bytes = }')
         return unsigned_bytes
@@ -203,7 +205,7 @@ class OwenProtocol():
         ascii_bytes = []
         for ch in value[::-1]:
             if ord(ch) > 127:
-                raise FurnaceException(f'Non ASCII character was met in value: {ch}')
+                raise FurnaceProtocolException(f'Non ASCII character was met in value: {ch}')
             ascii_bytes.append(ord(ch))
         return ascii_bytes
 
@@ -229,9 +231,9 @@ class OwenProtocol():
             If data is None or if size of data list is greater than 3 bytes
         """
         if data is None:
-            raise FurnaceException('Cannot decrypt empty data')
+            raise FurnaceProtocolException('Cannot decrypt empty data')
         if len(data) > 3:
-            raise FurnaceException('Unexpected size of data to convert to PIC float')
+            raise FurnaceProtocolException('Unexpected size of data to convert to PIC float')
         data_str = b''
         for b in data:
             data_str = data_str + b.to_bytes(1, 'big')
@@ -260,7 +262,7 @@ class OwenProtocol():
         """
         self.logger.debug(f'{data = }')
         if data is None:
-            raise FurnaceException('Cannot decrypt empty data!')
+            raise FurnaceProtocolException('Cannot decrypt empty data!')
         string = ''
         for data_byte in data[::-1]:
             string = string + chr(data_byte)
@@ -287,7 +289,7 @@ class OwenProtocol():
         command_id = self._get_command_id(command)
         command_hash = self._get_command_hash(command_id)
         data_length = 0 if data is None else len(data)
-        message_ascii = self._encrypt_tetrad_to_ascii(address=self.address, request=is_request, data_length=data_length, command_hash=command_hash, data=data)
+        message_ascii = self._encrypt_tetrad_to_ascii(address=self._address, request=is_request, data_length=data_length, command_hash=command_hash, data=data)
         return message_ascii
 
     def _get_command_id(self, command:str) -> list[int]:
@@ -325,13 +327,13 @@ class OwenProtocol():
             elif command_cap[i] == '/':
                 ch_id = 38
             else:
-                raise FurnaceException(f'Illegal char in command name: {command_cap[i]}')
+                raise FurnaceProtocolException(f'Illegal char in command name: {command_cap[i]}')
             ch_id = ch_id * 2
             if i < len(command_cap) - 1 and command_cap[i+1] == '.':
                 ch_id = ch_id + 1
             command_id.append(ch_id)
         if len(command_id) > 4:
-            raise FurnaceException('Command ID cannot contain more than 4 characters!')
+            raise FurnaceProtocolException('Command ID cannot contain more than 4 characters!')
         if len(command_id) < 4:
             for i in range(4 - len(command_id)):
                 command_id.append(78)
@@ -423,9 +425,9 @@ class OwenProtocol():
             If data length is larger 15 or data_length parameter does not match length of data bytes list or if encrypted message contains wrong characters
         """
         if data_length > 15:
-            raise FurnaceException('Data length cannot be larger than 15')
+            raise FurnaceProtocolException('Data length cannot be larger than 15')
         if data is None and data_length != 0:
-            raise FurnaceException('data_length parameter cannot be non zero if data is None')
+            raise FurnaceProtocolException('data_length parameter cannot be non zero if data is None')
         message_bytes = []
         message_bytes.append(address & 0xff)
         # NB: if address_len is 11b flag_byte must be modified accordingly
@@ -438,9 +440,9 @@ class OwenProtocol():
         message_bytes.append(command_hash & 0xff)
         if data is not None:
             if len(data) > 15:
-                raise FurnaceException('Data length cannot be larger than 15')
+                raise FurnaceProtocolException('Data length cannot be larger than 15')
             if len(data) != data_length:
-                raise FurnaceException('Length of data bytes list does not match data_length parameter')
+                raise FurnaceProtocolException('Length of data bytes list does not match data_length parameter')
             for data_byte in data:
                 message_bytes.append(data_byte & 0xff)
         crc = self._get_crc(message_bytes)
@@ -453,7 +455,7 @@ class OwenProtocol():
         message = message + chr(0x0d)
         for ch in message:
             if ch not in ['#', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', '\r']:
-                raise FurnaceException(f'Wrong ASCII message: "{message}"!')
+                raise FurnaceProtocolException(f'Wrong ASCII message: "{message}"!')
         return message
 
     def _unpack_message(self, message:str) -> tuple[int, int, int, list[int]|None, int]:
@@ -484,7 +486,7 @@ class OwenProtocol():
             If received message does not contain proper start and stop markers
         """
         if message[0] != chr(0x23) or message[-1] != chr(0x0d):
-            raise FurnaceException(f'Unexpected format of message from device: {message}')
+            raise FurnaceProtocolException(f'Unexpected format of message from device: {message}')
         message_bytes = []
         for i in range(1, len(message) - 1, 2):
             first_tetrad = (ord(message[i]) - 0x47) & 0xf
