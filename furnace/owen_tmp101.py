@@ -31,3 +31,8 @@ class OwenTPM101():
         """
         """
         raise NotImplementedError()
+
+    def set_temperature_control(self, value:bool):
+        """
+        """
+        raise NotImplementedError()
