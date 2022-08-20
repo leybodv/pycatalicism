@@ -1,3 +1,7 @@
+import threading
+
+import pycatalicism.furnace.furnace_logging as furnace_logging
+
 class OwenProtocol():
     """
     """
@@ -5,6 +9,7 @@ class OwenProtocol():
     def __init__(self):
         """
         """
+        self._read_write_lock = threading.Lock()
         self._logger = furnace_logging.get_logger(self.__class__.__name__)
 
     ## Public interface ##
@@ -44,7 +49,7 @@ class OwenProtocol():
     def _change_parameter_value(self, message:str):
         """
         """
-        with self.port_read_write_lock:
+        with self._read_write_lock:
             self._write_message(message)
             receipt = self._read_message()
         if not self._receipt_is_ok(receipt=receipt, message=message):
@@ -65,7 +70,7 @@ class OwenProtocol():
         response:str
             Message received from the device encrypted in tetrad-to-ASCII from according to owen protocol.
         """
-        with self.port_read_write_lock:
+        with self._read_write_lock:
             self._write_message(message)
             response = self._read_message()
         address, flag_byte, response_hash, data, crc = self._unpack_message(response)
