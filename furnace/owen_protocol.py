@@ -2,6 +2,31 @@ class OwenProtocol():
     """
     """
 
+    def __init__(self):
+        """
+        """
+        self._logger = furnace_logging.get_logger(self.__class__.__name__)
+
+    def request_string(self, parameter:str) -> str:
+        """
+        """
+        raise NotImplementedError()
+
+    def request_PIC(self, parameter:str) -> float:
+        """
+        """
+        raise NotImplementedError()
+
+    def send_PIC(self, parameter:str, value:float):
+        """
+        """
+        raise NotImplementedError()
+
+    def send_unsigned_byte(self, parameter:str, value:int):
+        """
+        """
+        raise NotImplementedError()
+
     ## Encrypt different values to bytes ##
 
     def _float_to_PIC(self, value:float) -> list[int]:
