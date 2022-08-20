@@ -23,7 +23,7 @@ class BronkhorstF201CV():
         calibrations:dict[int, BronkhorstMFCCalibration]
             set of calibrations written in the memory of the device with corresponding calibration number. NB: calibration number is for propar protocol, numbering is started from 0, so fluid1 has 0th number
         """
-        self._propar_instrument = propar.instrument(comport=serial_address)
+        self._serial_address = serial_address
         self._serial_id = serial_id
         self._calibrations = calibrations
         self._current_calibration = None
@@ -40,6 +40,7 @@ class BronkhorstF201CV():
             if wrong serial id was received from the device
         """
         self._logger.info(f'Connecting to mass flow controller {self._serial_id}')
+        self._propar_instrument = propar.instrument(comport=self._serial_address)
         serial_id_response = self._propar_instrument.readParameter(dde_nr=92)
         self._logger.log(5, f'{serial_id_response = }')
         if not serial_id_response == self._serial_id:
