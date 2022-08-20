@@ -64,7 +64,7 @@ class ChromatecCrystal5000():
             self._logger.info('Chromatograph connected already')
             self._connected = True
         else:
-            raise ChromatographException(f'Unknown connection status: {self._connection_status}')
+            raise ChromatographException(f'Unknown connection status: {connection_status}')
 
     def set_method(self, method:str):
         """
