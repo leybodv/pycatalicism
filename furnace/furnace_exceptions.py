@@ -1,0 +1,3 @@
+class FurnaceProtocolException(Exception):
+    """
+    """
