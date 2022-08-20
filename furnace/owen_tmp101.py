@@ -1,21 +1,31 @@
+from pycatalicism.furnace.owen_protocol import OwenProtocol
+
 class OwenTPM101():
     """
     """
 
-    def __init__(self):
+    def __init__(self, device_name:str):
         """
         """
+        self._connected = False
+        self._owen_protocol = OwenProtocol()
+        self._device_name = device_name
         self._logger = furnace_logging.get_logger(self.__class__.__name__)
 
     def connect(self):
         """
         """
-        raise NotImplementedError()
+        device_name = self._owen_protocol.request_string_parameter(parameter='dev')
+        if self._device_name != device_name:
+            raise FurnaceConnectionException('Cannot connect to furnace controller!')
+        self._connected = True
 
     def set_temperature(self, temperature:float):
         """
         """
-        raise NotImplementedError()
+        if not self._connected:
+            raise FurnaceStateException('Connect to furnace  controller first!')
+        self._owen_protocol.send_float_parameter(parameter='sp', value=temperature)
 
     def get_temperature(self) -> float:
         """
