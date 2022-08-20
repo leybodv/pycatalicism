@@ -15,7 +15,7 @@ class OwenTPM101():
     def connect(self):
         """
         """
-        device_name = self._owen_protocol.request_string_parameter(parameter='dev')
+        device_name = self._owen_protocol.request_string(parameter='dev')
         if self._device_name != device_name:
             raise FurnaceConnectionException('Cannot connect to furnace controller!')
         self._connected = True
@@ -25,14 +25,14 @@ class OwenTPM101():
         """
         if not self._connected:
             raise FurnaceStateException('Connect to furnace controller first!')
-        self._owen_protocol.send_PIC_parameter(parameter='sp', value=temperature)
+        self._owen_protocol.send_PIC(parameter='sp', value=temperature)
 
     def get_temperature(self) -> float:
         """
         """
         if not self._connected:
             raise FurnaceStateException('Connect to furnace controller first!')
-        temperature = self._owen_protocol.request_PIC_parameter(parameter='sp')
+        temperature = self._owen_protocol.request_PIC(parameter='sp')
         return temperature
 
     def set_temperature_control(self, value:bool):
@@ -41,4 +41,4 @@ class OwenTPM101():
         if not self._connected:
             raise FurnaceStateException('Connect to furnace controller first!')
         temperature_control = 1 if value else 0
-        self._owen_protocol.send_unsigned_byte_parameter(parameter='r_s', value=temperature_control)
+        self._owen_protocol.send_unsigned_byte(parameter='r_s', value=temperature_control)
