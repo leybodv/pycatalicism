@@ -73,6 +73,32 @@ methods = {
         'Водка-Маруся'									:		10,
         }
 
+## mass flow controllers configuration ##
+from pycatalicism.mass_flow_controller.bronkhorst_mfc_calibration import BronkhorstMFCCalibration
+mfc_He_serial_address = 'COM3'
+mfc_He_serial_id = 'M21212791C'
+# NB: calibration ordering starts from 0 here, so, calibration for fluid1 has 0th number
+mfc_He_calibrations = {
+                    0	:	BronkhorstMFCCalibration(max_flow_rate=100, gas='He', p_in=3, p_out=1),
+                    1	:	BronkhorstMFCCalibration(max_flow_rate=100, gas='He', p_in=32, p_out=30),
+                    }
+mfc_CO2_serial_address = 'COM4'
+mfc_CO2_serial_id = 'M21212791E'
+mfc_CO2_calibrations = {
+                    0	:	BronkhorstMFCCalibration(max_flow_rate=100, gas='CO2', p_in=3, p_out=1),
+                    1	:	BronkhorstMFCCalibration(max_flow_rate=100, gas='CO2', p_in=32, p_out=30),
+                    2	:	BronkhorstMFCCalibration(max_flow_rate=100, gas='O2', p_in=3, p_out=1),
+                    }
+mfc_H2_serial_address = 'COM5'
+mfc_H2_serial_id = 'M21212791D'
+mfc_H2_calibrations = {
+                    0	:	BronkhorstMFCCalibration(max_flow_rate=30, gas='CH4', p_in=3, p_out=1),
+                    1	:	BronkhorstMFCCalibration(max_flow_rate=90, gas='CH4', p_in=32, p_out=30),
+                    2	:	BronkhorstMFCCalibration(max_flow_rate=100, gas='H2', p_in=3, p_out=1),
+                    3	:	BronkhorstMFCCalibration(max_flow_rate=100, gas='H2', p_in=32, p_out=30),
+                    4	:	BronkhorstMFCCalibration(max_flow_rate=100, gas='CO', p_in=11, p_out=1),
+                    }
+
 ## furnace configuration (only used by co2-hydrogenation.py right now ##
 ## for pycat.py use furnace_config.py for configuration ##
 import serial

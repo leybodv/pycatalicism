@@ -6,6 +6,7 @@
     <li><a href="#calc">Calculation of catalyst functional properties</a></li>
     <li><a href="#furnace-control">Furnace control</a></li>
     <li><a href="#chromatograph-control">Chromatograph control</a></li>
+    <li><a href="#mfc">Mass flow controllers</a></li>
   </ol>
   <h2 id="installation">Installation</h2>
     <h3>Arch Linux</h3>
@@ -247,9 +248,49 @@
         </tr>
       </table>
     </p>
+  <h2 id="mfc">Mass flow controllers</h2>
+  <p>Program controls Bronkhorst F201CV mass flow controllers to control flow rates of He, CO2, O2, H2, CO or CH4 gases. Parameters of corresponding mass flow controllers must be added to <a href="https://github.com/leybodv/pycatalicism/blob/dev/config.py">config.py</a> file.</p>
+  <p><code>pycat mfc set-flow-rate --gas {He|CO2|O2|H2|CO|CH4} --flow-rate FR</code></p>
+  <p>Set gas flow rate to specified value in nml/min</p>
+  <p>
+    <table>
+      <tr>
+        <td>--gas {He|CO2|O2|H2|CO|CH4}</td>
+        <td>gas to set flow rate for. Program chooses mass flow controller based on this value</td>
+      </tr>
+      <tr>
+        <td>--flow-rate FR</td>
+        <td>Flow rate in nml/min</td>
+      </tr>
+    </table>
+  </p>
+  <p><code>pycat mfc set-calibration --gas {He|CO2|O2|H2|CO|CH4} --calibration-number CN</code></p>
+  <p>Set calibration of specified mass flow controller to the calibration number CN</p>
+  <p>
+    <table>
+      <tr>
+        <td>--gas {He|CO2|O2|H2|CO|CH4}</td>
+        <td>Gas to set calibration for. Program chooses mass flow controller based on this value.</td>
+      </tr>
+      <tr>
+        <td>--calibration-number CN</td>
+        <td>Calibration number which can be found in the documentaion supplied with mass flow controller</td>
+      </tr>
+    </table>
+  </p>
+  <p><code>pycat mfc print-flow-rate --gas {He|CO2|O2|H2|CO|CH4}</code></p>
+  <p>Print current flow rate in nml/min for specified gas.</p>
+  <p>
+    <table>
+      <tr>
+        <td>--gas {He|CO2|O2|H2|CO|CH4}</td>
+        <td>Gas to print current flow rate for. Program chooses mass flow controller based on this value.</td>
+      </tr>
+    </table>
+  </p>
   <h2>ToDo</h2>
     <ul>
-      <li>add mass flow controllers package</li>
+      <li>don't read chromatograph parameters upon object creation, see how it is implemented in mfc</li>
       <li>rewrite calc module. Selectivity should be calculated automatically if applicable. There should be two separate commands to calculate activity and conversion</li>
       <li>add furnace read temperature interface</li>
       <li>convert p, T, f data from gas clock to SI units before usage</li>

@@ -12,7 +12,8 @@ logging_levels = {
 # Furnace controller type
 controller_type = 'Owen_TPM101'
 # Furnace controller port name and corresponding port parameters (baudrate, bytesize, parity, stopbits) which must be the same as configured on controller device
-port = '/dev/ttyUSB0'
+# port = '/dev/ttyUSB0' # for windows
+port = 'COM6'
 baudrate = 19200
 bytesize = serial.EIGHTBITS
 parity = serial.PARITY_NONE
