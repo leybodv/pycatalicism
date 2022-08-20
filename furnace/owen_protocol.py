@@ -11,6 +11,7 @@ class OwenProtocol():
 
     def __init__(self, address:int, port:str, baudrate:int, bytesize:int, parity:str, stopbits:float, timeout:float, write_timeout:float|None, rtscts:bool):
         """
+        TODO: add request trials
         """
         self._address = address
         self._port = port
@@ -38,8 +39,8 @@ class OwenProtocol():
         """
         """
         message = self._pack_message(command=parameter, is_request=True, data=None)
-        response_data = self._get_parameter_data_bytes(message)
-        pic = self._decrypt_PIC(response_data)
+        parameter_data_bytes = self._get_parameter_data_bytes(message)
+        pic = self._decrypt_PIC(parameter_data_bytes)
         return pic
 
     def send_PIC(self, parameter:str, value:float):
