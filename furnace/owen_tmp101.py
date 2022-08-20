@@ -24,15 +24,21 @@ class OwenTPM101():
         """
         """
         if not self._connected:
-            raise FurnaceStateException('Connect to furnace  controller first!')
-        self._owen_protocol.send_float_parameter(parameter='sp', value=temperature)
+            raise FurnaceStateException('Connect to furnace controller first!')
+        self._owen_protocol.send_PIC_parameter(parameter='sp', value=temperature)
 
     def get_temperature(self) -> float:
         """
         """
-        raise NotImplementedError()
+        if not self._connected:
+            raise FurnaceStateException('Connect to furnace controller first!')
+        temperature = self._owen_protocol.request_PIC_parameter(parameter='sp')
+        return temperature
 
     def set_temperature_control(self, value:bool):
         """
         """
-        raise NotImplementedError()
+        if not self._connected:
+            raise FurnaceStateException('Connect to furnace controller first!')
+        temperature_control = 1 if value else 0
+        self._owen_protocol.send_unsigned_byte_parameter(parameter='r_s', value=temperature_control)
