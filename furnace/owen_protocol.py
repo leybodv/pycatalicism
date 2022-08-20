@@ -1,14 +1,24 @@
 import threading
+import serial
 
 import pycatalicism.furnace.furnace_logging as furnace_logging
+from pycatalicism.furnace.furnace_exceptions import FurnaceProtocolException
 
 class OwenProtocol():
     """
     """
 
-    def __init__(self):
+    def __init__(self, port:str, baudrate:int, parity:str, stopbits:float, timeout:float, write_timeout:float|None, rtscts:bool):
         """
         """
+        self._port = port
+        self._baudrate = baudrate
+        self._bytesize = bytesize
+        self._parity = parity
+        self._stopbits = stopbits
+        self._timeout = timeout
+        self._rtscts = rtscts
+        self._write_timeout = write_timeout
         self._read_write_lock = threading.Lock()
         self._logger = furnace_logging.get_logger(self.__class__.__name__)
 
@@ -91,7 +101,7 @@ class OwenProtocol():
         message:str
             Encrypted message to be sent to the device
         """
-        with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
+        with serial.Serial(port=self._port, baudrate=self._baudrate, bytesize=self._bytesize, parity=self._parity, stopbits=self._stopbits, timeout=self._timeout, rtscts=self._rtscts, write_timeout=self._write_timeout) as ser:
             self.logger.debug(f'Writing message: {bytes(message, encoding="ascii")}')
             ser.write(bytes(message, encoding='ascii'))
 
