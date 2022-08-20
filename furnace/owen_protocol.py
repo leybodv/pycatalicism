@@ -10,7 +10,13 @@ class OwenProtocol():
     def request_string(self, parameter:str) -> str:
         """
         """
-        raise NotImplementedError()
+        message = self._prepare_request(command=parameter)
+        response = self._get_response(message=message)
+        address, flag_byte, response_hash, data, crc = self._unpack_message(response)
+        if not self._crc_is_ok(address, flag_byte, response_hash, data, crc):
+            raise FurnaceProtocolException(f'Wrong CRC in response message!')
+        string = self._decrypt_string(data)
+        return string
 
     def request_PIC(self, parameter:str) -> float:
         """
