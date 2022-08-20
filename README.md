@@ -191,12 +191,10 @@
       </table>
       <p>Program should be configured prior use. The configuration file located in path/to/pycatalycism/furnace/furnace_config.py</p>
     <h2 id="chromatograph-control">Chromatograph control</h2>
-    <p>Chromatec Crystal 5000 chromatograph can be controled via modbus protocol. The protocol requires modbus server to be run. Chromatec Control Panel and Chromatec Analytic with special module from chromatec installation media surve as modbus server (see chromatec documentation for details). Before using this python program, modbus server must be configured at Control Panel and Analytic software and relevant holding and input registers must be added. For the list of required registers see config.py file at the root of pycatalycism package.</p>
+    <p>Chromatec Crystal 5000 chromatograph can be controled via modbus protocol. The protocol requires modbus server to be run. Chromatec Control Panel and Chromatec Analytic with special module from chromatec installation media surve as modbus server (see chromatec documentation for details). Before using this python program, modbus server must be configured at Control Panel and Analytic software and relevant holding and input registers must be added. For the list of required registers see <a href="https://github.com/leybodv/pycatalicism/blob/dev/config.py">config.py</a> file at the root of pycatalycism package.</p>
     <p><b>Commands:</b></p>
-    <p><code>pycat chromatograph connect</code></p>
-    <p>Opens Control Panel. Connection to chromatograph is istablished automatically. Analytic software is also automatically opened. Program waits for succsessful connection establishment, so, if chromatograph is not on, program will be hang forever.</p>
     <p><code>pycat chromatograph set-method method</code></p>
-    <p>Sets instrumental method to the specified one and starts preparation to analysis step. The list of methods must be in a config.py file.</p>
+    <p>Sets instrumental method to the specified one and starts preparation to analysis step. The list of methods must be in a <a href="https://github.com/leybodv/pycatalicism/blob/dev/config.py">config.py</a> file. If chromatec Control Panel or Analytic are not ON, starts these programs and connects to chromatograph. In this case, program waits for successful connection establishment, so, if chromatograph is not on, program will be hang forever.</p>
     <p>positional arguments:</p>
     <p>
       <table>
@@ -290,7 +288,6 @@
   </p>
   <h2>ToDo</h2>
     <ul>
-      <li>don't read chromatograph parameters upon object creation, see how it is implemented in mfc</li>
       <li>rewrite calc module. Selectivity should be calculated automatically if applicable. There should be two separate commands to calculate activity and conversion</li>
       <li>add furnace read temperature interface</li>
       <li>convert p, T, f data from gas clock to SI units before usage</li>

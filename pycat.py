@@ -32,28 +32,25 @@ def heat(args:argparse.Namespace):
     """
     furnace_module.heat(temperature=args.temperature, wait=args.wait, show_plot=args.show_plot, export_plot=args.export_plot, export_data=args.export_data)
 
-def chromatograph_connect(args:argparse.Namespace):
-    """
-    Connect to chromatograph
-    """
-    chromatograph.connect()
-
 def chromatograph_set_method(args:argparse.Namespace):
     """
     Set chromatograph instrument method
     """
+    chromatograph.connect()
     chromatograph.set_method(method=args.method)
 
 def chromatograph_start_analysis(args:argparse.Namespace):
     """
     Start chromatograph analysis
     """
+    chromatograph.connect()
     chromatograph.start_analysis()
 
 def chromatograph_set_passport(args:argparse.Namespace):
     """
     Set values of chromatogram passport. Should be run after analysis is complete.
     """
+    chromatograph.connect()
     if args.purpose == 'analysis':
         purpose = ChromatogramPurpose.ANALYSIS
     elif args.purpose == 'graduation':
@@ -151,8 +148,6 @@ furnace_parser.add_argument('--export-data', default=None, help='path to file to
 
 chromatograph_parser = subparsers.add_parser('chromatograph', help='commands to control chromatograph')
 chromatograph_subparser = chromatograph_parser.add_subparsers(required=True)
-chromatograph_connect_parser = chromatograph_subparser.add_parser('connect', help='connect to chromatograph')
-chromatograph_connect_parser.set_defaults(func=chromatograph_connect)
 chromatograph_setmethod_parser = chromatograph_subparser.add_parser('set-method', help='set instrumental method of chromatograph')
 chromatograph_setmethod_parser.set_defaults(func=chromatograph_set_method)
 chromatograph_setmethod_parser.add_argument('method', help='method name')
