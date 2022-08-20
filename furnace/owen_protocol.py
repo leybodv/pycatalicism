@@ -7,43 +7,118 @@ class OwenProtocol():
         """
         self._logger = furnace_logging.get_logger(self.__class__.__name__)
 
+    ## Public interface ##
+
     def request_string(self, parameter:str) -> str:
         """
         """
-        message = self._prepare_request(command=parameter)
-        response = self._get_response(message=message)
-        address, flag_byte, response_hash, data, crc = self._unpack_message(response)
-        if not self._crc_is_ok(address, flag_byte, response_hash, data, crc):
-            raise FurnaceProtocolException(f'Wrong CRC in response message!')
-        string = self._decrypt_string(data)
+        message = self._pack_message(command=parameter, is_request=True, data=None)
+        parameter_data_bytes = self._get_parameter_data_bytes(message=message)
+        string = self._decrypt_string(parameter_data_bytes)
         return string
 
     def request_PIC(self, parameter:str) -> float:
         """
         """
-        message = self._prepare_request(command=parameter)
-        response = self._get_response(message)
-        address, flag_byte, response_hash, data, crc = self._unpack_message(response)
-        if not self._crc_is_ok(address, flag_byte, response_hash, data, crc):
-            raise FurnaceProtocolException('Wrong CRC in response message!')
-        if data is None:
-            raise FurnaceProtocolException('Did not get any data in response message')
-        pic = self._decrypt_PIC(data)
+        message = self._pack_message(command=parameter, is_request=True, data=None)
+        response_data = self._get_parameter_data_bytes(message)
+        pic = self._decrypt_PIC(response_data)
         return pic
-
-        raise NotImplementedError()
 
     def send_PIC(self, parameter:str, value:float):
         """
         """
-        raise NotImplementedError()
+        data = self._float_to_PIC(value=value)
+        message = self._pack_message(command=parameter, is_request=False, data=data)
+        self._change_parameter_value(message=message)
 
     def send_unsigned_byte(self, parameter:str, value:int):
         """
         """
-        raise NotImplementedError()
+        data = self._int_to_unsigned_byte(value=value)
+        message = self._pack_message(command=parameter, is_request=False, data=data)
+        self._change_parameter_value(message=message)
 
-    ## Encrypt different values to bytes ##
+    ## Top level i/o ##
+
+    def _change_parameter_value(self, message:str):
+        """
+        """
+        with self.port_read_write_lock:
+            self._write_message(message)
+            receipt = self._read_message()
+        if not self._receipt_is_ok(receipt=receipt, message=message):
+            raise FurnaceProtocolException('Got wrong receipt from device!')
+
+    def _get_parameter_data_bytes(self, message:str) -> list[int]:
+        """
+        TODO: Change docs
+        Writes message to the device and gets a response from the device.
+
+        parameters
+        ----------
+        message:str
+            Message encrypted in tetrad-to-ASCII form according to owen protocol to be sent to the device.
+
+        returns
+        -------
+        response:str
+            Message received from the device encrypted in tetrad-to-ASCII from according to owen protocol.
+        """
+        with self.port_read_write_lock:
+            self._write_message(message)
+            response = self._read_message()
+        address, flag_byte, response_hash, data, crc = self._unpack_message(response)
+        if not self._crc_is_ok(address, flag_byte, response_hash, data, crc):
+            raise FurnaceProtocolException(f'Wrong CRC in response message!')
+        if data is None:
+            raise FurnaceProtocolException('Did not get any data in response message')
+        return data
+
+    ## Bottom level i/o ##
+
+    def _write_message(self, message:str):
+        """
+        Writes enctypted message over serial port.
+
+        parameters
+        ----------
+        message:str
+            Encrypted message to be sent to the device
+        """
+        with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
+            self.logger.debug(f'Writing message: {bytes(message, encoding="ascii")}')
+            ser.write(bytes(message, encoding='ascii'))
+
+    def _read_message(self) -> str:
+        """
+        Reads message from the device over serial port.
+
+        returns
+        -------
+        message:str
+            Encrypted message received from the device
+
+        raises
+        ------
+        FurnaceException
+            If message does not contain proper start and stop markers
+        """
+        with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
+            message = ''
+            for i in range(44):
+                self.logger.log(5, f'Reading byte #{i}')
+                byte = ser.read().decode()
+                self.logger.log(5, f'Read byte: {byte}')
+                message = message + byte
+                if byte == chr(0x0d):
+                    break
+            self.logger.debug(f'Got message: {message = }')
+        if message[0] != chr(0x23) or message[-1] != chr(0x0d):
+            raise FurnaceException(f'Unexpected format of message got from device: {message}')
+        return message
+
+    ## Encrypt data to bytes ##
 
     def _float_to_PIC(self, value:float) -> list[int]:
         """
@@ -117,7 +192,7 @@ class OwenProtocol():
             ascii_bytes.append(ord(ch))
         return ascii_bytes
 
-    ## Decrypt different values from bytes ##
+    ## Decrypt data from bytes ##
 
     def _decrypt_PIC(self, data:list[int]) -> float:
         """
@@ -176,8 +251,11 @@ class OwenProtocol():
             string = string + chr(data_byte)
         return string
 
-    def _prepare_request(self, command:str) -> str:
+    ## Message packing/unpacking ##
+
+    def _pack_message(self, command:str, is_request:bool, data:list[int]|None) -> str:
         """
+        TODO: change docs
         Prepares request of parameter value in tetrad-to-ASCII form according to owen protocol. Methods gets command id, retreives command hash and encrypts message.
 
         parameters
@@ -193,27 +271,9 @@ class OwenProtocol():
         self.logger.debug(f'Request {command} parameter value from device')
         command_id = self._get_command_id(command)
         command_hash = self._get_command_hash(command_id)
-        message_ascii = self._get_message_ascii(address=self.address, request=True, data_length=0, command_hash=command_hash, data=None)
+        data_length = 0 if data is None else len(data)
+        message_ascii = self._encrypt_tetrad_to_ascii(address=self.address, request=is_request, data_length=data_length, command_hash=command_hash, data=data)
         return message_ascii
-
-    def _get_response(self, message:str) -> str:
-        """
-        Writes message to the device and gets a response from the device.
-
-        parameters
-        ----------
-        message:str
-            Message encrypted in tetrad-to-ASCII form according to owen protocol to be sent to the device.
-
-        returns
-        -------
-        response:str
-            Message received from the device encrypted in tetrad-to-ASCII from according to owen protocol.
-        """
-        with self.port_read_write_lock:
-            self._write_message(message)
-            response = self._read_message()
-        return response
 
     def _get_command_id(self, command:str) -> list[int]:
         """
@@ -320,7 +380,7 @@ class OwenProtocol():
                 b = b & 0xff
         return crc
 
-    def _get_message_ascii(self, address:int, request:bool, data_length:int, command_hash:int, data:list[int]|None) -> str:
+    def _encrypt_tetrad_to_ascii(self, address:int, request:bool, data_length:int, command_hash:int, data:list[int]|None) -> str:
         """
         Encrypt message in tetrad-to-ASCII form according to owen protocol.
 
@@ -381,46 +441,64 @@ class OwenProtocol():
                 raise FurnaceException(f'Wrong ASCII message: "{message}"!')
         return message
 
-    def _write_message(self, message:str):
+    def _unpack_message(self, message:str) -> tuple[int, int, int, list[int]|None, int]:
         """
-        Writes enctypted message over serial port.
+        Decrypt tetrad-to-ASCII encrypted message according to owen protocol into bytes.
 
         parameters
         ----------
         message:str
-            Encrypted message to be sent to the device
-        """
-        with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
-            self.logger.debug(f'Writing message: {bytes(message, encoding="ascii")}')
-            ser.write(bytes(message, encoding='ascii'))
-
-    def _read_message(self) -> str:
-        """
-        Reads message from the device over serial port.
+            Tetrad-to-ASCII encrypted message received from the device
 
         returns
         -------
-        message:str
-            Encrypted message received from the device
+        address:int
+            Byte with address parameter
+        flag_byte:int
+            Byte with enhanced address, request and data length bits
+        response_hash:int
+            2 bytes hash of command id
+        data:list[int] or None
+            List of bytes with data encrypted according to owen protocol or None if data length is 0
+        crc:int
+            2 bytes CRC check sum received in message
 
         raises
         ------
         FurnaceException
-            If message does not contain proper start and stop markers
+            If received message does not contain proper start and stop markers
         """
-        with serial.Serial(port=self.port, baudrate=self.baudrate, bytesize=self.bytesize, parity=self.parity, stopbits=self.stopbits, timeout=self.timeout, rtscts=self.rtscts, write_timeout=self.write_timeout) as ser:
-            message = ''
-            for i in range(44):
-                self.logger.log(5, f'Reading byte #{i}')
-                byte = ser.read().decode()
-                self.logger.log(5, f'Read byte: {byte}')
-                message = message + byte
-                if byte == chr(0x0d):
-                    break
-            self.logger.debug(f'Got message: {message = }')
         if message[0] != chr(0x23) or message[-1] != chr(0x0d):
-            raise FurnaceException(f'Unexpected format of message got from device: {message}')
-        return message
+            raise FurnaceException(f'Unexpected format of message from device: {message}')
+        message_bytes = []
+        for i in range(1, len(message) - 1, 2):
+            first_tetrad = (ord(message[i]) - 0x47) & 0xf
+            second_tetrad = (ord(message[i+1]) - 0x47) & 0xf
+            self.logger.log(5, f'ASCII letter #{i} = {message[i]}')
+            self.logger.log(5, f'{first_tetrad = :#b}')
+            self.logger.log(5, f'{second_tetrad = :#b}')
+            byte = ((first_tetrad << 4) | second_tetrad) & 0xff
+            message_bytes.append(byte)
+        self.logger.log(5, f'{len(message_bytes) = }')
+        self.logger.log(5, f'{message_bytes = }')
+        address = message_bytes[0]
+        self.logger.log(5, f'{address = }')
+        flag_byte = message_bytes[1]
+        self.logger.log(5, f'{flag_byte = :#b}')
+        response_hash = ((message_bytes[2] << 8) | message_bytes[3]) & 0xffff
+        self.logger.log(5, f'{response_hash = :#x}')
+        data_length = flag_byte & 0b1111
+        self.logger.log(5, f'{data_length = }')
+        if data_length != 0:
+            data = []
+            for i in range(data_length):
+                data.append(message_bytes[4 + i])
+        else:
+            data = None
+        crc = ((message_bytes[4+data_length] << 8) | message_bytes[4+data_length+1]) & 0xffff
+        return (address, flag_byte, response_hash, data, crc)
+
+    ## Checking ##
 
     def _receipt_is_ok(self, receipt:str, message:str) -> bool:
         """
@@ -491,60 +569,3 @@ class OwenProtocol():
         crc_is_ok = crc == crc_to_check
         self.logger.debug(f'{crc_is_ok = }')
         return crc_is_ok
-
-    def _unpack_message(self, message:str) -> tuple[int, int, int, list[int]|None, int]:
-        """
-        Decrypt tetrad-to-ASCII encrypted message according to owen protocol into bytes.
-
-        parameters
-        ----------
-        message:str
-            Tetrad-to-ASCII encrypted message received from the device
-
-        returns
-        -------
-        address:int
-            Byte with address parameter
-        flag_byte:int
-            Byte with enhanced address, request and data length bits
-        response_hash:int
-            2 bytes hash of command id
-        data:list[int] or None
-            List of bytes with data encrypted according to owen protocol or None if data length is 0
-        crc:int
-            2 bytes CRC check sum received in message
-
-        raises
-        ------
-        FurnaceException
-            If received message does not contain proper start and stop markers
-        """
-        if message[0] != chr(0x23) or message[-1] != chr(0x0d):
-            raise FurnaceException(f'Unexpected format of message from device: {message}')
-        message_bytes = []
-        for i in range(1, len(message) - 1, 2):
-            first_tetrad = (ord(message[i]) - 0x47) & 0xf
-            second_tetrad = (ord(message[i+1]) - 0x47) & 0xf
-            self.logger.log(5, f'ASCII letter #{i} = {message[i]}')
-            self.logger.log(5, f'{first_tetrad = :#b}')
-            self.logger.log(5, f'{second_tetrad = :#b}')
-            byte = ((first_tetrad << 4) | second_tetrad) & 0xff
-            message_bytes.append(byte)
-        self.logger.log(5, f'{len(message_bytes) = }')
-        self.logger.log(5, f'{message_bytes = }')
-        address = message_bytes[0]
-        self.logger.log(5, f'{address = }')
-        flag_byte = message_bytes[1]
-        self.logger.log(5, f'{flag_byte = :#b}')
-        response_hash = ((message_bytes[2] << 8) | message_bytes[3]) & 0xffff
-        self.logger.log(5, f'{response_hash = :#x}')
-        data_length = flag_byte & 0b1111
-        self.logger.log(5, f'{data_length = }')
-        if data_length != 0:
-            data = []
-            for i in range(data_length):
-                data.append(message_bytes[4 + i])
-        else:
-            data = None
-        crc = ((message_bytes[4+data_length] << 8) | message_bytes[4+data_length+1]) & 0xffff
-        return (address, flag_byte, response_hash, data, crc)
