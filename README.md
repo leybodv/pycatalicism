@@ -290,7 +290,6 @@
   </p>
   <h2>ToDo</h2>
     <ul>
-      <li>add mass flow controller description to this README and merge dev with main branch</li>
       <li>don't read chromatograph parameters upon object creation, see how it is implemented in mfc</li>
       <li>rewrite calc module. Selectivity should be calculated automatically if applicable. There should be two separate commands to calculate activity and conversion</li>
       <li>add furnace read temperature interface</li>
