@@ -21,6 +21,16 @@ class OwenProtocol():
     def request_PIC(self, parameter:str) -> float:
         """
         """
+        message = self._prepare_request(command=parameter)
+        response = self._get_response(message)
+        address, flag_byte, response_hash, data, crc = self._unpack_message(response)
+        if not self._crc_is_ok(address, flag_byte, response_hash, data, crc):
+            raise FurnaceProtocolException('Wrong CRC in response message!')
+        if data is None:
+            raise FurnaceProtocolException('Did not get any data in response message')
+        pic = self._decrypt_PIC(data)
+        return pic
+
         raise NotImplementedError()
 
     def send_PIC(self, parameter:str, value:float):
