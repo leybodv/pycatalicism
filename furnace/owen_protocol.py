@@ -4,12 +4,13 @@ import struct
 
 import pycatalicism.furnace.furnace_logging as furnace_logging
 from pycatalicism.furnace.furnace_exceptions import FurnaceProtocolException
+from pycatalicism.furnace.furnace_exceptions import FurnaceConnectionException
 
 class OwenProtocol():
     """
     """
 
-    def __init__(self, address:int, port:str, baudrate:int, bytesize:int, parity:str, stopbits:float, timeout:float, write_timeout:float|None, rtscts:bool):
+    def __init__(self, address:int, port:str, baudrate:int, bytesize:int, parity:str, stopbits:float, timeout:float, write_timeout:float|None, rtscts:bool, request_trials:int=3):
         """
         TODO: add request trials
         """
@@ -23,6 +24,7 @@ class OwenProtocol():
         self._rtscts = rtscts
         self._write_timeout = write_timeout
         self._read_write_lock = threading.Lock()
+        self._request_trials = request_trials
         self._logger = furnace_logging.get_logger(self.__class__.__name__)
 
     ## Public interface ##
@@ -31,16 +33,40 @@ class OwenProtocol():
         """
         """
         message = self._pack_message(command=parameter, is_request=True, data=None)
-        parameter_data_bytes = self._get_parameter_data_bytes(message=message)
-        string = self._decrypt_string(parameter_data_bytes)
+        count = 0
+        while True:
+            self._logger.debug(f'Requesting string parameter "{parameter}". Trial #{count}.')
+            try:
+                parameter_data_bytes = self._get_parameter_data_bytes(message=message)
+                self._logger.log(5, f'{parameter_data_bytes = }')
+                string = self._decrypt_string(parameter_data_bytes)
+                self._logger.log(5, f'{string = }')
+                break
+            except FurnaceProtocolException as ex:
+                if count == self._request_trials-1:
+                    raise FurnaceConnectionException(ex)
+                else:
+                    count += 1
         return string
 
     def request_PIC(self, parameter:str) -> float:
         """
         """
         message = self._pack_message(command=parameter, is_request=True, data=None)
-        parameter_data_bytes = self._get_parameter_data_bytes(message)
-        pic = self._decrypt_PIC(parameter_data_bytes)
+        count = 0
+        while True:
+            self._logger.debug(f'Requesting PIC parameter "{parameter}". Trial #{count}.')
+            try:
+                parameter_data_bytes = self._get_parameter_data_bytes(message)
+                self._logger.log(5, f'{parameter_data_bytes = }')
+                pic = self._decrypt_PIC(parameter_data_bytes)
+                self._logger.log(5, f'{pic = }')
+                break
+            except FurnaceProtocolException as ex:
+                if count == self._request_trials-1:
+                    raise FurnaceConnectionException(ex)
+                else:
+                    count += 1
         return pic
 
     def send_PIC(self, parameter:str, value:float):
@@ -48,14 +74,34 @@ class OwenProtocol():
         """
         data = self._float_to_PIC(value=value)
         message = self._pack_message(command=parameter, is_request=False, data=data)
-        self._change_parameter_value(message=message)
+        count = 0
+        while True:
+            self._logger.debug(f'Sending PIC parameter "{parameter}". Trial #{count}.')
+            try:
+                self._change_parameter_value(message=message)
+                break
+            except FurnaceProtocolException as ex:
+                if count == self._request_trials-1:
+                    raise FurnaceConnectionException(ex)
+                else:
+                    count += 1
 
     def send_unsigned_byte(self, parameter:str, value:int):
         """
         """
         data = self._int_to_unsigned_byte(value=value)
         message = self._pack_message(command=parameter, is_request=False, data=data)
-        self._change_parameter_value(message=message)
+        count = 0
+        while True:
+            self._logger.debug(f'Sending unsigned byte parameter "{parameter}". Trial #{count}.')
+            try:
+                self._change_parameter_value(message=message)
+                break
+            except FurnaceProtocolException as ex:
+                if count == self._request_trials-1:
+                    raise FurnaceConnectionException(ex)
+                else:
+                    count += 1
 
     ## Top level i/o ##
 
