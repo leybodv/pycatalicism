@@ -7,9 +7,10 @@ Module is a start point for the program. It parses arguments provided by user as
 import argparse
 
 import pycatalicism.calc.calc as calc
-import pycatalicism.furnace.furnace_module as furnace_module
 import pycatalicism.config as config
 from pycatalicism.calc.calculatorexception import CalculatorException
+from pycatalicism.furnace.owen_protocol import OwenProtocol
+from pycatalicism.furnace.owen_tmp101 import OwenTPM101
 from pycatalicism.chromatograph.chromatec_control_panel_modbus import ChromatecControlPanelModbus
 from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatecAnalyticModbus
 from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatogramPurpose
@@ -26,11 +27,24 @@ def calculate(args:argparse.Namespace):
     except CalculatorException:
         print('At least one of the flags {--conversion|--selectivity} must be provided to the program')
 
-def heat(args:argparse.Namespace):
+def furnace_set_temperature(args:argparse.Namespace):
     """
-    Set furnace controller temperature to specified value. If wait parameter is provided, hold furnace at specified temperature during wait time in minutes and turn heating off afterwards. Plot temperature vs. time plot if --show-plot is provided (NB: this will block execution of program until plot window is closed). Export temperature vs. time data/plot if --export-data/--export-plot arguments were provided by user.
+    Set furnace temperature to specified value
     """
-    furnace_module.heat(temperature=args.temperature, wait=args.wait, show_plot=args.show_plot, export_plot=args.export_plot, export_data=args.export_data)
+    temperature = float(args.temperature)
+    furnace_controller.connect()
+    furnace_controller.set_temperature(temperature)
+    if temperature == 0:
+        furnace_controller.set_temperature_control(False)
+    else:
+        furnace_controller.set_temperature_control(True)
+
+def furnace_print_temperature(args:argparse.Namespace):
+    """
+    """
+    furnace_controller.connect()
+    temperature = furnace_controller.get_temperature()
+    print(f'Current temperature is {temperature}°C')
 
 def chromatograph_set_method(args:argparse.Namespace):
     """
@@ -112,6 +126,10 @@ def mfc_print_flow_rate(args:argparse.Namespace):
     else:
         raise Exception(f'Unknown gas {gas}!')
 
+# initialize furnace controller
+furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts)
+furnace_controller = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol)
+
 # initialize chromatograph
 control_panel_modbus = ChromatecControlPanelModbus(modbus_id=config.control_panel_modbus_id, working_status_input_address=config.working_status_input_address, serial_number_input_address=config.serial_number_input_address, connection_status_input_address=config.connection_status_input_address, method_holding_address=config.method_holding_address, chromatograph_command_holding_address=config.chromatograph_command_holding_address, application_command_holding_address=config.application_command_holding_address)
 analytic_modbus = ChromatecAnalyticModbus(modbus_id=config.analytic_modbus_id, sample_name_holding_address=config.sample_name_holding_address, chromatogram_purpose_holding_address=config.chromatogram_purpose_holding_address, sample_volume_holding_address=config.sample_volume_holding_address, sample_dilution_holding_address=config.sample_dilution_holding_address, operator_holding_address=config.operator_holding_address, column_holding_address=config.column_holding_address, lab_name_holding_address=config.lab_name_holding_address)
@@ -138,13 +156,13 @@ calc_parser.add_argument('--output-plot', default=None, help='path to directory 
 calc_parser.add_argument('--products-basis', action='store_true', help='calculate conversion based on products concentration instead of reactants')
 calc_parser.add_argument('--sample-name', help='sample name will be added to results data files and as a title to the result plots')
 
-furnace_parser = subparsers.add_parser('heat', help='control furnace')
-furnace_parser.set_defaults(func=heat)
-furnace_parser.add_argument('temperature', help='heat furnace to target temperature')
-furnace_parser.add_argument('--wait', default=None, help='time in minutes to hold furnace at the specified temperature before turning heating off')
-furnace_parser.add_argument('--show-plot', action='store_true', help='show temperature vs. time plot')
-furnace_parser.add_argument('--export-plot', default=None, help='path to file to save plot of temperature vs. time as png image')
-furnace_parser.add_argument('--export-data', default=None, help='path to file to save temperature vs. time data')
+furnace_parser = subparsers.add_parser('furnace', help='control furnace')
+furnace_subparser = furnace_parser.add_subparsers(required=True)
+furnace_settemperature_parser = furnace_subparser.add_parser('set-temperature', help='set furnace temperature')
+furnace_settemperature_parser.set_defaults(func=furnace_set_temperature)
+furnace_settemperature_parser.add_argument('temperature', help='temperature in °C')
+furnace_printtemperature_parser = furnace_subparser.add_parser('print-temperature', help='print current temperature in °C')
+furnace_printtemperature_parser.set_defaults(func=furnace_print_temperature)
 
 chromatograph_parser = subparsers.add_parser('chromatograph', help='commands to control chromatograph')
 chromatograph_subparser = chromatograph_parser.add_subparsers(required=True)

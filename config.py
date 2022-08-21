@@ -99,20 +99,11 @@ mfc_H2_calibrations = {
                     4	:	BronkhorstMFCCalibration(max_flow_rate=100, gas='CO', p_in=11, p_out=1),
                     }
 
-## furnace configuration (only used by co2-hydrogenation.py right now ##
-## for pycat.py use furnace_config.py for configuration ##
+## furnace configuration ##
 import serial
 
-# Dictionary of logging levels of corresponding classes
-logging_levels = {
-                'FurnaceData'               :    logging.INFO,
-                'Owen_TPM101_Controller'    :    logging.INFO,
-                'SimpleTempTimeExporter'    :    logging.INFO,
-                'SimpleTempTimePlotter'     :    logging.INFO
-                }
-
 # Furnace controller type
-controller_type = 'Owen_TPM101'
+furnace_device_name = 'ÒÐÌ101' # <- this string is actually returned by the device \_O_/ although should be 'TPM101' according to owen protocol
 # Furnace controller port name and corresponding port parameters (baudrate, bytesize, parity, stopbits) which must be the same as configured on controller device
 furnace_port = 'COM6'
 furnace_baudrate = 19200
@@ -127,19 +118,3 @@ furnace_write_timeout = None
 furnace_rtscts = False
 # Address of Owen TRM101 device
 furnace_address = 0
-# Time interval between message was sent to the device and controller was sent the answer in ms
-furnace_rsdl = 20
-# Address length in bits. Can be 8 or 11 bits, however only 8 bits is supported now
-furnace_address_len = 8
-
-# Type of plotter to plot temperature vs. time data
-plotter_type = 'simple_temp_time_plotter'
-# Resolution of figure
-fig_dpi = 96
-# Width of figure in inches
-fig_width = 800 / fig_dpi
-# Height of figure in inches
-fig_height = 600 / fig_dpi
-
-# Type of exporter to save temperature vs. time data
-exporter_type = 'simple_temp_time_exporter'
