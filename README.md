@@ -160,37 +160,21 @@
     </p>
     <p>If flow rate measurement data is not provided, conversion is calculated based solely on concentrations and warning is logged to console in this case.</p>
   <h2 id="furnace-control">Furnace control</h2>
-    <p><code>pycat heat [--wait WAIT] [--show-plot] [--export-plot EXPORT_PLOT] [--export-data EXPORT_DATA] temperature</code></p>
+  <p>Furnace control is performed with Owen TPM101 controller. Communication is over serial port. All configuration values must be in a <a href="https://github.com/leybodv/pycatalicism/blob/dev/config.py">config.py</a> file and must match controller's settings.</p>
+    <p><code>pycat furnace set-temperature temperature</code></p>
+    <p>Set setpoint value of furnace controller to specified value.</p>
     <p>positional arguments:</p>
     <p>
       <table>
         <tr>
           <td>temperature</td>
-          <td>temperature in °C to heat furnace to. If 0, sets set point of a controller to 0 and turns off temperature regulation</td>
+          <td>temperature in °C</td>
         </tr>
       </table>
     </p>
-    <p>parameters:</p>
-      <table>
-        <tr>
-          <td>--wait WAIT</td>
-          <td>wait for WAIT minutes after a furnace has reached target temperature and turn heating off afterwards</td>
-        </tr>
-        <tr>
-          <td>--show-plot</td>
-          <td>show plot of temperature vs. time. NB: this will block the program until the window with the plot is closed</td>
-        </tr>
-        <tr>
-          <td>--export-plot EXPORT_PLOT</td>
-          <td>export temperature vs. time plot to the file specified by EXPORT_PLOT path</td>
-        </tr>
-        <tr>
-          <td>--export-data</td>
-          <td>export temperature vs. time data to the file specified by EXPORT_DATA path</td>
-        </tr>
-      </table>
-      <p>Program should be configured prior use. The configuration file located in path/to/pycatalycism/furnace/furnace_config.py</p>
-    <h2 id="chromatograph-control">Chromatograph control</h2>
+    <p><code>pycat furnace print-temperature</code></p>
+    <p>Print current furnace temperature.</p>
+  <h2 id="chromatograph-control">Chromatograph control</h2>
     <p>Chromatec Crystal 5000 chromatograph can be controled via modbus protocol. The protocol requires modbus server to be run. Chromatec Control Panel and Chromatec Analytic with special module from chromatec installation media surve as modbus server (see chromatec documentation for details). Before using this python program, modbus server must be configured at Control Panel and Analytic software and relevant holding and input registers must be added. For the list of required registers see <a href="https://github.com/leybodv/pycatalicism/blob/dev/config.py">config.py</a> file at the root of pycatalycism package.</p>
     <p><b>Commands:</b></p>
     <p><code>pycat chromatograph set-method method</code></p>
@@ -288,7 +272,7 @@
   </p>
   <h2>ToDo</h2>
     <ul>
-      <li>implement furnace package similar to chromatograph and mass_flow_controllers</li>
+      <li>write co_oxidation.py script</li>
       <li>rewrite calc module. Selectivity should be calculated automatically if applicable. There should be two separate commands to calculate activity and conversion</li>
       <li>add furnace read temperature interface</li>
       <li>convert p, T, f data from gas clock to SI units before usage</li>
