@@ -36,7 +36,7 @@ furnace_controller.set_temperature_control(True)
 furnace_controller.set_temperature(process_config.activation_temperature)
 while True:
     current_temperature = furnace_controller.get_temperature()
-    if current_temperature >= process_config.acrivation_temperature:
+    if current_temperature >= process_config.activation_temperature:
         break
     time.sleep(secs=60)
 
