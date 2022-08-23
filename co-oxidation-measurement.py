@@ -52,4 +52,49 @@ while True:
     time.sleep(60)
 
 chromatograph.start_analysis()
+while True:
+    chromatograph_working_status = chromatograph.get_working_status()
+    if chromatograph_working_status is not WorkingStatus.ANALYSIS:
+        chromatograph.set_passport(name=f'{date}_purge', volume=0.5, dilution=1, purpose=ChromatogramPurpose.ANALYSIS, operator=args.operator, column='HaesepN/NaX', lab_name='Inorganic Nanomaterials')
+        break
+    time.sleep(60)
 
+while True:
+    chromatograph_working_status = chromatograph.get_working_status()
+    if chromatograph_working_status is WorkingStatus.PREPARATION or chromatograph_working_status is WorkingStatus.READY_FOR_ANALYSIS:
+        chromatograph.set_method('co-oxidation')
+        break
+    time.sleep(60)
+
+for temperature in process_config.temperatures[1:]:
+    while True:
+        if chromatograph.is_ready_for_analysis():
+            break
+        time.sleep(60)
+    current_temperature = furnace.get_temperature()
+    chromatograph.start_analysis()
+    furnace.set_temperature(temperature=temperature)
+    while True:
+        current_temperature = furnace.get_temperature()
+        if current_temperature >= temperature:
+            break
+        time.sleep(60)
+    isothermal_start = # current time in secs
+    while True:
+        chromatograph_working_status = chromatograph.get_working_status()
+        if chromatograph_working_status is not WorkingStatus.ANALYSIS:
+            chromatograph.set_passport(name=f'{date}_{process_config.sample_name}_{current_temperature}', volume=0.5, dilution=1, purpose=ChromatogramPurpose.ANALYSIS, operator=process_config.operator, column='HaesepN/NaX', lab_name='Inorganic Nanomaterials')
+            break
+        time.sleep(60)
+    current_time = # current time in secs
+    if current_time - isothermal_start < 30 * 60:
+        time.sleep(30 * 60 - (current_time - isothermal_start))
+
+furnace.set_temperature(0)
+furnace.set_temperature_control(False)
+while True:
+    chromatograph_working_status = chromatograph.get_working_status()
+    if chromatograph_working_status is WorkingStatus.PREPARATION or chromatograph_working_status is WorkingStatus.READY_FOR_ANALYSIS:
+        chromatograph.set_method('cooling') # NB: make this method in Control Panel, add it to config.py
+        break
+    time.sleep(60)
