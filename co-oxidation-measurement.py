@@ -3,6 +3,7 @@
 import time
 
 import pycatalicism.config as device_config
+import pycatalicism.co_oxidation_measurement_config as process_config
 from pycatalicism.furnace.owen_protocol import OwenProtocol
 from pycatalicism.furnace.owen_tmp101 import OwenTPM101
 from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
