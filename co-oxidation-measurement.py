@@ -37,12 +37,15 @@ for mfc in mfcs:
     mfc.connect()
 chromatograph.connect()
 
+# set chromatograph instrumental method to 'purge'. it will start to prepare itself
 chromatograph.set_method('purge')
 
+# set flow rates and calibrations of mass flow controllers
 for mfc, calibration, flow_rate in zip(mfcs, process_config.calibrations, process_config.flow_rates):
     mfc.set_calibration(calibration_num=calibration)
     mfc.set_flow_rate(flow_rate)
 
+# heat furnace to first measurement temperature, wait until temperature is reached
 furnace.set_temperature_control(True)
 furnace.set_temperature(temperature=process_config.temperatures[0])
 while True:
@@ -51,13 +54,15 @@ while True:
         break
     time.sleep(60)
 
+# wait until chromatograph is ready for analysis, start chromatograph purge afterwards
 while True:
     chromatograph_is_ready = chromatograph.is_ready_for_analysis()
     if chromatograph_is_ready:
         break
     time.sleep(60)
-
 chromatograph.start_analysis()
+
+# wait until chromatograph analysis is over, set passport values
 while True:
     chromatograph_working_status = chromatograph.get_working_status()
     if chromatograph_working_status is not WorkingStatus.ANALYSIS:
@@ -65,6 +70,7 @@ while True:
         break
     time.sleep(60)
 
+# wait until chromatograph starts to prepare itself, change instrumental method to 'co-oxidation'
 while True:
     chromatograph_working_status = chromatograph.get_working_status()
     if chromatograph_working_status is WorkingStatus.PREPARATION or chromatograph_working_status is WorkingStatus.READY_FOR_ANALYSIS:
@@ -72,6 +78,15 @@ while True:
         break
     time.sleep(60)
 
+# for each temperature in measurement temperatures list:
+    # wait until chromatograph is ready for analysis
+    # read current furnace temperature
+    # start chromatograph measurement
+    # heat furnace to the next temperature
+    # wait until temperature is reached
+    # mark current time
+    # wait until chromatograph analysis is over
+    #
 for temperature in process_config.temperatures[1:]:
     while True:
         if chromatograph.is_ready_for_analysis():
