@@ -170,3 +170,24 @@ class ChromatecCrystal5000():
         self._analytic.set_operator(operator)
         self._analytic.set_column(column)
         self._analytic.set_lab_name(lab_name)
+
+    def get_working_status(self) -> WorkingStatus:
+        """
+        Get working status of chromatograph.
+
+        returns
+        -------
+        working_status:WorkingStatus
+            chromatograph working status
+
+        raises
+        ------
+        ChromatographStateException
+            if chromatograph is not connected
+        """
+        if not self._connected:
+            raise ChromatographStateException('Connect chromatograph first!')
+        self._logger.info('Getting working status.')
+        working_status = self._control_panel.get_current_working_status()
+        self._logger.debug(f'{working_status = }')
+        return working_status
