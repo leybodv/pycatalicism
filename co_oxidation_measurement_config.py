@@ -12,4 +12,6 @@ flow_rates = [
 
 temperatures = [] # activity measurement temperatures
 
+sample_name = 
+
 operator = 
