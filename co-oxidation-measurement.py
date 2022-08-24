@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import time
+from datetime import date
 
 import pycatalicism.config as device_config
 import pycatalicism.co_oxidation_measurement_config as process_config
@@ -8,8 +9,12 @@ from pycatalicism.furnace.owen_protocol import OwenProtocol
 from pycatalicism.furnace.owen_tmp101 import OwenTPM101
 from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
 from pycatalicism.chromatograph.chromatec_control_panel_modbus import ChromatecControlPanelModbus
+from pycatalicism.chromatograph.chromatec_control_panel_modbus import WorkingStatus
 from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatecAnalyticModbus
+from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatogramPurpose
 from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
+
+today = date.today()
 
 # initialize furnace controller
 furnace_controller_protocol = OwenProtocol(address=device_config.furnace_address, port=device_config.furnace_port, baudrate=device_config.furnace_baudrate, bytesize=device_config.furnace_bytesize, parity=device_config.furnace_parity, stopbits=device_config.furnace_stopbits, timeout=device_config.furnace_timeout, write_timeout=device_config.furnace_write_timeout, rtscts=device_config.furnace_rtscts)
@@ -56,7 +61,7 @@ chromatograph.start_analysis()
 while True:
     chromatograph_working_status = chromatograph.get_working_status()
     if chromatograph_working_status is not WorkingStatus.ANALYSIS:
-        chromatograph.set_passport(name=f'{date}_purge', volume=0.5, dilution=1, purpose=ChromatogramPurpose.ANALYSIS, operator=args.operator, column='HaesepN/NaX', lab_name='Inorganic Nanomaterials')
+        chromatograph.set_passport(name=f'{today.strftime("%Y%m%d")}_purge', volume=0.5, dilution=1, purpose=ChromatogramPurpose.ANALYSIS, operator=process_config.operator, column='HaesepN/NaX', lab_name='Inorganic Nanomaterials')
         break
     time.sleep(60)
 
@@ -80,14 +85,14 @@ for temperature in process_config.temperatures[1:]:
         if current_temperature >= temperature:
             break
         time.sleep(60)
-    isothermal_start = # current time in secs
+    isothermal_start = time.time()
     while True:
         chromatograph_working_status = chromatograph.get_working_status()
         if chromatograph_working_status is not WorkingStatus.ANALYSIS:
-            chromatograph.set_passport(name=f'{date}_{process_config.sample_name}_{current_temperature}', volume=0.5, dilution=1, purpose=ChromatogramPurpose.ANALYSIS, operator=process_config.operator, column='HaesepN/NaX', lab_name='Inorganic Nanomaterials')
+            chromatograph.set_passport(name=f'{today.strftime("%Y%m%d")}_{process_config.sample_name}_{current_temperature}', volume=0.5, dilution=1, purpose=ChromatogramPurpose.ANALYSIS, operator=process_config.operator, column='HaesepN/NaX', lab_name='Inorganic Nanomaterials')
             break
         time.sleep(60)
-    current_time = # current time in secs
+    current_time = time.time()
     if current_time - isothermal_start < 30 * 60:
         time.sleep(30 * 60 - (current_time - isothermal_start))
 
