@@ -4,7 +4,7 @@ Module for instantiating and configuring of logger
 
 import logging
 
-from pycatalicism.furnace.logging_config import logging_levels
+from furnace.logging_config import logging_levels
 
 def get_logger(name:str) -> logging.Logger:
     """

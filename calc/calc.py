@@ -1,12 +1,12 @@
 from pathlib import Path
 
-from pycatalicism.calc import calculator_factory
-from pycatalicism.calc import parser_factory
-from pycatalicism.calc import exporter_factory
-from pycatalicism.calc import plotter_factory
-from pycatalicism.calc.conversion import Conversion
-from pycatalicism.calc.selectivity import Selectivity
-from pycatalicism.calc.calculatorexception import CalculatorException
+from calc import calculator_factory
+from calc import parser_factory
+from calc import exporter_factory
+from calc import plotter_factory
+from calc.conversion import Conversion
+from calc.selectivity import Selectivity
+from calc.calculatorexception import CalculatorException
 
 """
 Main interface for calculating conversion, activity and selectivity of catalysts. Users of this module should use calculate method to perform all calculation tasks.

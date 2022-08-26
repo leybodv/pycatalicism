@@ -1,7 +1,7 @@
-from pycatalicism.calc.rawdata import RawData
-from pycatalicism.calc.conversion import Conversion
-from pycatalicism.calc.selectivity import Selectivity
-from pycatalicism.calc.activity import Activity
+from calc.rawdata import RawData
+from calc.conversion import Conversion
+from calc.selectivity import Selectivity
+from calc.activity import Activity
 
 class Calculator():
     """

@@ -1,6 +1,6 @@
-import pycatalicism.furnace.furnace_logging as furnace_logging
-from pycatalicism.furnace.owen_protocol import OwenProtocol
-from pycatalicism.furnace.furnace_exceptions import FurnaceConnectionException, FurnaceStateException
+import furnace.furnace_logging as furnace_logging
+from furnace.owen_protocol import OwenProtocol
+from furnace.furnace_exceptions import FurnaceConnectionException, FurnaceStateException
 
 class OwenTPM101():
     """

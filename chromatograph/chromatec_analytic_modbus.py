@@ -2,8 +2,8 @@ from enum import Enum
 
 from pymodbus.client.sync import ModbusTcpClient
 
-import pycatalicism.chromatograph.chromatograph_logging as chromatograph_logging
-import pycatalicism.chromatograph.modbus_converter as convert
+import chromatograph.chromatograph_logging as chromatograph_logging
+import chromatograph.modbus_converter as convert
 
 class ChromatogramPurpose(Enum):
     """

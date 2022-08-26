@@ -6,16 +6,16 @@ Module is a start point for the program. It parses arguments provided by user as
 
 import argparse
 
-import pycatalicism.calc.calc as calc
-import pycatalicism.config as config
-from pycatalicism.calc.calculatorexception import CalculatorException
-from pycatalicism.furnace.owen_protocol import OwenProtocol
-from pycatalicism.furnace.owen_tmp101 import OwenTPM101
-from pycatalicism.chromatograph.chromatec_control_panel_modbus import ChromatecControlPanelModbus
-from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatecAnalyticModbus
-from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatogramPurpose
-from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
-from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
+import calc.calc as calc
+import config as config
+from calc.calculatorexception import CalculatorException
+from furnace.owen_protocol import OwenProtocol
+from furnace.owen_tmp101 import OwenTPM101
+from chromatograph.chromatec_control_panel_modbus import ChromatecControlPanelModbus
+from chromatograph.chromatec_analytic_modbus import ChromatecAnalyticModbus
+from chromatograph.chromatec_analytic_modbus import ChromatogramPurpose
+from chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
+from mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
 
 def calculate(args:argparse.Namespace):
     """

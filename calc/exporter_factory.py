@@ -1,7 +1,7 @@
-from pycatalicism.calc.exporter import Exporter
-from pycatalicism.calc.co2_hydrogenation_exporter import CO2HydrogenationExporter
-from pycatalicism.calc.co_oxidation_exporter import COOxidationExporter
-from pycatalicism.calc.exporterexception import ExporterException
+from calc.exporter import Exporter
+from calc.co2_hydrogenation_exporter import CO2HydrogenationExporter
+from calc.co_oxidation_exporter import COOxidationExporter
+from calc.exporterexception import ExporterException
 
 """
 Factory for creating exporters for specified reaction.

@@ -1,6 +1,6 @@
 import numpy as np
 
-from pycatalicism.logging_decorator import Logging
+from logging_decorator import Logging
 
 class RawData():
     """

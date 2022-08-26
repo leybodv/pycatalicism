@@ -2,9 +2,9 @@ from enum import Enum
 
 from pymodbus.client.sync import ModbusTcpClient
 
-import pycatalicism.chromatograph.chromatograph_logging as chromatograph_logging
-import pycatalicism.chromatograph.modbus_converter as convert
-from pycatalicism.chromatograph.chromatograph_exceptions import ChromatographException
+import chromatograph.chromatograph_logging as chromatograph_logging
+import chromatograph.modbus_converter as convert
+from chromatograph.chromatograph_exceptions import ChromatographException
 
 class WorkingStatus(Enum):
     """

@@ -1,6 +1,6 @@
-from pycatalicism.calc.parser import Parser
-from pycatalicism.calc.parserexception import ParserException
-from pycatalicism.calc.chromatec_crystal_composition_copy_paste_parser import ChromatecCrystalCompositionCopyPasteParser
+from calc.parser import Parser
+from calc.parserexception import ParserException
+from calc.chromatec_crystal_composition_copy_paste_parser import ChromatecCrystalCompositionCopyPasteParser
 
 """
 Factory for creating parser for specific data format.

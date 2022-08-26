@@ -1,6 +1,6 @@
 import struct
 
-import pycatalicism.chromatograph.chromatograph_logging as chromatograph_logging
+import chromatograph.chromatograph_logging as chromatograph_logging
 
 _logger = chromatograph_logging.get_logger(__name__)
 

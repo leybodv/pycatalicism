@@ -74,7 +74,7 @@ methods = {
         }
 
 ## mass flow controllers configuration ##
-from pycatalicism.mass_flow_controller.bronkhorst_mfc_calibration import BronkhorstMFCCalibration
+from mass_flow_controller.bronkhorst_mfc_calibration import BronkhorstMFCCalibration
 mfc_He_serial_address = 'COM3'
 mfc_He_serial_id = 'M21212791C'
 # NB: calibration ordering starts from 0 here, so, calibration for fluid1 has 0th number

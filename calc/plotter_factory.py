@@ -1,7 +1,7 @@
-from pycatalicism.calc.plotter import Plotter
-from pycatalicism.calc.co_oxidation_plotter import COOxidationPlotter
-from pycatalicism.calc.co2_hydrogenation_plotter import CO2HydrogenationPlotter
-from pycatalicism.calc.plotterexception import PlotterException
+from calc.plotter import Plotter
+from calc.co_oxidation_plotter import COOxidationPlotter
+from calc.co2_hydrogenation_plotter import CO2HydrogenationPlotter
+from calc.plotterexception import PlotterException
 
 """
 Factory for creation of resulting data plotters.

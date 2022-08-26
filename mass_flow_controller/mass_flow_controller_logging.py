@@ -4,7 +4,7 @@ Module for instantiating and configuring logger
 
 import logging
 
-from pycatalicism.mass_flow_controller.logging_config import logging_levels
+from mass_flow_controller.logging_config import logging_levels
 
 def get_logger(name:str) -> logging.Logger:
     """

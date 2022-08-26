@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from pycatalicism.calc.parser import Parser
-from pycatalicism.calc.rawdata import RawData
-from pycatalicism.calc.parserexception import ParserException
-from pycatalicism.logging_decorator import Logging
+from calc.parser import Parser
+from calc.rawdata import RawData
+from calc.parserexception import ParserException
+from logging_decorator import Logging
 
 class ChromatecCrystalCompositionCopyPasteParser(Parser):
     """

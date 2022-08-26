@@ -5,11 +5,11 @@ import matplotlib
 import matplotlib.axes
 import numpy as np
 
-from pycatalicism.calc.plotter import Plotter
-from pycatalicism.calc.plotterexception import PlotterException
-from pycatalicism.calc.conversion import Conversion
-from pycatalicism.calc.selectivity import Selectivity
-from pycatalicism.logging_decorator import Logging
+from calc.plotter import Plotter
+from calc.plotterexception import PlotterException
+from calc.conversion import Conversion
+from calc.selectivity import Selectivity
+from logging_decorator import Logging
 
 class CO2HydrogenationPlotter(Plotter):
     """

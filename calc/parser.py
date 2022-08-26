@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pycatalicism.calc.rawdata import RawData
+from calc.rawdata import RawData
 
 class Parser():
     """

@@ -2,11 +2,11 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 
-from pycatalicism.calc.plotter import Plotter
-from pycatalicism.calc.plotterexception import PlotterException
-from pycatalicism.calc.conversion import Conversion
-from pycatalicism.calc.selectivity import Selectivity
-from pycatalicism.logging_decorator import Logging
+from calc.plotter import Plotter
+from calc.plotterexception import PlotterException
+from calc.conversion import Conversion
+from calc.selectivity import Selectivity
+from logging_decorator import Logging
 
 class COOxidationPlotter(Plotter):
     """

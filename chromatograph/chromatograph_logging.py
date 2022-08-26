@@ -4,7 +4,7 @@ Module for instantiating and configuring logger
 
 import logging
 
-from pycatalicism.chromatograph.logging_config import logging_levels
+from chromatograph.logging_config import logging_levels
 
 def get_logger(name:str) -> logging.Logger:
     """

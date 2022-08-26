@@ -1,7 +1,7 @@
-from pycatalicism.calc.co2hydrogenationcalculator import CO2HydrogenationCalculator
-from pycatalicism.calc.rawdata import RawData
-from pycatalicism.calc.conversion import Conversion
-from pycatalicism.logging_decorator import Logging
+from calc.co2hydrogenationcalculator import CO2HydrogenationCalculator
+from calc.rawdata import RawData
+from calc.conversion import Conversion
+from logging_decorator import Logging
 
 class CO2HydrogenationProductsBasisCalculator(CO2HydrogenationCalculator):
     """

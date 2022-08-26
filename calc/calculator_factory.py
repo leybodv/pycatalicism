@@ -1,8 +1,8 @@
-from pycatalicism.calc.calculator import Calculator
-from pycatalicism.calc.cooxidationcalculator import COOxidationCalculator
-from pycatalicism.calc.co2hydrogenationcalculator import CO2HydrogenationCalculator
-from pycatalicism.calc.co2hydrogenationproductsbasiscalculator import CO2HydrogenationProductsBasisCalculator
-from pycatalicism.calc.calculatorexception import CalculatorException
+from calc.calculator import Calculator
+from calc.cooxidationcalculator import COOxidationCalculator
+from calc.co2hydrogenationcalculator import CO2HydrogenationCalculator
+from calc.co2hydrogenationproductsbasiscalculator import CO2HydrogenationProductsBasisCalculator
+from calc.calculatorexception import CalculatorException
 
 """
 Factory to create calculator for proper reaction.

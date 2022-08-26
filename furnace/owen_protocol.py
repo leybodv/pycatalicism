@@ -2,9 +2,9 @@ import threading
 import serial
 import struct
 
-import pycatalicism.furnace.furnace_logging as furnace_logging
-from pycatalicism.furnace.furnace_exceptions import FurnaceProtocolException
-from pycatalicism.furnace.furnace_exceptions import FurnaceConnectionException
+import furnace.furnace_logging as furnace_logging
+from furnace.furnace_exceptions import FurnaceProtocolException
+from furnace.furnace_exceptions import FurnaceConnectionException
 
 class OwenProtocol():
     """

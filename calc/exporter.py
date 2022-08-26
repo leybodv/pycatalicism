@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from pycatalicism.calc.conversion import Conversion
-from pycatalicism.calc.selectivity import Selectivity
+from calc.conversion import Conversion
+from calc.selectivity import Selectivity
 
 class Exporter():
     """
