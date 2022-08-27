@@ -2,7 +2,7 @@ from calc.calculator import Calculator
 from calc.rawdata import RawData
 from calc.conversion import Conversion
 from calc.selectivity import Selectivity
-from logging_decorator import Logging
+from logger.logging_decorator import Logging
 
 class CO2HydrogenationCalculator(Calculator):
     """

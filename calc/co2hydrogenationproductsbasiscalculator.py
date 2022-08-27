@@ -1,7 +1,7 @@
 from calc.co2hydrogenationcalculator import CO2HydrogenationCalculator
 from calc.rawdata import RawData
 from calc.conversion import Conversion
-from logging_decorator import Logging
+from logger.logging_decorator import Logging
 
 class CO2HydrogenationProductsBasisCalculator(CO2HydrogenationCalculator):
     """

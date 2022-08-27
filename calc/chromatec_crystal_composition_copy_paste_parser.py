@@ -3,7 +3,7 @@ from pathlib import Path
 from calc.parser import Parser
 from calc.rawdata import RawData
 from calc.parserexception import ParserException
-from logging_decorator import Logging
+from logger.logging_decorator import Logging
 
 class ChromatecCrystalCompositionCopyPasteParser(Parser):
     """

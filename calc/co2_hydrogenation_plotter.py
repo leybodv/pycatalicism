@@ -9,7 +9,7 @@ from calc.plotter import Plotter
 from calc.plotterexception import PlotterException
 from calc.conversion import Conversion
 from calc.selectivity import Selectivity
-from logging_decorator import Logging
+from logger.logging_decorator import Logging
 
 class CO2HydrogenationPlotter(Plotter):
     """

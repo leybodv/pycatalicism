@@ -7,7 +7,7 @@ Module is a start point for the program. It parses arguments provided by user as
 import argparse
 
 import calc.calc as calc
-import config as config
+import config.config as config
 from calc.calculatorexception import CalculatorException
 from furnace.owen_protocol import OwenProtocol
 from furnace.owen_tmp101 import OwenTPM101

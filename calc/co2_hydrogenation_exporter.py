@@ -4,7 +4,7 @@ from calc.exporter import Exporter
 from calc.conversion import Conversion
 from calc.selectivity import Selectivity
 from calc.exporterexception import ExporterException
-from logging_decorator import Logging
+from logger.logging_decorator import Logging
 
 class CO2HydrogenationExporter(Exporter):
     """

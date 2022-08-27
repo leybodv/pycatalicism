@@ -1,6 +1,6 @@
 import numpy as np
 
-from logging_decorator import Logging
+from logger.logging_decorator import Logging
 
 class RawData():
     """
