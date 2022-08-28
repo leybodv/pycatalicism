@@ -86,7 +86,8 @@ while True:
     # wait until temperature is reached
     # mark current time
     # wait until chromatograph analysis is over
-    #
+    # set passport values
+    # wait until isothermal dwell at measurement temperature is more than 30 minutes
 for temperature in process_config.temperatures[1:]:
     while True:
         if chromatograph.is_ready_for_analysis():
@@ -111,8 +112,12 @@ for temperature in process_config.temperatures[1:]:
     if current_time - isothermal_start < 30 * 60:
         time.sleep(30 * 60 - (current_time - isothermal_start))
 
+# turn off heating
 furnace.set_temperature(0)
 furnace.set_temperature_control(False)
+
+
+# start chromatograph cooldown
 while True:
     chromatograph_working_status = chromatograph.get_working_status()
     if chromatograph_working_status is WorkingStatus.PREPARATION or chromatograph_working_status is WorkingStatus.READY_FOR_ANALYSIS:
