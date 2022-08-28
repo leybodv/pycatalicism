@@ -2,11 +2,11 @@
 
 import time
 
-import pycatalicism.config as device_config
-import pycatalicism.co_oxidation_activation_config as process_config
-from pycatalicism.furnace.owen_protocol import OwenProtocol
-from pycatalicism.furnace.owen_tmp101 import OwenTPM101
-from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
+import config as device_config
+import config.co_oxidation_activation as process_config
+from furnace.owen_protocol import OwenProtocol
+from furnace.owen_tmp101 import OwenTPM101
+from mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
 
 # initialize furnace controller
 furnace_controller_protocol = OwenProtocol(address=device_config.furnace_address, port=device_config.furnace_port, baudrate=device_config.furnace_baudrate, bytesize=device_config.furnace_bytesize, parity=device_config.furnace_parity, stopbits=device_config.furnace_stopbits, timeout=device_config.furnace_timeout, write_timeout=device_config.furnace_write_timeout, rtscts=device_config.furnace_rtscts)

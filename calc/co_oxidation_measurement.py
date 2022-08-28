@@ -3,16 +3,16 @@
 import time
 from datetime import date
 
-import pycatalicism.config as device_config
-import pycatalicism.co_oxidation_measurement_config as process_config
-from pycatalicism.furnace.owen_protocol import OwenProtocol
-from pycatalicism.furnace.owen_tmp101 import OwenTPM101
-from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
-from pycatalicism.chromatograph.chromatec_control_panel_modbus import ChromatecControlPanelModbus
-from pycatalicism.chromatograph.chromatec_control_panel_modbus import WorkingStatus
-from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatecAnalyticModbus
-from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatogramPurpose
-from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
+import config.config as device_config
+import config.co_oxidation_measurement as process_config
+from furnace.owen_protocol import OwenProtocol
+from furnace.owen_tmp101 import OwenTPM101
+from mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
+from chromatograph.chromatec_control_panel_modbus import ChromatecControlPanelModbus
+from chromatograph.chromatec_control_panel_modbus import WorkingStatus
+from chromatograph.chromatec_analytic_modbus import ChromatecAnalyticModbus
+from chromatograph.chromatec_analytic_modbus import ChromatogramPurpose
+from chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
 
 today = date.today()
 
