@@ -10,6 +10,7 @@ import importlib
 import importlib.util
 import sys
 from pathlib import Path
+from datetime import date
 
 import pycatalicism.calc.calc as calc
 import pycatalicism.config as config
@@ -20,6 +21,7 @@ from pycatalicism.chromatograph.chromatec_control_panel_modbus import ChromatecC
 from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatecAnalyticModbus
 from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatogramPurpose
 from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
+from pycatalicism.chromatograph.chromatec_control_panel_modbus import WorkingStatus
 from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
 
 def calculate(args:argparse.Namespace):
@@ -209,6 +211,134 @@ def activate(args:argparse.Namespace):
     for mfc, flow_rate in zip(mfcs, process_config.post_flow_rates):
         mfc.set_flow_rate(flow_rate)
 
+def measure(args:argparse.Namespace):
+    """
+    Gather chromatograms at different measurement temperatures defined in a config file provided as an argument. Configuration file is a file with several variables defined using python syntax. Use measurement_config.py as an example of configuration. Method initializes devices and connects to them. It sets chromatograph method to 'purge', sets mass flow controller calibrations and flow rates. Heats furnace to the first measurement temperature and waits until target temperature is reached. Starts chromatograph purge, waits until purge is over and sets chromatograph method to the one specified in a config. Then, for each measurement temperature, method waits until chromatograph is ready for analysis, starts measurement, heats furnace to the next temperature. Finally, it turns off furnace and starts chromatograph cooldown.
+    """
+    # import configuration variables
+    config_path = Path(args.config)
+    config_spec = importlib.util.spec_from_file_location('process_config', config_path)
+    if config_spec is None:
+        raise Exception(f'Cannot read config file at {args.config}')
+    config_loader = config_spec.loader
+    if config_loader is None:
+        raise Exception(f'Cannot read config file at {args.config}')
+    config_module = importlib.util.module_from_spec(config_spec)
+    sys.modules['process_config'] = config_module
+    config_loader.exec_module(config_module)
+    process_config = importlib.import_module('process_config')
+    # what is the date today?
+    today = date.today()
+    # initialize furnace controller
+    furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts)
+    furnace = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol)
+    # initialize mass flow controllers
+    mfcs = list()
+    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations))
+    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_CO2_serial_address, serial_id=config.mfc_CO2_serial_id, calibrations=config.mfc_CO2_calibrations))
+    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_H2_serial_address, serial_id=config.mfc_H2_serial_id, calibrations=config.mfc_H2_calibrations))
+    # initialize chromatograph
+    control_panel_modbus = ChromatecControlPanelModbus(modbus_id=config.control_panel_modbus_id, working_status_input_address=config.working_status_input_address, serial_number_input_address=config.serial_number_input_address, connection_status_input_address=config.connection_status_input_address, method_holding_address=config.method_holding_address, chromatograph_command_holding_address=config.chromatograph_command_holding_address, application_command_holding_address=config.application_command_holding_address)
+    analytic_modbus = ChromatecAnalyticModbus(modbus_id=config.analytic_modbus_id, sample_name_holding_address=config.sample_name_holding_address, chromatogram_purpose_holding_address=config.chromatogram_purpose_holding_address, sample_volume_holding_address=config.sample_volume_holding_address, sample_dilution_holding_address=config.sample_dilution_holding_address, operator_holding_address=config.operator_holding_address, column_holding_address=config.column_holding_address, lab_name_holding_address=config.lab_name_holding_address)
+    chromatograph = ChromatecCrystal5000(control_panel_modbus, analytic_modbus, config.methods)
+    # connect to devices
+    furnace.connect()
+    for mfc in mfcs:
+        mfc.connect()
+    chromatograph.connect()
+    # set chromatograph instrumental method to 'purge'. chromatograph will start to prepare itself
+    chromatograph.set_method('purge')
+    # set flow rates and calibrations of mass flow controllers
+    for mfc, calibration, flow_rate in zip(mfcs, process_config.calibrations, process_config.flow_rates):
+        mfc.set_calibration(calibration_num=calibration)
+        mfc.set_flow_rate(flow_rate)
+    # heat furnace to first measurement temperature, wait until temperature is reached
+    furnace.set_temperature_control(True)
+    furnace.set_temperature(temperature=process_config.temperatures[0])
+    while True:
+        current_temperature = furnace.get_temperature()
+        if current_temperature >= process_config.temperatures[0]:
+            break
+        time.sleep(60)
+    # wait until chromatograph is ready for analysis, start chromatograph purge afterwards
+    while True:
+        chromatograph_is_ready = chromatograph.is_ready_for_analysis()
+        if chromatograph_is_ready:
+            break
+        time.sleep(60)
+    chromatograph.start_analysis()
+    # wait until chromatograph analysis is over, set passport values
+    while True:
+        chromatograph_working_status = chromatograph.get_working_status()
+        if chromatograph_working_status is not WorkingStatus.ANALYSIS:
+            chromatograph.set_passport(name=f'{today.strftime("%Y%m%d")}_purge', volume=0.5, dilution=1, purpose=ChromatogramPurpose.ANALYSIS, operator=process_config.operator, column='HaesepN/NaX', lab_name='Inorganic Nanomaterials')
+            break
+        time.sleep(60)
+    # wait until chromatograph starts to prepare itself, change instrumental method to corresponding instrumental method
+    while True:
+        chromatograph_working_status = chromatograph.get_working_status()
+        if chromatograph_working_status is WorkingStatus.PREPARATION or chromatograph_working_status is WorkingStatus.READY_FOR_ANALYSIS:
+            chromatograph.set_method(process_config.chromatograph_method)
+            break
+        time.sleep(60)
+    # for each temperature in measurement temperatures list:
+        # wait until chromatograph is ready for analysis
+        # read current furnace temperature
+        # start chromatograph measurement
+        # heat furnace to the next temperature
+        # wait until temperature is reached
+        # mark current time
+        # wait until chromatograph analysis is over
+        # set passport values
+        # wait until isothermal dwell at measurement temperature is more than 30 minutes
+    for temperature in process_config.temperatures[1:]:
+        while True:
+            if chromatograph.is_ready_for_analysis():
+                break
+            time.sleep(60)
+        current_temperature = furnace.get_temperature()
+        chromatograph.start_analysis()
+        furnace.set_temperature(temperature=temperature)
+        while True:
+            current_temperature = furnace.get_temperature()
+            if current_temperature >= temperature:
+                break
+            time.sleep(60)
+        isothermal_start = time.time()
+        while True:
+            chromatograph_working_status = chromatograph.get_working_status()
+            if chromatograph_working_status is not WorkingStatus.ANALYSIS:
+                chromatograph.set_passport(name=f'{today.strftime("%Y%m%d")}_{process_config.sample_name}_{current_temperature}', volume=0.5, dilution=1, purpose=ChromatogramPurpose.ANALYSIS, operator=process_config.operator, column='HaesepN/NaX', lab_name='Inorganic Nanomaterials')
+                break
+            time.sleep(60)
+        current_time = time.time()
+        if current_time - isothermal_start < process_config.isothermal * 60:
+            time.sleep(process_config.isothermal * 60 - (current_time - isothermal_start))
+    # measure chromatogram at final temperature
+    while True:
+        if chromatograph.is_ready_for_analysis():
+            break
+        time.sleep(60)
+    current_temperature = furnace.get_temperature()
+    chromatograph.start_analysis()
+    # turn off heating
+    furnace.set_temperature(0)
+    furnace.set_temperature_control(False)
+    # set final chromatogram passport values
+    while True:
+        chromatograph_working_status = chromatograph.get_working_status()
+        if chromatograph_working_status is not WorkingStatus.ANALYSIS:
+            chromatograph.set_passport(name=f'{today.strftime("%Y%m%d")}_{process_config.sample_name}_{current_temperature}', volume=0.5, dilution=1, purpose=ChromatogramPurpose.ANALYSIS, operator=process_config.operator, column='HaesepN/NaX', lab_name='Inorganic Nanomaterials')
+            break
+        time.sleep(60)
+    # start chromatograph cooldown
+    while True:
+        chromatograph_working_status = chromatograph.get_working_status()
+        if chromatograph_working_status is WorkingStatus.PREPARATION or chromatograph_working_status is WorkingStatus.READY_FOR_ANALYSIS:
+            chromatograph.set_method('cooling') # NB: make this method in Control Panel, add it to config.py
+            break
+        time.sleep(60)
+
 if (__name__ == '__main__'):
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(required=True)
@@ -268,6 +398,10 @@ if (__name__ == '__main__'):
     activation_parser = subparsers.add_parser('activate', help='activate catalyst using parameters provided in configuration file')
     activation_parser.set_defaults(func=activate)
     activation_parser.add_argument('--config', required=True, help='configuration file with activation parameters')
+
+    measurement_parser = subparsers.add_parser('measure', help='gather chromatograms at different temperatures')
+    measurement_parser.set_defaults(func=measure)
+    measurement_parser.add_argument('--config', required=True, help='configuration file with measurement parameters')
 
     args = parser.parse_args()
     args.func(args)
