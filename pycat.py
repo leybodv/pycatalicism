@@ -5,6 +5,8 @@ Module is a start point for the program. It parses arguments provided by user as
 """
 
 import argparse
+import time
+from pathlib import Path
 
 import pycatalicism.calc.calc as calc
 import pycatalicism.config as config
@@ -148,6 +150,51 @@ def mfc_print_flow_rate(args:argparse.Namespace):
     else:
         raise Exception(f'Unknown gas {gas}!')
 
+def activate(args:argparse.Namespace):
+    """
+    """
+    config_path = Path(args.config)
+    # https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
+    # initialize furnace controller
+    furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts)
+    furnace_controller = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol)
+    # initialize mass flow controllers
+    mfcs = list()
+    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations))
+    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_CO2_serial_address, serial_id=config.mfc_CO2_serial_id, calibrations=config.mfc_CO2_calibrations))
+    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_H2_serial_address, serial_id=config.mfc_H2_serial_id, calibrations=config.mfc_H2_calibrations))
+    # connect to devices
+    furnace_controller.connect()
+    for mfc in mfcs:
+        mfc.connect()
+    # set mass flow controllers calibrations and flow rates
+    for mfc, calibration, flow_rate in zip(mfcs, process_config.calibrations, process_config.activation_flow_rates):
+        mfc.set_calibration(calibration_num=calibration)
+        mfc.set_flow_rate(flow_rate)
+    # wait system to be purged with gases for 10 minutes
+    time.sleep(secs=10*60)
+    # heat furnace to activation temperature, wait until temperature is reached
+    furnace_controller.set_temperature_control(True)
+    furnace_controller.set_temperature(process_config.activation_temperature)
+    while True:
+        current_temperature = furnace_controller.get_temperature()
+        if current_temperature >= process_config.activation_temperature:
+            break
+        time.sleep(secs=60)
+    # dwell for activation duration time
+    time.sleep(secs=process_config.activation_duration*60)
+    # turn off heating, wait until furnace is cooled down to post_temperature
+    furnace_controller.set_temperature(0)
+    furnace_controller.set_temperature_control(False)
+    while True:
+        current_temperature = furnace_controller.get_temperature()
+        if current_temperature <= process_config.post_temperature:
+            break
+        time.sleep(secs=60)
+    # change gas flow rates to post activation values
+    for mfc, flow_rate in zip(mfcs, process_config.post_flow_rates):
+        mfc.set_flow_rate(flow_rate)
+
 if (__name__ == '__main__'):
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(required=True)
@@ -203,6 +250,10 @@ if (__name__ == '__main__'):
     mfc_print_flow_rate_parser = mfc_subparser.add_parser('print-flow-rate', help='print current flow rate')
     mfc_print_flow_rate_parser.set_defaults(func=mfc_print_flow_rate)
     mfc_print_flow_rate_parser.add_argument('--gas', required=True, choices=['He', 'CO2', 'O2', 'H2', 'CO', 'CH4'], help='which gas to print flow rate for')
+
+    activation_parser = subparsers.add_parser('activate', help='activate catalyst using parameters provided in configuration file')
+    activation_parser.set_defaults(func=activate)
+    activation_parser.add_argument('--config', required=True, help='configuration file with activation parameters')
 
     args = parser.parse_args()
     args.func(args)
