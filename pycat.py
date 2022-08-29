@@ -6,6 +6,9 @@ Module is a start point for the program. It parses arguments provided by user as
 
 import argparse
 import time
+import importlib
+import importlib.util
+import sys
 from pathlib import Path
 
 import pycatalicism.calc.calc as calc
@@ -152,9 +155,20 @@ def mfc_print_flow_rate(args:argparse.Namespace):
 
 def activate(args:argparse.Namespace):
     """
+    Activate catalyst using parameters defined in configuration file, provided as argument. Configuration file is file with several variables created using python syntax. Use activation_config.py as an example. Method initializes furnace controller, mass flow controllers and connects to the devices. It sets mass flow controllers with proper calibrations and flow rates (corresponding valves must be opened prior this method is called). It waits 10 minutes for system to be purged with gases, heats furnace to activation temperature and holds it at that temperature for activation time. It then turns off heating, waits until furnace is cooled down and sets gas flow rates to the specified in configuration file values. NB: valves cannot be opened or closed automatically.
     """
+    # import configuration variables
     config_path = Path(args.config)
-    # https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
+    config_spec = importlib.util.spec_from_file_location('process_config', config_path)
+    if config_spec is None:
+        raise Exception(f'Cannot read config file at {args.config}')
+    config_loader = config_spec.loader
+    if config_loader is None:
+        raise Exception(f'Cannot read config file at {args.config}')
+    config_module = importlib.util.module_from_spec(config_spec)
+    sys.modules['process_config'] = config_module
+    config_loader.exec_module(config_module)
+    process_config = importlib.import_module('process_config')
     # initialize furnace controller
     furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts)
     furnace_controller = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol)
