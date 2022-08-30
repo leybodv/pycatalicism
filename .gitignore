@@ -1,6 +1,3 @@
-sandbox/
-sandbox/*
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 calc/__pycache__/
