@@ -1,4 +1,5 @@
 from enum import Enum
+import time
 
 from pymodbus.client.sync import ModbusTcpClient
 
@@ -96,6 +97,7 @@ class ChromatecControlPanelModbus():
                     raise ChromatographException('Cannot get working status!')
                 else:
                     count += 1
+                    time.sleep(1)
         current_status_id = convert.bytes_to_int(response_registers)
         current_status = WorkingStatus(current_status_id)
         self._logger.log(5, f'{current_status = }')
@@ -122,6 +124,7 @@ class ChromatecControlPanelModbus():
                     raise ChromatographException('Cannot get serial number!')
                 else:
                     count += 1
+                    time.sleep(1)
         serial_number = convert.bytes_to_string(response_registers)
         self._logger.log(5, f'{serial_number = }')
         return serial_number
@@ -147,6 +150,7 @@ class ChromatecControlPanelModbus():
                     raise ChromatographException('Cannot get connection status!')
                 else:
                     count += 1
+                    time.sleep(1)
         connection_status = ConnectionStatus(response_registers[0])
         self._logger.log(5, f'{connection_status = }')
         return connection_status
