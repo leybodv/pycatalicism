@@ -28,7 +28,7 @@ class NonBlockingActivationPlotter():
         timer.start()
         plt.show()
 
-    def _call_back(self):
+    def _call_back(self) -> bool:
         """
         """
         while self._pipe.poll():
