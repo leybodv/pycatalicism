@@ -3,6 +3,9 @@ import time
 
 from pycatalicism.furnace.owen_tmp101 import OwenTPM101
 from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
+from pycatalicism.plotters.non_blocking_activation_plotter import NonBlockingActivationPlotter
+from pycatalicism.plotters.non_blocking_measurement_plotter import NonBlockingMeasurementPlotter
+from pycatalicism.plotters.plotter_exceptions import PlotterException
 
 class DataCollectorPlotter(multiprocessing.Process):
     """
