@@ -1,6 +1,6 @@
 import multiprocessing.connection
 
-class NonBlockingActivationPlotter():
+class NonBlockingMeasurementPlotter():
     """
     """
 
