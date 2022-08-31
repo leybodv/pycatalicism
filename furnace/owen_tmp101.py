@@ -96,4 +96,4 @@ class OwenTPM101():
             raise FurnaceStateException('Connect to furnace controller first!')
         self._logger.info(f'Setting temperature control to {value}')
         temperature_control = 1 if value else 0
-        self._owen_protocol.send_unsigned_byte(parameter='r_s', value=temperature_control)
+        self._owen_protocol.send_unsigned_byte(parameter='r-s', value=temperature_control)
