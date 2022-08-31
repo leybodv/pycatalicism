@@ -43,7 +43,7 @@ class DataCollectorPlotter(multiprocessing.Process):
         """
         self._running = False
 
-    def _collect_data(self):
+    def _collect_data(self) -> tuple[list[float], list[list[float]]]:
         """
         """
         temp_t = (time.time() - self._start_time) / 60.0
