@@ -23,6 +23,7 @@ from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatogramPur
 from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
 from pycatalicism.chromatograph.chromatec_control_panel_modbus import WorkingStatus
 from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
+from pycatalicism.plotters.process_plotter import DataCollectorPlotter
 
 def calculate(args:argparse.Namespace):
     """
@@ -187,6 +188,9 @@ def activate(args:argparse.Namespace):
     for mfc, calibration, flow_rate in zip(mfcs, process_config.calibrations, process_config.activation_flow_rates):
         mfc.set_calibration(calibration_num=calibration)
         mfc.set_flow_rate(flow_rate)
+    # start plotter
+    plotter = DataCollectorPlotter(process='activation', furnace_controller=furnace_controller, mass_flow_controllers=mfcs)
+    plotter.run()
     # wait system to be purged with gases for 10 minutes
     time.sleep(secs=10*60)
     # heat furnace to activation temperature, wait until temperature is reached
@@ -210,6 +214,9 @@ def activate(args:argparse.Namespace):
     # change gas flow rates to post activation values
     for mfc, flow_rate in zip(mfcs, process_config.post_flow_rates):
         mfc.set_flow_rate(flow_rate)
+    print('Hit enter to stop plotter')
+    input()
+    plotter.stop()
 
 def measure(args:argparse.Namespace):
     """
