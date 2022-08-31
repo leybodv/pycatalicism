@@ -1,16 +1,13 @@
-from multiprocessing import Process
-
-class DataCollector(Process):
+class NonBlockingActivationPlotter():
     """
     """
 
     def __init__(self):
         """
         """
-        super().__init__(daemon=False)
         raise NotImplementedError()
 
-    def run(self):
+    def __call__(self, pipe):
         """
         """
         raise NotImplementedError()
