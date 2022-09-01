@@ -189,10 +189,10 @@ def activate(args:argparse.Namespace):
         mfc.set_calibration(calibration_num=calibration)
         mfc.set_flow_rate(flow_rate)
     # start plotter
-    plotter = DataCollectorPlotter(process='activation', furnace_controller=furnace_controller, mass_flow_controllers=mfcs)
-    plotter.run()
+    # plotter = DataCollectorPlotter(process='activation', furnace_controller=furnace_controller, mass_flow_controllers=mfcs)
+    # plotter.run()
     # wait system to be purged with gases for 10 minutes
-    time.sleep(secs=10*60)
+    time.sleep(10*60)
     # heat furnace to activation temperature, wait until temperature is reached
     furnace_controller.set_temperature_control(True)
     furnace_controller.set_temperature(process_config.activation_temperature)
@@ -200,9 +200,9 @@ def activate(args:argparse.Namespace):
         current_temperature = furnace_controller.get_temperature()
         if current_temperature >= process_config.activation_temperature:
             break
-        time.sleep(secs=60)
+        time.sleep(60)
     # dwell for activation duration time
-    time.sleep(secs=process_config.activation_duration*60)
+    time.sleep(process_config.activation_duration*60)
     # turn off heating, wait until furnace is cooled down to post_temperature
     furnace_controller.set_temperature(0)
     furnace_controller.set_temperature_control(False)
@@ -210,13 +210,13 @@ def activate(args:argparse.Namespace):
         current_temperature = furnace_controller.get_temperature()
         if current_temperature <= process_config.post_temperature:
             break
-        time.sleep(secs=60)
+        time.sleep(60)
     # change gas flow rates to post activation values
     for mfc, flow_rate in zip(mfcs, process_config.post_flow_rates):
         mfc.set_flow_rate(flow_rate)
-    print('Hit enter to stop plotter')
-    input()
-    plotter.stop()
+    # print('Hit enter to stop plotter')
+    # input()
+    # plotter.stop()
 
 def measure(args:argparse.Namespace):
     """
