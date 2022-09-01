@@ -74,7 +74,7 @@ class OwenTPM101():
         if not self._connected:
             raise FurnaceStateException('Connect to furnace controller first!')
         self._logger.info('Requesting temperature from furnace controller.')
-        temperature = self._owen_protocol.request_PIC(parameter='sp')
+        temperature = self._owen_protocol.request_PIC(parameter='pv')
         self._logger.debug(f'{temperature = }')
         return temperature
 
