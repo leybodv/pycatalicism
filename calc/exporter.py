@@ -8,7 +8,7 @@ class Exporter():
     Abstract class. Concrete instances of child classes are intended for exporting calculated by the program data
     """
 
-    def export(self, output_data_path:Path, conversion:Conversion, selectivity:Selectivity|None):
+    def export(self, output_data_path:Path, conversion:Conversion|None, selectivity:Selectivity|None):
         """
         Concrete classes should override this method to export results of calculations.
 
