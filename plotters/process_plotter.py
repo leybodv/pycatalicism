@@ -1,4 +1,5 @@
 import multiprocessing
+import multiprocessing.connection
 import time
 
 from pycatalicism.furnace.owen_tmp101 import OwenTPM101
@@ -11,12 +12,13 @@ class DataCollectorPlotter(multiprocessing.Process):
     """
     """
 
-    def __init__(self, process:str, furnace_controller:OwenTPM101, mass_flow_controllers:list[BronkhorstF201CV]):
+    def __init__(self, process:str, furnace_controller:OwenTPM101, mass_flow_controllers:list[BronkhorstF201CV], stopper_pipe:multiprocessing.connection.Connection):
         """
         """
         super().__init__(daemon=False)
         self._furnace_controller = furnace_controller
         self._mfcs = mass_flow_controllers
+        self._stopper_pipe = stopper_pipe
         self._collector_pipe, self._plotter_pipe = multiprocessing.Pipe()
         if process == 'activation':
             self._plotter = NonBlockingActivationPlotter()
@@ -35,13 +37,10 @@ class DataCollectorPlotter(multiprocessing.Process):
         while self._running:
             temperature, flow_rates = self._collect_data()
             self._send_data(temperature, flow_rates)
+            if self._stopper_pipe.poll():
+                self._running = self._stopper_pipe.recv()
             time.sleep(10)
         self._send_data(None, None)
-
-    def stop(self):
-        """
-        """
-        self._running = False
 
     def _collect_data(self) -> tuple[list[float], list[list[float]]]:
         """
