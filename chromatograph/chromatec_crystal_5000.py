@@ -163,6 +163,7 @@ class ChromatecCrystal5000():
             raise ChromatographStateException('Start some instrumental method first!')
         if working_status is WorkingStatus.ANALYSIS:
             raise ChromatographStateException('Analysis is in progress, cannot set passport for currently running chromatogram, wait until analysis is over!')
+        self._logger.info(f'Setting passport values to: [name:{name}, volume:{volume}, dilution:{dilution}, purpose:{purpose}, operator:{operator}, column:{column}, lab_name:{lab_name}')
         self._analytic.set_sample_name(name)
         self._analytic.set_sample_volume(volume)
         self._analytic.set_sample_dilution(dilution)
@@ -189,5 +190,5 @@ class ChromatecCrystal5000():
             raise ChromatographStateException('Connect chromatograph first!')
         self._logger.info('Getting working status.')
         working_status = self._control_panel.get_current_working_status()
-        self._logger.debug(f'{working_status = }')
+        self._logger.info(f'{working_status = }')
         return working_status
