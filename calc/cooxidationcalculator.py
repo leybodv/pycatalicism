@@ -50,6 +50,9 @@ class COOxidationCalculator(Calculator):
             f_f = input_data.get_fin_flow(temperature)
             C_CO_i = input_data.get_init_conc('CO')
             C_CO_f = input_data.get_conc('CO', temperature)
+            self.logger.debug(f'{temperature = }')
+            self.logger.debug(f'{C_CO_i = }')
+            self.logger.debug(f'{C_CO_f = }')
             if T_i is None or p_i is None or f_i is None or T_f is None or p_f is None or f_f is None:
                 self.logger.warning(f'No data about initial and final flow rate found. Calculating results based only on concentrations')
                 T_i = 1
@@ -58,7 +61,7 @@ class COOxidationCalculator(Calculator):
                 T_f = 1
                 p_f = 1
                 f_f = 1
-            alpha = ((p_i * f_i / T_i) * C_CO_i - (p_f * f_f / T_f) * C_CO_f) / (p_i * f_i / T_i) * C_CO_i
+            alpha = ((p_i * f_i / T_i) * C_CO_i - (p_f * f_f / T_f) * C_CO_f) / ((p_i * f_i / T_i) * C_CO_i)
             temperatures.append(temperature)
             alphas.append(alpha)
         conversion = Conversion(temperatures, alphas, input_data.get_sample_name())
