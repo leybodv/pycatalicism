@@ -19,10 +19,9 @@ class NonBlockingActivationPlotter():
         """
         self._pipe = pipe
         self._fig, self._left_ax = plt.subplots()
-        self._left_ax.set_xlabel('Time')
-        self._left_ax.set_ylabel('Temperature')
+        self._setup_left_ax(self._left_ax)
         self._right_ax = self._left_ax.twinx()
-        self._right_ax.set_ylabel('Flow rate')
+        self._setup_right_ax(self._right_ax)
         timer = self._fig.canvas.new_timer(interval=60000)
         timer.add_callback(self._call_back)
         timer.start()
@@ -44,9 +43,22 @@ class NonBlockingActivationPlotter():
                     self._fr_times[i].append(flow_rates[i][0])
                     self._fr_flow_rates[i].append(flow_rates[i][1])
                 self._left_ax.clear()
+                self._setup_left_ax(self._left_ax)
                 self._left_ax.plot(self._temp_time, self._temp_temperature)
                 self._right_ax.clear()
+                self._setup_right_ax(self._right_ax)
                 for i in range(3):
                     self._right_ax.plot(self._fr_times[i], self._fr_flow_rates[i])
         self._fig.canvas.draw()
         return True
+
+    def _setup_left_ax(self, left_ax):
+        """
+        """
+        left_ax.set_xlabel('Time')
+        left_ax.set_ylabel('Temperature')
+
+    def _setup_right_ax(self, right_ax):
+        """
+        """
+        right_ax.set_ylabel('Flow rate')
