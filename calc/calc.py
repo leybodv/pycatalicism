@@ -13,7 +13,7 @@ Main interface for calculating conversion, activity and selectivity of catalysts
 """
 
 
-def _print_results(conversion:Conversion, selectivity:Selectivity):
+def _print_results(conversion:Conversion|None, selectivity:Selectivity|None):
     """
     Print results for conversion and/or selectivities vs. temperature to console.
 
