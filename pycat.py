@@ -259,6 +259,8 @@ def measure(args:argparse.Namespace):
     for mfc, calibration, flow_rate in zip(mfcs, process_config.calibrations, process_config.flow_rates):
         mfc.set_calibration(calibration_num=calibration)
         mfc.set_flow_rate(flow_rate)
+    # wait 10 minutes to purge the system
+    time.sleep(10*60)
     # heat furnace to first measurement temperature, wait until temperature is reached
     furnace.set_temperature_control(True)
     furnace.set_temperature(temperature=process_config.temperatures[0])
