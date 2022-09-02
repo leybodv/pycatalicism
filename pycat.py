@@ -190,9 +190,9 @@ def activate(args:argparse.Namespace):
         mfc.set_calibration(calibration_num=calibration)
         mfc.set_flow_rate(flow_rate)
     # start plotter
-    sender_pipe, receiver_pipe = multiprocessing.Pipe()
-    plotter = DataCollectorPlotter(process='activation', furnace_controller=furnace_controller, mass_flow_controllers=mfcs, stopper_pipe=receiver_pipe)
-    plotter.start()
+    # sender_pipe, receiver_pipe = multiprocessing.Pipe()
+    # plotter = DataCollectorPlotter(process='activation', furnace_controller=furnace_controller, mass_flow_controllers=mfcs, stopper_pipe=receiver_pipe)
+    # plotter.start()
     # wait system to be purged with gases for 10 minutes
     time.sleep(10*60)
     # heat furnace to activation temperature, wait until temperature is reached
@@ -216,8 +216,8 @@ def activate(args:argparse.Namespace):
     # change gas flow rates to post activation values
     for mfc, flow_rate in zip(mfcs, process_config.post_flow_rates):
         mfc.set_flow_rate(flow_rate)
-    input()
-    sender_pipe.send(False)
+    # input()
+    # sender_pipe.send(False)
 
 def measure(args:argparse.Namespace):
     """
