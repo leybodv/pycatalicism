@@ -276,6 +276,12 @@ def measure(args:argparse.Namespace):
             break
         time.sleep(60)
     chromatograph.start_analysis()
+    # wait until analysis is actually started
+    while True:
+        chromatograph_working_status = chromatograph.get_working_status()
+        if chromatograph_working_status is WorkingStatus.ANALYSIS:
+            break
+        time.sleep(60)
     # wait until chromatograph analysis is over, set passport values
     while True:
         chromatograph_working_status = chromatograph.get_working_status()
@@ -330,6 +336,12 @@ def measure(args:argparse.Namespace):
         time.sleep(60)
     current_temperature = furnace.get_temperature()
     chromatograph.start_analysis()
+    # wait until analysis is actually started
+    while True:
+        chromatograph_working_status = chromatograph.get_working_status()
+        if chromatograph_working_status is WorkingStatus.ANALYSIS:
+            break
+        time.sleep(60)
     # turn off heating
     furnace.set_temperature(0)
     furnace.set_temperature_control(False)
