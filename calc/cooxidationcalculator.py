@@ -61,7 +61,7 @@ class COOxidationCalculator(Calculator):
             alpha = ((p_i * f_i / T_i) * C_CO_i - (p_f * f_f / T_f) * C_CO_f) / (p_i * f_i / T_i) * C_CO_i
             temperatures.append(temperature)
             alphas.append(alpha)
-        conversion = Conversion(temperatures, alphas)
+        conversion = Conversion(temperatures, alphas, input_data.get_sample_name())
         return conversion
 
     def calculate_selectivity(self, input_data:RawData) -> None:
