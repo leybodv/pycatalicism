@@ -43,7 +43,9 @@ class NonBlockingActivationPlotter():
                 for i in range(3):
                     self._fr_times[i].append(flow_rates[i][0])
                     self._fr_flow_rates[i].append(flow_rates[i][1])
+                self._left_ax.clear()
                 self._left_ax.plot(self._temp_time, self._temp_temperature)
+                self._right_ax.clear()
                 for i in range(3):
                     self._right_ax.plot(self._fr_times[i], self._fr_flow_rates[i])
         self._fig.canvas.draw()
