@@ -173,6 +173,14 @@ def _import_config(path:Path) -> types.ModuleType:
     process_config = importlib.import_module('process_config')
     return process_config
 
+def _initialize_furnace_controller() -> OwenTPM101:
+    """
+    """
+    furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts)
+    furnace_controller = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol)
+    furnace_controller.connect()
+    return furnace_controller
+
 
 def activate(args:argparse.Namespace):
     """
@@ -182,15 +190,13 @@ def activate(args:argparse.Namespace):
     config_path = Path(args.config)
     process_config = _import_config(config_path)
     # initialize furnace controller
-    furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts)
-    furnace_controller = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol)
+    furnace_controller = _initialize_furnace_controller()
     # initialize mass flow controllers
     mfcs = list()
     mfcs.append(BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations))
     mfcs.append(BronkhorstF201CV(serial_address=config.mfc_CO2_serial_address, serial_id=config.mfc_CO2_serial_id, calibrations=config.mfc_CO2_calibrations))
     mfcs.append(BronkhorstF201CV(serial_address=config.mfc_H2_serial_address, serial_id=config.mfc_H2_serial_id, calibrations=config.mfc_H2_calibrations))
     # connect to devices
-    furnace_controller.connect()
     for mfc in mfcs:
         mfc.connect()
     # set mass flow controllers calibrations and flow rates
@@ -359,6 +365,12 @@ def measure(args:argparse.Namespace):
             chromatograph.set_method('cooling')
             break
         time.sleep(60)
+
+def measure_init_conc(args:argparse.Namespace):
+    """
+    """
+    config_path = Path(args.config)
+    process_config = _import_config(config_path)
 
 if (__name__ == '__main__'):
     parser = argparse.ArgumentParser()
