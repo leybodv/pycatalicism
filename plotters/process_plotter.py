@@ -6,7 +6,6 @@ import threading
 from pycatalicism.furnace.owen_tmp101 import OwenTPM101
 from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
 from non_blocking_plotter import NonBlockingPlotter
-from pycatalicism.plotters.plotter_exceptions import PlotterException
 
 class DataCollectorPlotter(threading.Thread):
     """
