@@ -181,6 +181,17 @@ def _initialize_furnace_controller() -> OwenTPM101:
     furnace_controller.connect()
     return furnace_controller
 
+def _initialize_mass_flow_controllers() -> list[BronkhorstF201CV]:
+    """
+    """
+    mfcs = list()
+    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations))
+    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_CO2_serial_address, serial_id=config.mfc_CO2_serial_id, calibrations=config.mfc_CO2_calibrations))
+    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_H2_serial_address, serial_id=config.mfc_H2_serial_id, calibrations=config.mfc_H2_calibrations))
+    for mfc in mfcs:
+        mfc.connect()
+    return mfcs
+
 
 def activate(args:argparse.Namespace):
     """
@@ -192,13 +203,7 @@ def activate(args:argparse.Namespace):
     # initialize furnace controller
     furnace_controller = _initialize_furnace_controller()
     # initialize mass flow controllers
-    mfcs = list()
-    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations))
-    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_CO2_serial_address, serial_id=config.mfc_CO2_serial_id, calibrations=config.mfc_CO2_calibrations))
-    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_H2_serial_address, serial_id=config.mfc_H2_serial_id, calibrations=config.mfc_H2_calibrations))
-    # connect to devices
-    for mfc in mfcs:
-        mfc.connect()
+    mfcs = _initialize_mass_flow_controllers()
     # set mass flow controllers calibrations and flow rates
     for mfc, calibration, flow_rate in zip(mfcs, process_config.calibrations, process_config.activation_flow_rates):
         mfc.set_calibration(calibration_num=calibration)
