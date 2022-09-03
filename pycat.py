@@ -233,16 +233,7 @@ def measure(args:argparse.Namespace):
     """
     # import configuration variables
     config_path = Path(args.config)
-    config_spec = importlib.util.spec_from_file_location('process_config', config_path)
-    if config_spec is None:
-        raise Exception(f'Cannot read config file at {args.config}')
-    config_loader = config_spec.loader
-    if config_loader is None:
-        raise Exception(f'Cannot read config file at {args.config}')
-    config_module = importlib.util.module_from_spec(config_spec)
-    sys.modules['process_config'] = config_module
-    config_loader.exec_module(config_module)
-    process_config = importlib.import_module('process_config')
+    process_config = _import_config(config_path)
     # what is the date today?
     today = date.today()
     # initialize furnace controller
