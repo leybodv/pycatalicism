@@ -12,7 +12,6 @@ import sys
 from pathlib import Path
 from datetime import date
 import types
-import multiprocessing
 
 import pycatalicism.calc.calc as calc
 import pycatalicism.config as config
@@ -397,35 +396,44 @@ def measure_init_conc(args:argparse.Namespace):
     config_path = Path(args.config)
     process_config = _import_config(config_path)
     today = date.today()
+    # initialize devices
     mfcs = _initialize_mass_flow_controllers()
     chromatograph = _initialize_chromatograph()
+    # set chromatograph method to purge
     chromatograph.set_method('purge')
+    # set mass flow controllers calibrations and flow rates
     for mfc, calibration, flow_rate in zip(mfcs, process_config.calibrations, process_config.flow_rates):
         mfc.set_calibration(calibration_num=calibration)
         mfc.set_flow_rate(flow_rate)
+    # wait until chromatograph is ready to start analysis
     while True:
         chromatograph_is_ready = chromatograph.is_ready_for_analysis()
         if chromatograph_is_ready:
             break
         time.sleep(60)
+    # purge chromatograph
     chromatograph.start_analysis()
+    # wait until chromatograph analysis is actually started
     while True:
         chromatograph_working_status = chromatograph.get_working_status()
         if chromatograph_working_status is WorkingStatus.ANALYSIS:
             break
         time.sleep(60)
+    # wait until chromatograph analysis is over and write passport values
     while True:
         chromatograph_working_status = chromatograph.get_working_status()
         if chromatograph_working_status is not WorkingStatus.ANALYSIS:
             chromatograph.set_passport(name=f'{today.strftime("%Y%m%d")}_purge', volume=0.5, dilution=1, purpose=ChromatogramPurpose.ANALYSIS, operator=process_config.operator, column='HaesepN/NaX', lab_name='Inorganic Nanomaterials')
             break
         time.sleep(60)
+    # change chromatograph method to analysis method from config
     while True:
         chromatograph_working_status = chromatograph.get_working_status()
         if chromatograph_working_status is WorkingStatus.PREPARATION or chromatograph_working_status is WorkingStatus.READY_FOR_ANALYSIS:
             chromatograph.set_method(process_config.chromatograph_method)
             break
         time.sleep(60)
+    # gather series of chromatograms
     for i in range(process_config.measurements_number):
         while True:
             if chromatograph.is_ready_for_analysis():
@@ -443,6 +451,7 @@ def measure_init_conc(args:argparse.Namespace):
                 chromatograph.set_passport(name=f'{today.strftime("%Y%m%d")}_{process_config.gases[0]}-{process_config.gases[1]}-{process_config.gases[2]}_{process_config.flow_rates[0]}-{process_config.flow_rates[1]}-{process_config.flow_rates[2]}_{i:02d}', volume=0.5, dilution=1, purpose=ChromatogramPurpose.ANALYSIS, operator=process_config.operator, column='HaesepN/NaX', lab_name='Inorganic Nanomaterials')
                 break
             time.sleep(60)
+    # wait until chromatograph method is finished and start cooldown
     while True:
         chromatograph_working_status = chromatograph.get_working_status()
         if chromatograph_working_status is WorkingStatus.PREPARATION or chromatograph_working_status is WorkingStatus.READY_FOR_ANALYSIS:
