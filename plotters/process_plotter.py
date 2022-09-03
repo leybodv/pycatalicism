@@ -1,6 +1,7 @@
 import multiprocessing
 import multiprocessing.connection
 import time
+import threading
 
 from pycatalicism.furnace.owen_tmp101 import OwenTPM101
 from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
@@ -8,17 +9,16 @@ from pycatalicism.plotters.non_blocking_activation_plotter import NonBlockingAct
 from pycatalicism.plotters.non_blocking_measurement_plotter import NonBlockingMeasurementPlotter
 from pycatalicism.plotters.plotter_exceptions import PlotterException
 
-class DataCollectorPlotter(multiprocessing.Process):
+class DataCollectorPlotter(threading.Thread):
     """
     """
 
-    def __init__(self, process:str, furnace_controller:OwenTPM101, mass_flow_controllers:list[BronkhorstF201CV], stopper_pipe:multiprocessing.connection.Connection):
+    def __init__(self, process:str, furnace_controller:OwenTPM101, mass_flow_controllers:list[BronkhorstF201CV]):
         """
         """
         super().__init__(daemon=False)
         self._furnace_controller = furnace_controller
         self._mfcs = mass_flow_controllers
-        self._stopper_pipe = stopper_pipe
         self._collector_pipe, self._plotter_pipe = multiprocessing.Pipe()
         if process == 'activation':
             self._plotter = NonBlockingActivationPlotter()
@@ -37,10 +37,13 @@ class DataCollectorPlotter(multiprocessing.Process):
         while self._running:
             temperature, flow_rates = self._collect_data()
             self._send_data(temperature, flow_rates)
-            if self._stopper_pipe.poll():
-                self._running = self._stopper_pipe.recv()
             time.sleep(10)
         self._send_data(None, None)
+
+    def stop(self):
+        """
+        """
+        self._running = False
 
     def _collect_data(self) -> tuple[list[float], list[list[float]]]:
         """
