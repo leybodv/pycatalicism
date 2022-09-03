@@ -11,6 +11,7 @@ import importlib.util
 import sys
 from pathlib import Path
 from datetime import date
+import types
 import multiprocessing
 
 import pycatalicism.calc.calc as calc
@@ -157,13 +158,10 @@ def mfc_print_flow_rate(args:argparse.Namespace):
     else:
         raise Exception(f'Unknown gas {gas}!')
 
-def activate(args:argparse.Namespace):
+def _import_config(path:Path) -> types.ModuleType:
     """
-    Activate catalyst using parameters defined in configuration file, provided as argument. Configuration file is file with several variables created using python syntax. Use activation_config.py as an example. Method initializes furnace controller, mass flow controllers and connects to the devices. It sets mass flow controllers with proper calibrations and flow rates (corresponding valves must be opened prior this method is called). It waits 10 minutes for system to be purged with gases, heats furnace to activation temperature and holds it at that temperature for activation time. It then turns off heating, waits until furnace is cooled down and sets gas flow rates to the specified in configuration file values. NB: valves cannot be opened or closed automatically.
     """
-    # import configuration variables
-    config_path = Path(args.config)
-    config_spec = importlib.util.spec_from_file_location('process_config', config_path)
+    config_spec = importlib.util.spec_from_file_location('process_config', path)
     if config_spec is None:
         raise Exception(f'Cannot read config file at {args.config}')
     config_loader = config_spec.loader
@@ -173,6 +171,16 @@ def activate(args:argparse.Namespace):
     sys.modules['process_config'] = config_module
     config_loader.exec_module(config_module)
     process_config = importlib.import_module('process_config')
+    return process_config
+
+
+def activate(args:argparse.Namespace):
+    """
+    Activate catalyst using parameters defined in configuration file, provided as argument. Configuration file is file with several variables created using python syntax. Use activation_config.py as an example. Method initializes furnace controller, mass flow controllers and connects to the devices. It sets mass flow controllers with proper calibrations and flow rates (corresponding valves must be opened prior this method is called). It waits 10 minutes for system to be purged with gases, heats furnace to activation temperature and holds it at that temperature for activation time. It then turns off heating, waits until furnace is cooled down and sets gas flow rates to the specified in configuration file values. NB: valves cannot be opened or closed automatically.
+    """
+    # import configuration variables
+    config_path = Path(args.config)
+    process_config = _import_config(config_path)
     # initialize furnace controller
     furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts)
     furnace_controller = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol)
