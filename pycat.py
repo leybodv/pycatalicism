@@ -175,6 +175,12 @@ def _import_config(path:Path) -> types.ModuleType:
 
 def _initialize_furnace_controller() -> OwenTPM101:
     """
+    Initialize furnace controller with patameters in config.py file. Connect to furnace controller.
+
+    returns
+    -------
+    furnace_controller:OwenTPM101
+        furnace controller
     """
     furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts)
     furnace_controller = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol)
@@ -183,6 +189,12 @@ def _initialize_furnace_controller() -> OwenTPM101:
 
 def _initialize_mass_flow_controllers() -> list[BronkhorstF201CV]:
     """
+    Initialize 3 mass flow controllers with parameters in config.py file. Connect to mass flow controllers.
+
+    returns
+    -------
+    mfcs:list[BronkhorstF201CV]
+        list of mass flow controllers
     """
     mfcs = list()
     mfcs.append(BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations))
@@ -194,6 +206,12 @@ def _initialize_mass_flow_controllers() -> list[BronkhorstF201CV]:
 
 def _initialize_chromatograph() -> ChromatecCrystal5000:
     """
+    Initialize modbus objects and chromatograph object with parameters in config.py file, connect to chromatograph.
+
+    returns
+    -------
+    chromatograph:ChromatecCrystal5000
+        chromatograph used for analysis
     """
     control_panel_modbus = ChromatecControlPanelModbus(modbus_id=config.control_panel_modbus_id, working_status_input_address=config.working_status_input_address, serial_number_input_address=config.serial_number_input_address, connection_status_input_address=config.connection_status_input_address, method_holding_address=config.method_holding_address, chromatograph_command_holding_address=config.chromatograph_command_holding_address, application_command_holding_address=config.application_command_holding_address)
     analytic_modbus = ChromatecAnalyticModbus(modbus_id=config.analytic_modbus_id, sample_name_holding_address=config.sample_name_holding_address, chromatogram_purpose_holding_address=config.chromatogram_purpose_holding_address, sample_volume_holding_address=config.sample_volume_holding_address, sample_dilution_holding_address=config.sample_dilution_holding_address, operator_holding_address=config.operator_holding_address, column_holding_address=config.column_holding_address, lab_name_holding_address=config.lab_name_holding_address)
@@ -370,9 +388,67 @@ def measure(args:argparse.Namespace):
 
 def measure_init_conc(args:argparse.Namespace):
     """
+    Method for measuring initial concentration of gas mixture needed for conversion calculation. Parameters of measurement must be in a configuration file provided as a parameter to this method. Method performs following actions:
+        - sets gas flow rates to the values specified in config file
+        - purges chromatograph prior to analysis
+        - measures several chromatograms (number is defined in config file)
+        - starts chromatograph cooldown
     """
     config_path = Path(args.config)
     process_config = _import_config(config_path)
+    today = date.today()
+    mfcs = _initialize_mass_flow_controllers()
+    chromatograph = _initialize_chromatograph()
+    chromatograph.set_method('purge')
+    for mfc, calibration, flow_rate in zip(mfcs, process_config.calibrations, process_config.flow_rates):
+        mfc.set_calibration(calibration_num=calibration)
+        mfc.set_flow_rate(flow_rate)
+    while True:
+        chromatograph_is_ready = chromatograph.is_ready_for_analysis()
+        if chromatograph_is_ready:
+            break
+        time.sleep(60)
+    chromatograph.start_analysis()
+    while True:
+        chromatograph_working_status = chromatograph.get_working_status()
+        if chromatograph_working_status is WorkingStatus.ANALYSIS:
+            break
+        time.sleep(60)
+    while True:
+        chromatograph_working_status = chromatograph.get_working_status()
+        if chromatograph_working_status is not WorkingStatus.ANALYSIS:
+            chromatograph.set_passport(name=f'{today.strftime("%Y%m%d")}_purge', volume=0.5, dilution=1, purpose=ChromatogramPurpose.ANALYSIS, operator=process_config.operator, column='HaesepN/NaX', lab_name='Inorganic Nanomaterials')
+            break
+        time.sleep(60)
+    while True:
+        chromatograph_working_status = chromatograph.get_working_status()
+        if chromatograph_working_status is WorkingStatus.PREPARATION or chromatograph_working_status is WorkingStatus.READY_FOR_ANALYSIS:
+            chromatograph.set_method(process_config.chromatograph_method)
+            break
+        time.sleep(60)
+    for i in range(process_config.measurements_number):
+        while True:
+            if chromatograph.is_ready_for_analysis():
+                break
+            time.sleep(60)
+        chromatograph.start_analysis()
+        while True:
+            chromatograph_working_status = chromatograph.get_working_status()
+            if chromatograph_working_status is WorkingStatus.ANALYSIS:
+                break
+            time.sleep(60)
+        while True:
+            chromatograph_working_status = chromatograph.get_working_status()
+            if chromatograph_working_status is not WorkingStatus.ANALYSIS:
+                chromatograph.set_passport(name=f'{today.strftime("%Y%m%d")}_{process_config.gases[0]}-{process_config.gases[1]}-{process_config.gases[2]}_{process_config.flow_rates[0]}-{process_config.flow_rates[1]}-{process_config.flow_rates[2]}_{i:02d}', volume=0.5, dilution=1, purpose=ChromatogramPurpose.ANALYSIS, operator=process_config.operator, column='HaesepN/NaX', lab_name='Inorganic Nanomaterials')
+                break
+            time.sleep(60)
+    while True:
+        chromatograph_working_status = chromatograph.get_working_status()
+        if chromatograph_working_status is WorkingStatus.PREPARATION or chromatograph_working_status is WorkingStatus.READY_FOR_ANALYSIS:
+            chromatograph.set_method('cooling')
+            break
+        time.sleep(60)
 
 if (__name__ == '__main__'):
     parser = argparse.ArgumentParser()
