@@ -53,6 +53,7 @@ def furnace_set_temperature(args:argparse.Namespace):
 
 def furnace_print_temperature(args:argparse.Namespace):
     """
+    Print current temperature to console
     """
     furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts)
     furnace_controller = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol)
