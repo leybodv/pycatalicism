@@ -425,5 +425,9 @@ if (__name__ == '__main__'):
     measurement_parser.set_defaults(func=measure)
     measurement_parser.add_argument('--config', required=True, help='configuration file with measurement parameters')
 
+    init_conc_parser = subparsers.add_parser('measure-init-concentration', help='gather several chromatograms consequently')
+    init_conc_parser.set_defaults(func=measure_init_conc)
+    init_conc_parser.add_argument('--config', required=True, help='path to configuration file with measurement parameters')
+
     args = parser.parse_args()
     args.func(args)
