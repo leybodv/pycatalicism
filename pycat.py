@@ -235,7 +235,7 @@ def activate(args:argparse.Namespace):
         mfc.set_calibration(calibration_num=calibration)
         mfc.set_flow_rate(flow_rate)
     # start plotter
-    plotter = DataCollectorPlotter(process='activation', furnace_controller=furnace_controller, mass_flow_controllers=mfcs)
+    plotter = DataCollectorPlotter(furnace_controller=furnace_controller, mass_flow_controllers=mfcs)
     plotter.start()
     # wait system to be purged with gases for 10 minutes
     time.sleep(10*60)
