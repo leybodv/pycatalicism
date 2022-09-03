@@ -192,6 +192,14 @@ def _initialize_mass_flow_controllers() -> list[BronkhorstF201CV]:
         mfc.connect()
     return mfcs
 
+def _initialize_chromatograph() -> ChromatecCrystal5000:
+    """
+    """
+    control_panel_modbus = ChromatecControlPanelModbus(modbus_id=config.control_panel_modbus_id, working_status_input_address=config.working_status_input_address, serial_number_input_address=config.serial_number_input_address, connection_status_input_address=config.connection_status_input_address, method_holding_address=config.method_holding_address, chromatograph_command_holding_address=config.chromatograph_command_holding_address, application_command_holding_address=config.application_command_holding_address)
+    analytic_modbus = ChromatecAnalyticModbus(modbus_id=config.analytic_modbus_id, sample_name_holding_address=config.sample_name_holding_address, chromatogram_purpose_holding_address=config.chromatogram_purpose_holding_address, sample_volume_holding_address=config.sample_volume_holding_address, sample_dilution_holding_address=config.sample_dilution_holding_address, operator_holding_address=config.operator_holding_address, column_holding_address=config.column_holding_address, lab_name_holding_address=config.lab_name_holding_address)
+    chromatograph = ChromatecCrystal5000(control_panel_modbus, analytic_modbus, config.methods)
+    chromatograph.connect()
+    return chromatograph
 
 def activate(args:argparse.Namespace):
     """
@@ -248,22 +256,11 @@ def measure(args:argparse.Namespace):
     # what is the date today?
     today = date.today()
     # initialize furnace controller
-    furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts)
-    furnace = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol)
+    furnace = _initialize_furnace_controller()
     # initialize mass flow controllers
-    mfcs = list()
-    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations))
-    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_CO2_serial_address, serial_id=config.mfc_CO2_serial_id, calibrations=config.mfc_CO2_calibrations))
-    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_H2_serial_address, serial_id=config.mfc_H2_serial_id, calibrations=config.mfc_H2_calibrations))
+    mfcs = _initialize_mass_flow_controllers()
     # initialize chromatograph
-    control_panel_modbus = ChromatecControlPanelModbus(modbus_id=config.control_panel_modbus_id, working_status_input_address=config.working_status_input_address, serial_number_input_address=config.serial_number_input_address, connection_status_input_address=config.connection_status_input_address, method_holding_address=config.method_holding_address, chromatograph_command_holding_address=config.chromatograph_command_holding_address, application_command_holding_address=config.application_command_holding_address)
-    analytic_modbus = ChromatecAnalyticModbus(modbus_id=config.analytic_modbus_id, sample_name_holding_address=config.sample_name_holding_address, chromatogram_purpose_holding_address=config.chromatogram_purpose_holding_address, sample_volume_holding_address=config.sample_volume_holding_address, sample_dilution_holding_address=config.sample_dilution_holding_address, operator_holding_address=config.operator_holding_address, column_holding_address=config.column_holding_address, lab_name_holding_address=config.lab_name_holding_address)
-    chromatograph = ChromatecCrystal5000(control_panel_modbus, analytic_modbus, config.methods)
-    # connect to devices
-    furnace.connect()
-    for mfc in mfcs:
-        mfc.connect()
-    chromatograph.connect()
+    chromatograph = _initialize_chromatograph()
     # set chromatograph instrumental method to 'purge'. chromatograph will start to prepare itself
     chromatograph.set_method('purge')
     # set flow rates and calibrations of mass flow controllers
