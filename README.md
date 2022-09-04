@@ -306,10 +306,12 @@
       </tr>
     </table>
   </p>
-  <h2>ToDo</h2>
+  <h2>ТуДу</h2>
     <ul>
-      <li>write co_oxidation.py script</li>
-      <li>rewrite calc module. Selectivity should be calculated automatically if applicable. There should be two separate commands to calculate activity and conversion</li>
-      <li>add furnace read temperature interface</li>
-      <li>convert p, T, f data from gas clock to SI units before usage</li>
+      <li>сделать возможной установку программы с помощью <code>pip install</code></li>
+      <li>автоматизировать открытие/закрытие соленоидных клапанов</li>
+      <li>автоматизировать переключение 3х портового крана</li>
+      <li>добавить построение графиков в режиме онлайн при проведении измерений</li>
+      <li>переписать модуль calc: селективность должна рассчитываться автоматически, если это имеет смысл; должно быть 2 команды <code>calculate activity</code> и <code>calculate conversion</code></li>
+      <li>автоматически конвертировать данные с газовых часов в СИ при рассчёте</li>
     </ul>
