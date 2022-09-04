@@ -7,6 +7,9 @@
     <li><a href="#furnace-control">Управление печи</a></li>
     <li><a href="#chromatograph-control">Управление хроматографом</a></li>
     <li><a href="#mfc">Управление регуляторами расхода газов</a></li>
+    <li><a href="#activation">Проведение активации</a></li>
+    <li><a href="#measurement">Проведение измерения</a></li>
+    <li><a href="#init-conc-measurement">Проведение измерения исходной концентрации реагентов</a></li>
   </ol>
   <h2 id="installation">Установка программы</h2>
     <h3>Arch Linux</h3>
@@ -178,98 +181,100 @@
     <p>Осуществляется управление хроматографом Хроматэк Кристалл 5000 через протокол Modbus. Для работы протокола необходимо, чтобы был запущен сервер Modbus, в качестве которых выступают Панель управления и Аналитик, а также специальная программа, которую необходимо установить с установочного диска ПО Хроматэк (см. документацию Modbus из комплекта документации Хроматэк для более детальной инструкции). Перед работой с pycatalytic, необходимо добавить нужные регистры Modbus в Панели управления и Аналитик. Список необходимых регистров прописывается в конфигурации программы и может быть найден здесь: <a href="https://github.com/leybodv/pycatalicism/blob/dev/config.py">config.py</a></p>
     <p><b>Доступные комманды:</b></p>
     <p><code>pycat chromatograph set-method method</code></p>
-    <p>Sets instrumental method to the specified one and starts preparation to analysis step. The list of methods must be in a <a href="https://github.com/leybodv/pycatalicism/blob/dev/config.py">config.py</a> file. If chromatec Control Panel or Analytic are not ON, starts these programs and connects to chromatograph. In this case, program waits for successful connection establishment, so, if chromatograph is not on, program will be hang forever.</p>
-    <p>positional arguments:</p>
+    <p>Устанавливает инструментальный метод хроматографа. Хроматограф переходит в режим "Подготовка". Список методов должен быть в <a href="https://github.com/leybodv/pycatalicism/blob/dev/config.py">config.py</a>. Если Панель управления и Аналитик не запущены, запускает их, устанавливает соединение с хроматографом. В этом случае программа ждёт успешного запуска Панели управления и Аналитика, а также установления соединения. Если, при этом, хроматограф выключен, программа зависнет.</p>
+    <p>Аргументы:</p>
     <p>
       <table>
         <tr>
           <td>method</td>
-          <td>instrumental method</td>
+          <td>инструментальный метод хроматографа</td>
         </tr>
       </table>
     </p>
     <p><code>pycat chromatograph start-analysis</code></p>
-    <p>Starts measurement.</p>
+    <p>Начинает измерение.</p>
     <p><code>pycat chromatograph set-passport --name NAME [--volume VOL] [--dilution DIL] [--purpose {analysis|graduation}] --operator OP --column COL [--lab-name LN]</code></p>
-    <p>Set parameters to a passport of chromatogram. This method should be run only after the analysis step is over and before next analysis is started.</p>
-    <p>required parameters:</p>
+    <p>Устанавливает значения паспорта хроматограммы. Эта команда должна использоваться только после окончания анализа на хроматографе.</p>
+    <p>Необходимые параметры:</p>
     <p>
       <table>
         <tr>
           <td>--name NAME</td>
-          <td>name of chromatogram</td>
+          <td>название хроматограммы</td>
         </tr>
         <tr>
           <td>--operator OP</td>
-          <td>name of operator</td>
+          <td>оператор</td>
         </tr>
         <tr>
           <td>--column COL</td>
-          <td>name of column</td>
+          <td>название колонки</td>
         </tr>
       </table>
     </p>
-    <p>optional parameters:</p>
+    <p>Опциональные параметры:</p>
     <p>
       <table>
         <tr>
           <td>--volume VOL</td>
-          <td>sample's volume, 0.5 by default</td>
+          <td>объём пробы, 0.5 по умолчанию</td>
         </tr>
         <tr>
           <td>--dilution DIL</td>
-          <td>sample's dilution, 1 by default</td>
+          <td>разбавление пробы, 1 по умолчанию</td>
         </tr>
         <tr>
           <td>--purpose {analysis|graduation}</td>
-          <td>purpose of chromatogram, analysis by default</td>
+          <td>назначение хроматограммы, analysis по умолчанию</td>
         </tr>
         <tr>
           <td>--lab-name LN</td>
-          <td>name of lab, Inorganic Nanomaterials by default</td>
+          <td>название лаборатории, Inorganic Nanomaterials по умолчанию</td>
         </tr>
       </table>
     </p>
-  <h2 id="mfc">Mass flow controllers</h2>
-  <p>Program controls Bronkhorst F201CV mass flow controllers to control flow rates of He, CO2, O2, H2, CO or CH4 gases. Parameters of corresponding mass flow controllers must be added to <a href="https://github.com/leybodv/pycatalicism/blob/dev/config.py">config.py</a> file.</p>
+  <h2 id="mfc">Управление регуляторами расхода газов</h2>
+  <p>Программа осуществляет управление регуляторами расхода газов Bronkhorst F201CV для регулирования потока He, CO<sub>2</sub>, O<sub>2</sub>, H<sub>2</sub>, CO или CH<sub>4</sub>. Параметры соответствующих регуляторов расхода газов должны быть прописаны в файле <a href="https://github.com/leybodv/pycatalicism/blob/dev/config.py">config.py</a></p>
   <p><code>pycat mfc set-flow-rate --gas {He|CO2|O2|H2|CO|CH4} --flow-rate FR</code></p>
-  <p>Set gas flow rate to specified value in nml/min</p>
+  <p>Устанавливает поток газа</p>
   <p>
     <table>
       <tr>
         <td>--gas {He|CO2|O2|H2|CO|CH4}</td>
-        <td>gas to set flow rate for. Program chooses mass flow controller based on this value</td>
+        <td>газ, для которого необходимо установить поток. Программа выбирает регулятор на основе этого значения</td>
       </tr>
       <tr>
         <td>--flow-rate FR</td>
-        <td>Flow rate in nml/min</td>
+        <td>поток газа в н.мл/мин</td>
       </tr>
     </table>
   </p>
   <p><code>pycat mfc set-calibration --gas {He|CO2|O2|H2|CO|CH4} --calibration-number CN</code></p>
-  <p>Set calibration of specified mass flow controller to the calibration number CN</p>
+  <p>Устанавливает калибровку регулятора расхода газа</p>
   <p>
     <table>
       <tr>
         <td>--gas {He|CO2|O2|H2|CO|CH4}</td>
-        <td>Gas to set calibration for. Program chooses mass flow controller based on this value.</td>
+        <td>газ, для которого необходимо установить калибровку. Программа выбирает регулятор на основе этого значения</td>
       </tr>
       <tr>
         <td>--calibration-number CN</td>
-        <td>Calibration number which can be found in the documentaion supplied with mass flow controller</td>
+        <td>номер калибровки, указанный в документации, поставляемой с прибором</td>
       </tr>
     </table>
   </p>
   <p><code>pycat mfc print-flow-rate --gas {He|CO2|O2|H2|CO|CH4}</code></p>
-  <p>Print current flow rate in nml/min for specified gas.</p>
+  <p>Выводит измеренный поток газа в консоль в н.мл/мин</p>
   <p>
     <table>
       <tr>
         <td>--gas {He|CO2|O2|H2|CO|CH4}</td>
-        <td>Gas to print current flow rate for. Program chooses mass flow controller based on this value.</td>
+        <td>газ, для которого нужно показать поток. Программа выбирает регулятор на основе этого значения</td>
       </tr>
     </table>
   </p>
+  <h2 id="activation">Активация</h2>
+  <p></p>
   <h2>ToDo</h2>
     <ul>
       <li>write co_oxidation.py script</li>
