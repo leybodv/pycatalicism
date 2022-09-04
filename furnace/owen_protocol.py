@@ -1,6 +1,7 @@
 import threading
 import serial
 import struct
+import time
 
 import pycatalicism.furnace.furnace_logging as furnace_logging
 from pycatalicism.furnace.furnace_exceptions import FurnaceProtocolException
@@ -87,6 +88,7 @@ class OwenProtocol():
                     raise FurnaceConnectionException(ex)
                 else:
                     count += 1
+                    time.sleep(1)
         return string
 
     def request_PIC(self, parameter:str) -> float:
@@ -123,6 +125,7 @@ class OwenProtocol():
                     raise FurnaceConnectionException(ex)
                 else:
                     count += 1
+                    time.sleep(1)
         return pic
 
     def send_PIC(self, parameter:str, value:float):
@@ -154,6 +157,7 @@ class OwenProtocol():
                     raise FurnaceConnectionException(ex)
                 else:
                     count += 1
+                    time.sleep(1)
 
     def send_unsigned_byte(self, parameter:str, value:int):
         """
@@ -184,6 +188,7 @@ class OwenProtocol():
                     raise FurnaceConnectionException(ex)
                 else:
                     count += 1
+                    time.sleep(1)
 
     ## Top level i/o ##
 

@@ -61,14 +61,13 @@ def string_to_bytes(string:str) -> tuple[int]:
         bytes to sent to chromatograph
     """
     _logger.debug(f'Converting string {string} to bytes')
+    string = string.ljust(30)
     if len(string) > 30:
         _logger.warning(f'String cannot be > 30 chars long due to modbus limitation. Will be cut to 30 chars')
         string = string[0:30]
-    if len(string) % 2 != 0:
-        string += '\x00'
     string_bytes = bytes(string.encode())
     _logger.log(5, f'{string_bytes = }')
-    message = struct.unpack('>'+'H'*int(len(string_bytes)/2), string_bytes)
+    message = struct.unpack('>'+'H'*15, string_bytes)
     _logger.log(5, f'{message = }')
     return message
 

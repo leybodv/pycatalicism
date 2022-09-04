@@ -62,15 +62,16 @@ lab_name_holding_address = 55
 methods = {
         '20220415_O2-N2-CO2-CO-C1,5HxAlkanes_2levels'	:		0,
         'co2-hydrogenation'								:		1,
-        'co-oxidation'									:		2,
-        'crm'											:		3,
-        'Marusya method'								:		4,
-        'NaX-conditioning'								:		5,
-        'NaX-HaesepN-conditioning'						:		6,
-        'purge'											:		7,
-        'purge-overnight'								:		8,
-        'zero'											:		9,
-        'Водка-Маруся'									:		10,
+        'cooling'										:		2,
+        'co-oxidation'									:		3,
+        'crm'											:		4,
+        'Marusya method'								:		5,
+        'NaX-conditioning'								:		6,
+        'NaX-HaesepN-conditioning'						:		7,
+        'purge'											:		8,
+        'purge-overnight'								:		9,
+        'zero'											:		10,
+        'Водка-Маруся'									:		11,
         }
 
 ## mass flow controllers configuration ##

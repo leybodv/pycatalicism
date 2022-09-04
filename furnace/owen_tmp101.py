@@ -74,8 +74,8 @@ class OwenTPM101():
         if not self._connected:
             raise FurnaceStateException('Connect to furnace controller first!')
         self._logger.info('Requesting temperature from furnace controller.')
-        temperature = self._owen_protocol.request_PIC(parameter='sp')
-        self._logger.debug(f'{temperature = }')
+        temperature = self._owen_protocol.request_PIC(parameter='pv')
+        self._logger.info(f'{temperature = }')
         return temperature
 
     def set_temperature_control(self, value:bool):
@@ -96,4 +96,4 @@ class OwenTPM101():
             raise FurnaceStateException('Connect to furnace controller first!')
         self._logger.info(f'Setting temperature control to {value}')
         temperature_control = 1 if value else 0
-        self._owen_protocol.send_unsigned_byte(parameter='r_s', value=temperature_control)
+        self._owen_protocol.send_unsigned_byte(parameter='r-s', value=temperature_control)
