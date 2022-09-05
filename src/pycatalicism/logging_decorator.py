@@ -4,7 +4,7 @@ import logging
 import sys
 from typing import Callable
 
-import config
+import pycatalicism.config as config
 
 class Logging:
     """
