@@ -4,6 +4,14 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 
+install_requires = [
+    "numpy>=1.23.2",
+    "matplotlib>=3.5.3",
+    "pyserial>=3.5",
+    "pymodbus>=2.5.3",
+    "bronkhorst-propar>=1.0",
+    ]
+
 setuptools.setup(
      name='pycatalicism',
      version='0.1',
