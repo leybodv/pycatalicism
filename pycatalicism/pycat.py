@@ -163,10 +163,10 @@ def _import_config(path:Path) -> types.ModuleType:
     """
     config_spec = importlib.util.spec_from_file_location('process_config', path)
     if config_spec is None:
-        raise Exception(f'Cannot read config file at {args.config}')
+        raise Exception(f'Cannot read config file at {path}')
     config_loader = config_spec.loader
     if config_loader is None:
-        raise Exception(f'Cannot read config file at {args.config}')
+        raise Exception(f'Cannot read config file at {path}')
     config_module = importlib.util.module_from_spec(config_spec)
     sys.modules['process_config'] = config_module
     config_loader.exec_module(config_module)
@@ -221,7 +221,7 @@ def _initialize_chromatograph() -> ChromatecCrystal5000:
 
 def activate(args:argparse.Namespace):
     """
-    Activate catalyst using parameters defined in configuration file, provided as argument. Configuration file is file with several variables created using python syntax. Use activation_config.py as an example. Method initializes furnace controller, mass flow controllers and connects to the devices. It sets mass flow controllers with proper calibrations and flow rates (corresponding valves must be opened prior this method is called). It waits 10 minutes for system to be purged with gases, heats furnace to activation temperature and holds it at that temperature for activation time. It then turns off heating, waits until furnace is cooled down and sets gas flow rates to the specified in configuration file values. NB: valves cannot be opened or closed automatically.
+    Activate catalyst using parameters defined in configuration file, provided as argument. Configuration file is file with several variables created using python syntax. Use activation_config.py as an example. Method initializes furnace controller, mass flow controllers and connects to the devices. It sets mass flow controllers with proper calibrations and flow rates (corresponding valves must be opened prior this method is called). It waits 30 minutes for system to be purged with gases, heats furnace to activation temperature and holds it at that temperature for activation time. It then turns off heating, waits until furnace is cooled down and sets gas flow rates to the specified in configuration file values. NB: valves cannot be opened or closed automatically.
     """
     # import configuration variables
     config_path = Path(args.config)
@@ -237,8 +237,8 @@ def activate(args:argparse.Namespace):
     # start plotter
     plotter = DataCollectorPlotter(furnace_controller=furnace_controller, mass_flow_controllers=mfcs)
     plotter.start()
-    # wait system to be purged with gases for 10 minutes
-    time.sleep(10*60)
+    # wait system to be purged with gases for 30 minutes
+    time.sleep(30*60)
     # heat furnace to activation temperature, wait until temperature is reached
     furnace_controller.set_temperature_control(True)
     furnace_controller.set_temperature(process_config.activation_temperature)
@@ -459,7 +459,7 @@ def measure_init_conc(args:argparse.Namespace):
             break
         time.sleep(60)
 
-if (__name__ == '__main__'):
+def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(required=True)
 
