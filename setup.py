@@ -14,8 +14,7 @@ install_requires = [
 
 setuptools.setup(
      name='pycatalicism',
-     version='0.2.1',
-     #scripts=['pycatalicism/pycat'] ,
+     version='0.2.2',
      author="Denis Leybo",
      author_email="leybodv@gmail.com",
      description="Program controls catalytic activity of materials measurement equipment as well calculations",
@@ -24,6 +23,7 @@ setuptools.setup(
      url="https://github.com/leybodv/pycatalicism",
      packages=setuptools.find_packages(),
      install_requires = install_requires,
+     python_requires='>3.10.0',
      entry_points={
                         'console_scripts': [
                                 'pycat=pycatalicism.pycat:main',
