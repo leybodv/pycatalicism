@@ -14,7 +14,7 @@ install_requires = [
 
 setuptools.setup(
      name='pycatalicism',
-     version='0.1',
+     version='0.2.1',
      scripts=['pycatalicism/pycat'] ,
      author="Denis Leybo",
      author_email="leybodv@gmail.com",
@@ -23,6 +23,7 @@ setuptools.setup(
      long_description_content_type="text/markdown",
      url="https://github.com/leybodv/pycatalicism",
      packages=setuptools.find_packages(),
+     install_requires = install_requires,
      classifiers=[
          "Programming Language :: Python :: 3",
          "License :: OSI Approved :: MIT License",
