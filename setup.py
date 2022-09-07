@@ -1,6 +1,6 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 
@@ -15,7 +15,7 @@ install_requires = [
 setuptools.setup(
      name='pycatalicism',
      version='0.2.1',
-     scripts=['pycatalicism/pycat'] ,
+     #scripts=['pycatalicism/pycat'] ,
      author="Denis Leybo",
      author_email="leybodv@gmail.com",
      description="Program controls catalytic activity of materials measurement equipment as well calculations",
@@ -24,6 +24,10 @@ setuptools.setup(
      url="https://github.com/leybodv/pycatalicism",
      packages=setuptools.find_packages(),
      install_requires = install_requires,
+     entry_points={
+                        'console_scripts': [
+                                'pycat=pycatalicism.pycat:main',
+                        ]},
      classifiers=[
          "Programming Language :: Python :: 3",
          "License :: OSI Approved :: MIT License",
