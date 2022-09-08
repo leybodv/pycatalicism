@@ -21,8 +21,7 @@ setuptools.setup(
      long_description=long_description,
      long_description_content_type="text/markdown",
      url="https://github.com/leybodv/pycatalicism",
-     package_dir={'':"src"},
-     packages=setuptools.find_packages("src"),
+     packages=setuptools.find_packages(),
      install_requires = install_requires,
      python_requires='>3.10.0',
      entry_points={
