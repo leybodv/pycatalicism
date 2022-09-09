@@ -89,6 +89,7 @@ class OwenProtocol():
                 else:
                     count += 1
                     time.sleep(1)
+                self._logger.warning(f'Connection problems were encountered: {ex}, trying to repeat. Trial #{count}')
         return string
 
     def request_PIC(self, parameter:str) -> float:
@@ -126,6 +127,7 @@ class OwenProtocol():
                 else:
                     count += 1
                     time.sleep(1)
+                self._logger.warning(f'Connection problems were encountered: {ex}, trying to repeat. Trial #{count}')
         return pic
 
     def send_PIC(self, parameter:str, value:float):
