@@ -219,28 +219,34 @@ def _initialize_chromatograph() -> ChromatecCrystal5000:
     chromatograph.connect()
     return chromatograph
 
-def _check_flow_rates(mfcs:list[BronkhorstF201CV], flow_rates:list[float]) -> bool:
+def _set_flow_rates(mfcs:list[BronkhorstF201CV], calibrations:list[int], flow_rates:list[float]):
     """
-    Check if actual flow rates differ from expected less than 5%. Method expects equal number of items for mfcs and flow_rates objects with mutual correspondence of indicies.
+    Method sets calibrations and flow rates of mass flow controllers. It then waits for 10s and checks if actual flow rates differ from expected ones not more than by 5%.
 
     parameters
     ----------
     mfcs:list[BronkhorstF201CV]
         list of mass flow controllers
+    calibrations:list[int]
+        list of calibrations to set for each mass flow controller
     flow_rates:list[float]
-        list of expected flow rates
+        list of flow rates to set for each mass flow controller
 
-    returns
-    -------
-    True if actual flow rates differ no more than 5% from expected
+    raises
+    ------
+    Exception
+        if actual gas flow rates differ from expected by more than 5%
     """
+    for mfc, calibration, flow_rate in zip(mfcs, calibrations, flow_rates):
+        mfc.set_calibration(calibration_num=calibration)
+        mfc.set_flow_rate(flow_rate)
+    time.sleep(10)
     for mfc, flow_rate in zip(mfcs, flow_rates):
         if flow_rate == 0:
             continue
         actual_flow_rate = mfc.get_flow_rate()
         if abs(actual_flow_rate - flow_rate) / flow_rate > 0.05:
-            return False
-    return True
+            raise Exception("Actual gas flow rates differ from configuration!")
 
 def activate(args:argparse.Namespace):
     """
@@ -254,21 +260,12 @@ def activate(args:argparse.Namespace):
     # initialize mass flow controllers
     mfcs = _initialize_mass_flow_controllers()
     # set mass flow controllers calibrations and flow rates
-    for mfc, calibration, flow_rate in zip(mfcs, process_config.calibrations, process_config.activation_flow_rates):
-        mfc.set_calibration(calibration_num=calibration)
-        mfc.set_flow_rate(flow_rate)
+    _set_flow_rates(mfcs, process_config.calibrations, process_config.activation_flow_rates)
     # start plotter
     plotter = DataCollectorPlotter(furnace_controller=furnace_controller, mass_flow_controllers=mfcs)
     plotter.start()
     # wait system to be purged with gases for 30 minutes
     time.sleep(30*60)
-    # check if flow rates were set properly
-    flow_rates_are_ok = _check_flow_rates(mfcs, process_config.activation_flow_rates)
-    if not flow_rates_are_ok:
-        plotter.stop()
-        for mfc in mfcs:
-            mfc.set_flow_rate(0)
-        raise Exception("Actual gas flow rates differ from configuration!")
     # heat furnace to activation temperature, wait until temperature is reached
     furnace_controller.set_temperature_control(True)
     furnace_controller.set_temperature(process_config.activation_temperature)
