@@ -219,6 +219,29 @@ def _initialize_chromatograph() -> ChromatecCrystal5000:
     chromatograph.connect()
     return chromatograph
 
+def _check_flow_rates(mfcs:list[BronkhorstF201CV], flow_rates:list[float]) -> bool:
+    """
+    Check if actual flow rates differ from expected less than 5%. Method expects equal number of items for mfcs and flow_rates objects with mutual correspondence of indicies.
+
+    parameters
+    ----------
+    mfcs:list[BronkhorstF201CV]
+        list of mass flow controllers
+    flow_rates:list[float]
+        list of expected flow rates
+
+    returns
+    -------
+    True if actual flow rates differ no more than 5% from expected
+    """
+    for mfc, flow_rate in zip(mfcs, flow_rates):
+        if flow_rate == 0:
+            continue
+        actual_flow_rate = mfc.get_flow_rate()
+        if abs(actual_flow_rate - flow_rate) / flow_rate > 0.05:
+            return False
+    return True
+
 def activate(args:argparse.Namespace):
     """
     Activate catalyst using parameters defined in configuration file, provided as argument. Configuration file is file with several variables created using python syntax. Use activation_config.py as an example. Method initializes furnace controller, mass flow controllers and connects to the devices. It sets mass flow controllers with proper calibrations and flow rates (corresponding valves must be opened prior this method is called). It waits 30 minutes for system to be purged with gases, heats furnace to activation temperature and holds it at that temperature for activation time. It then turns off heating, waits until furnace is cooled down and sets gas flow rates to the specified in configuration file values. NB: valves cannot be opened or closed automatically.
