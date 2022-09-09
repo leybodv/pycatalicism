@@ -239,6 +239,13 @@ def activate(args:argparse.Namespace):
     plotter.start()
     # wait system to be purged with gases for 30 minutes
     time.sleep(30*60)
+    # check if flow rates were set properly
+    flow_rates_are_ok = _check_flow_rates(mfcs, process_config.activation_flow_rates)
+    if not flow_rates_are_ok:
+        plotter.stop()
+        for mfc in mfcs:
+            mfc.set_flow_rate(0)
+        raise Exception("Actual gas flow rates differ from configuration!")
     # heat furnace to activation temperature, wait until temperature is reached
     furnace_controller.set_temperature_control(True)
     furnace_controller.set_temperature(process_config.activation_temperature)
