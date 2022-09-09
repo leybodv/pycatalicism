@@ -316,6 +316,12 @@ def measure(args:argparse.Namespace):
         mfc.set_flow_rate(flow_rate)
     # wait 10 minutes to purge the system
     time.sleep(10*60)
+    # check if flow rates were set properly
+    flow_rates_are_ok = _check_flow_rates(mfcs, process_config.activation_flow_rates)
+    if not flow_rates_are_ok:
+        for mfc in mfcs:
+            mfc.set_flow_rate(0)
+        raise Exception("Actual gas flow rates differ from configuration!")
     # heat furnace to first measurement temperature, wait until temperature is reached
     furnace.set_temperature_control(True)
     furnace.set_temperature(temperature=process_config.temperatures[0])
