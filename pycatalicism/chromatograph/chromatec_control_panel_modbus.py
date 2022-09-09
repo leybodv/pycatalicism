@@ -23,6 +23,7 @@ class ConnectionStatus(Enum):
     Connection status of chromatograph and corresponding values in modbus protocol
     """
     CP_ON_CONNECTED = 7
+    CP_ON_CONNECTING = 3 # not sure about exact meaning, however it is sometimes returned right after control panel is up, but chromatograph is not connected
     CP_ON_NOT_CONNECTED = 1
     CP_OFF_NOT_CONNECTED = 0
 
