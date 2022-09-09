@@ -280,6 +280,8 @@ class OwenProtocol():
                 if byte == chr(0x0d):
                     break
             self._logger.debug(f'Got message: {message = }')
+        if len(message) == 0:
+            raise FurnaceProtocolException('Empty message was received from device')
         if message[0] != chr(0x23) or message[-1] != chr(0x0d):
             raise FurnaceProtocolException(f'Unexpected format of message got from device: {message}')
         return message
