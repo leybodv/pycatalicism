@@ -13,10 +13,8 @@ class NonBlockingPlotter():
         """
         Initialize instance variables.
         """
-        self._temp_time = []
-        self._temp_temperature = []
-        self._fr_times = [[],[],[]]
-        self._fr_flow_rates = [[],[],[]]
+        self._temperatures = []
+        self._flow_rates = {}
 
     def __call__(self, pipe:multiprocessing.connection.Connection):
         """
@@ -48,9 +46,9 @@ class NonBlockingPlotter():
         """
         while self._pipe.poll():
             data = self._pipe.recv()
-            temperature = data[0]
-            flow_rates = data[1]
-            if temperature is None or flow_rates is None:
+            temperature_point = data[0]
+            flow_rate_points = data[1]
+            if temperature_point is None or flow_rate_points is None:
                 return False
             else:
                 self._temp_time.append(temperature[0])
@@ -77,8 +75,8 @@ class NonBlockingPlotter():
         left_ax:matplotlib.axes.Axes
             axes to setup
         """
-        left_ax.set_xlabel('Time')
-        left_ax.set_ylabel('Temperature')
+        left_ax.set_xlabel('Time, min')
+        left_ax.set_ylabel('Temperature, °C')
 
     def _setup_right_ax(self, right_ax:matplotlib.axes.Axes):
         """
@@ -89,4 +87,4 @@ class NonBlockingPlotter():
         right_ax:matplotlib.axes.Axes
             axes to setup
         """
-        right_ax.set_ylabel('Flow rate')
+        right_ax.set_ylabel('Flow rate, n.ml/min')
