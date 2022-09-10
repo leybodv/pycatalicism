@@ -265,33 +265,40 @@ def _set_flow_rates(mfcs:list[BronkhorstF201CV], calibrations:list[int], flow_ra
         mfc.set_calibration(calibration_num=calibration)
         mfc.set_flow_rate(flow_rate)
 
+def _heat_and_wait_until_temperature_reached(furnace:OwenTPM101, temperature:float):
+    """
+    Heat furnace to the required temperature and wait until this temperature is reached.
+
+    parameters
+    ----------
+    furnace:OwenTPM101
+        furnace controller object
+    temperature:float
+        required temperature
+    """
+    furnace.set_temperature_control(True)
+    furnace.set_temperature(temperature)
+    while True:
+        current_temperature = furnace.get_temperature()
+        if current_temperature >= temperature:
+            break
+        time.sleep(60)
+
 def activate(args:argparse.Namespace):
     """
     Activate catalyst using parameters defined in configuration file, provided as argument. Configuration file is file with several variables created using python syntax. Use activation_config.py as an example. Method initializes furnace controller, mass flow controllers and connects to the devices. It sets mass flow controllers with proper calibrations and flow rates (corresponding valves must be opened prior this method is called). It waits 30 minutes for system to be purged with gases, heats furnace to activation temperature and holds it at that temperature for activation time. It then turns off heating, waits until furnace is cooled down and sets gas flow rates to the specified in configuration file values. NB: valves cannot be opened or closed automatically.
     """
-    # import configuration variables
     config_path = Path(args.config)
     process_config = _import_config(config_path)
-    # initialize furnace controller
     furnace_controller = _initialize_furnace_controller()
-    # initialize mass flow controllers
     mfcs = _initialize_mass_flow_controllers()
-    # set mass flow controllers calibrations and flow rates
     _set_flow_rates(mfcs, process_config.calibrations, process_config.activation_flow_rates)
-    # start plotter
     plotter = DataCollectorPlotter(furnace_controller=furnace_controller, mass_flow_controllers=mfcs)
     plotter.start()
     # wait system to be purged with gases for 30 minutes
     time.sleep(30*60)
     _check_flow_rates(mfcs, process_config.activation_flow_rates, plotter=plotter)
-    # heat furnace to activation temperature, wait until temperature is reached
-    furnace_controller.set_temperature_control(True)
-    furnace_controller.set_temperature(process_config.activation_temperature)
-    while True:
-        current_temperature = furnace_controller.get_temperature()
-        if current_temperature >= process_config.activation_temperature:
-            break
-        time.sleep(60)
+    _heat_and_wait_until_temperature_reached(furnace_controller, process_config.activation_temperature)
     # dwell for activation duration time
     time.sleep(process_config.activation_duration*60)
     # turn off heating, wait until furnace is cooled down to post_temperature
