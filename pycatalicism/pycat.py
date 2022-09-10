@@ -312,25 +312,17 @@ def measure(args:argparse.Namespace):
     """
     Gather chromatograms at different measurement temperatures defined in a config file provided as an argument. Configuration file is a file with several variables defined using python syntax. Use measurement_config.py as an example of configuration. Method initializes devices and connects to them. It sets chromatograph method to 'purge', sets mass flow controller calibrations and flow rates. Heats furnace to the first measurement temperature and waits until target temperature is reached. Starts chromatograph purge, waits until purge is over and sets chromatograph method to the one specified in a config. Then, for each measurement temperature, method waits until chromatograph is ready for analysis, starts measurement, heats furnace to the next temperature. Finally, it turns off furnace and starts chromatograph cool down.
     """
-    # import configuration variables
     config_path = Path(args.config)
     process_config = _import_config(config_path)
-    # what is the date today?
     today = date.today()
-    # initialize furnace controller
     furnace = _initialize_furnace_controller()
-    # initialize mass flow controllers
     mfcs = _initialize_mass_flow_controllers()
-    # initialize chromatograph
+    _set_flow_rates(mfcs, process_config.calibrations, process_config.flow_rates)
     chromatograph = _initialize_chromatograph()
-    # set chromatograph instrumental method to 'purge'. chromatograph will start to prepare itself
     chromatograph.set_method('purge')
-    # set flow rates and calibrations of mass flow controllers
-    for mfc, calibration, flow_rate in zip(mfcs, process_config.calibrations, process_config.flow_rates):
-        mfc.set_calibration(calibration_num=calibration)
-        mfc.set_flow_rate(flow_rate)
     # wait 10 minutes to purge the system
     time.sleep(10*60)
+    _check_flow_rates(mfcs, process_config.flow_rates)
     # heat furnace to first measurement temperature, wait until temperature is reached
     furnace.set_temperature_control(True)
     furnace.set_temperature(temperature=process_config.temperatures[0])
@@ -441,21 +433,17 @@ def measure_init_conc(args:argparse.Namespace):
     config_path = Path(args.config)
     process_config = _import_config(config_path)
     today = date.today()
-    # initialize devices
     mfcs = _initialize_mass_flow_controllers()
     chromatograph = _initialize_chromatograph()
-    # set chromatograph method to purge
     chromatograph.set_method('purge')
-    # set mass flow controllers calibrations and flow rates
-    for mfc, calibration, flow_rate in zip(mfcs, process_config.calibrations, process_config.flow_rates):
-        mfc.set_calibration(calibration_num=calibration)
-        mfc.set_flow_rate(flow_rate)
+    _set_flow_rates(mfcs, process_config.calibrations, process_config.flow_rates)
     # wait until chromatograph is ready to start analysis
     while True:
         chromatograph_is_ready = chromatograph.is_ready_for_analysis()
         if chromatograph_is_ready:
             break
         time.sleep(60)
+    _check_flow_rates(mfcs, process_config.flow_rates)
     # purge chromatograph
     chromatograph.start_analysis()
     # wait until chromatograph analysis is actually started
