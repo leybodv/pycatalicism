@@ -330,14 +330,7 @@ def measure(args:argparse.Namespace):
     # wait 10 minutes to purge the system
     time.sleep(10*60)
     _check_flow_rates(mfcs, process_config.flow_rates)
-    # heat furnace to first measurement temperature, wait until temperature is reached
-    furnace.set_temperature_control(True)
-    furnace.set_temperature(temperature=process_config.temperatures[0])
-    while True:
-        current_temperature = furnace.get_temperature()
-        if current_temperature >= process_config.temperatures[0]:
-            break
-        time.sleep(60)
+    _heat_and_wait_until_temperature_reached(furnace, process_config.temperatures[0])
     # wait until chromatograph is ready for analysis, start chromatograph purge afterwards
     while True:
         chromatograph_is_ready = chromatograph.is_ready_for_analysis()
@@ -382,12 +375,7 @@ def measure(args:argparse.Namespace):
             time.sleep(60)
         chromatogram_temperature = furnace.get_temperature()
         chromatograph.start_analysis()
-        furnace.set_temperature(temperature=temperature)
-        while True:
-            current_temperature = furnace.get_temperature()
-            if current_temperature >= temperature:
-                break
-            time.sleep(60)
+        _heat_and_wait_until_temperature_reached(furnace, temperature)
         isothermal_start = time.time()
         while True:
             chromatograph_working_status = chromatograph.get_working_status()
