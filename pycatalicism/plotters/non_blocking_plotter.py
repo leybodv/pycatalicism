@@ -13,8 +13,9 @@ class NonBlockingPlotter():
         """
         Initialize instance variables.
         """
-        self._temperatures = []
-        self._flow_rates = {}
+        self._temperatures = Data(label='temperature')
+        self._chromatograms = None
+        self._flow_rates = None
 
     def __call__(self, pipe:multiprocessing.connection.Connection):
         """
@@ -26,7 +27,8 @@ class NonBlockingPlotter():
             pipe through which data are get from data collector
         """
         self._pipe = pipe
-        self._fig, self._left_ax = plt.subplots()
+        self._fig = plt.figure()
+        self._left_ax = self._fig.add_axes([0.07, 0.1, 0.6, 0.85]) # left, bottom, right, top
         self._setup_left_ax(self._left_ax)
         self._right_ax = self._left_ax.twinx()
         self._setup_right_ax(self._right_ax)
@@ -37,7 +39,7 @@ class NonBlockingPlotter():
 
     def _call_back(self) -> bool:
         """
-        Collect data through multiprocessing pipe, append them to instance variables and add corresponding dots on plot canvas. This function is called by the matplotlib timer. Data must be sent as iterable with temperature data at 0th position and flow rates data at 1st. Temperature data is a list of floats with time at 0th position and temperature at 1st. Flow rates is a 3-element list, each containing data from different mass flow controllers. Each element is in turn a list with time at 0th position and temperature at 1st.
+        Collect data through multiprocessing pipe, append them to instance variables and add corresponding dots on plot canvas. This function is called by the matplotlib timer. Data must be sent in a 3-element tuple: (temperature_point, chromatogram_point, list-of-flow-rate-points). Each data point is wrapped as Point object.
 
         returns
         -------
@@ -47,22 +49,36 @@ class NonBlockingPlotter():
         while self._pipe.poll():
             data = self._pipe.recv()
             temperature_point = data[0]
-            flow_rate_points = data[1]
-            if temperature_point is None or flow_rate_points is None:
+            chromatogram_point = data[1]
+            flow_rate_points = data[2]
+            if temperature_point is None:
                 return False
             else:
-                self._temp_time.append(temperature[0])
-                self._temp_temperature.append(temperature[1])
-                for i in range(3):
-                    self._fr_times[i].append(flow_rates[i][0])
-                    self._fr_flow_rates[i].append(flow_rates[i][1])
+                self._temperatures.add_point(temperature_point)
+                if chromatogram_point is not None:
+                    if self._chromatograms is None:
+                        self._chromatograms = Data(label='chromatograms')
+                    self._chromatograms.add_point(chromatogram_point)
+                if self._flow_rates is None:
+                    self._flow_rates = []
+                    for flow_rate_point in flow_rate_points:
+                        self._flow_rates.append(Data(label=flow_rate_point.get_label()))
+                for flow_rate_point, flow_rate in zip(flow_rate_points, self._flow_rates):
+                    flow_rate.add_point(flow_rate_point)
                 self._left_ax.clear()
-                self._setup_left_ax(self._left_ax)
-                self._left_ax.plot(self._temp_time, self._temp_temperature)
                 self._right_ax.clear()
+                self._setup_left_ax(self._left_ax)
                 self._setup_right_ax(self._right_ax)
-                for i in range(3):
-                    self._right_ax.plot(self._fr_times[i], self._fr_flow_rates[i])
+                lines = []
+                line, = self._left_ax.plot(self._temperatures.get_x(), self._temperatures.get_y(), color='red', linewidth=1, linestyle=':', marker='o', markersize=5, markeredgewidth=0, label=self._temperatures.get_label())
+                lines.append(line)
+                if self._chromatograms is not None:
+                    line = self._left_ax.vlines(self._chromatograms.get_x(), self._left_ax.get_ylim()[0], self._left_ax.get_ylim()[1], colors=['#e6daa6'], linewidth=1, label=self._chromatograms.get_label())
+                    lines.append(line)
+                for flow_rate in self._flow_rates:
+                    line, = self._right_ax.plot(flow_rate.get_x(), flow_rate.get_y(), linewidth=0, marker='o', fillstyle='none', label=flow_rate.get_label())
+                    lines.append(line)
+                self._left_ax.legend(handles=lines, bbox_to_anchor=(1.1, 1), loc='upper left', borderaxespad=0)
         self._fig.canvas.draw()
         return True
 
