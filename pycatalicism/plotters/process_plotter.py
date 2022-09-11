@@ -33,15 +33,15 @@ class DataCollectorPlotter(threading.Thread):
 
     def run(self):
         """
-        This method is invoked when thread is started. While thread is running get temperature and flow rate data and send these data through multiprocessing pipe to non blocking plotter. Send None to plotter, when thread is not running.
+        This method is invoked when thread is started. While thread is running get temperature, chromatograph and flow rate data and send these data through multiprocessing pipe to non blocking plotter. Send None to plotter, when thread is not running.
         """
         self._running = True
         self._start_time = time.time()
         while self._running:
-            temperature, flow_rates = self._collect_data()
-            self._send_data(temperature, flow_rates)
+            temperature_point, chromatograph_point, flow_rate_points = self._collect_data()
+            self._collector_pipe.send((temperature_point, chromatograph_point, flow_rate_points))
             time.sleep(10)
-        self._send_data(None, None)
+        self._collector_pipe.send((None, None, None))
 
     def stop(self):
         """
@@ -69,16 +69,3 @@ class DataCollectorPlotter(threading.Thread):
             fr = mfc.get_flow_rate()
             flow_rates.append([t, fr])
         return (temperature, flow_rates)
-
-    def _send_data(self, temperature:list[float]|None, flow_rates:list[list[float]]|None):
-        """
-        Send data to non blocking plotter through pipe.
-
-        parameters
-        ----------
-        temperature:list[float]|None
-            list of time (0th) and temperature (1st) data to send to plotter or None if thread was stopped
-        flow_rates:list[list[float]]|None
-            list of lists of time (0th) and temperature (1st) data to send to plotter or None if thread was stopped
-        """
-        self._collector_pipe.send((temperature, flow_rates))
