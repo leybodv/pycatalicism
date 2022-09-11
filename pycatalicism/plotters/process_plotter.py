@@ -51,21 +51,19 @@ class DataCollectorPlotter(threading.Thread):
 
     def _collect_data(self) -> tuple[Point, Point, list[Point]]:
         """
-        Collect temperature and flow rates data and send these to plotter with time stamps.
-
-        returns
-        -------
-        temperature:list[float]
-            list of time (0th) and temperature(1st) collected from furnace controller
-        flow_rates:list[list[float]]
-            list of lists of time (0th) and flow rate (1st) data collected from all mass flow controllers
         """
-        temp_t = (time.time() - self._start_time) / 60.0
-        temp_T = self._furnace_controller.get_temperature()
-        temperature = [temp_t, temp_T]
-        flow_rates = []
-        for mfc in self._mfcs:
+        t = (time.time() - self._start_time) / 60.0
+        T = self._furnace_controller.get_temperature()
+        temperature_point = Point(x=t, y=T, label='temperature')
+        chromatograph_point = None
+        if self._chromatograph is not None:
+            if self._chromatograph.get_status() is WorkingStatus.ANALYSIS:
+                t = round((time.time() - self._start_time) / 60.0, 2) - self._chromatograph.get_analysis_time()
+                chromatograph_point = Point(x=t, y=None, label='chromatograms')
+        flow_rate_points = []
+        for mfc, gas in zip(self._mfcs, self._gases):
             t = (time.time() - self._start_time) / 60.0
             fr = mfc.get_flow_rate()
-            flow_rates.append([t, fr])
-        return (temperature, flow_rates)
+            flow_rate_point = Point(x=t, y=fr, label=gas)
+            flow_rate_points.append(flow_rate_point)
+        return (temperature_point, chromatograph_point, flow_rate_points)
