@@ -49,7 +49,7 @@ class DataCollectorPlotter(threading.Thread):
         """
         self._running = False
 
-    def _collect_data(self) -> tuple[list[float], list[list[float]]]:
+    def _collect_data(self) -> tuple[Point, Point, list[Point]]:
         """
         Collect temperature and flow rates data and send these to plotter with time stamps.
 
