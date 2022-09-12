@@ -6,7 +6,7 @@ import threading
 from pycatalicism.furnace.owen_tmp101 import OwenTPM101
 from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
 from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
-from pycatalicism.chromatograph.chromatec_control_panel_modbus import WorkingStatus
+from pycatalicism.chromatograph.chromatograph_exceptions import ChromatographStateException
 from pycatalicism.plotters.non_blocking_plotter import NonBlockingPlotter
 from pycatalicism.plotters.point import Point
 
@@ -66,9 +66,11 @@ class DataCollectorPlotter(threading.Thread):
         temperature_point = Point(x=t, y=T, label='temperature')
         chromatograph_point = None
         if self._chromatograph is not None:
-            if self._chromatograph.get_working_status() is WorkingStatus.ANALYSIS:
+            try:
                 t = round((time.time() - self._start_time) / 60.0, 2) - self._chromatograph.get_analysis_time()
                 chromatograph_point = Point(x=t, y=None, label='chromatograms')
+            except ChromatographStateException:
+                pass
         flow_rate_points = []
         for mfc, gas in zip(self._mfcs, self._gases):
             t = (time.time() - self._start_time) / 60.0
