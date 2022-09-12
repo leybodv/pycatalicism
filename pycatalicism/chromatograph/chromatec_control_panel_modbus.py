@@ -45,7 +45,7 @@ class ChromatecControlPanelModbus():
     Class represents simplified version of modbus protocol for connection with chromatec control panel modbus slave.
     """
 
-    def __init__(self, modbus_id:int, working_status_input_address:int, serial_number_input_address:int, connection_status_input_address:int, method_holding_address:int, chromatograph_command_holding_address:int, application_command_holding_address:int, request_trials:int=3):
+    def __init__(self, modbus_id:int, working_status_input_address:int, connection_status_input_address:int, method_holding_address:int, chromatograph_command_holding_address:int, application_command_holding_address:int, request_trials:int=3):
         """
         Initializes instance private variables, creates modbus client and registers logger.
 
@@ -55,8 +55,6 @@ class ChromatecControlPanelModbus():
             modbus slave id of control panel software
         working_status_input_address:int
             modbus address of current chromatograph status (analysis, purging, preparing etc.)
-        serial_number_input_address:int
-            modbus address with chromatograph serial number
         connection_status_input_address:int
             modbus address for chromatograph and its applications connection status
         method_holding_address:int
@@ -69,7 +67,6 @@ class ChromatecControlPanelModbus():
         self._modbus_id = modbus_id
         self._request_trials = request_trials
         self._working_status_input_address = working_status_input_address
-        self._serial_number_input_address = serial_number_input_address
         self._connection_status_input_address = connection_status_input_address
         self._method_holding_address = method_holding_address
         self._chromatograph_command_holding_address = chromatograph_command_holding_address
