@@ -104,32 +104,6 @@ class ChromatecControlPanelModbus():
         self._logger.log(5, f'{current_status = }')
         return current_status
 
-    def get_serial_number(self) -> str:
-        """
-        Get serial number of chromatograph.
-
-        returns
-        -------
-        serial_number:str
-            serial number of chromatograph
-        """
-        count = 0
-        while True:
-            self._logger.debug(f'Getting chromatograph serial number. Trial #{count}')
-            try:
-                response = self._modbus_client.read_input_registers(address=self._serial_number_input_address, count=15, unit=self._modbus_id)
-                response_registers = response.registers
-                break
-            except AttributeError:
-                if count == self._request_trials-1:
-                    raise ChromatographException('Cannot get serial number!')
-                else:
-                    count += 1
-                    time.sleep(1)
-        serial_number = convert.bytes_to_string(response_registers)
-        self._logger.log(5, f'{serial_number = }')
-        return serial_number
-
     def get_analysis_time(self) -> float:
         """
         """
