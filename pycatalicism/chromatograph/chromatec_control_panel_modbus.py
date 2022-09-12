@@ -45,7 +45,7 @@ class ChromatecControlPanelModbus():
     Class represents simplified version of modbus protocol for connection with chromatec control panel modbus slave.
     """
 
-    def __init__(self, modbus_id:int, working_status_input_address:int, connection_status_input_address:int, method_holding_address:int, chromatograph_command_holding_address:int, application_command_holding_address:int, request_trials:int=3):
+    def __init__(self, modbus_id:int, working_status_input_address:int, connection_status_input_address:int, analysis_time_input_address:int, method_holding_address:int, chromatograph_command_holding_address:int, application_command_holding_address:int, request_trials:int=3):
         """
         Initializes instance private variables, creates modbus client and registers logger.
 
@@ -57,6 +57,8 @@ class ChromatecControlPanelModbus():
             modbus address of current chromatograph status (analysis, purging, preparing etc.)
         connection_status_input_address:int
             modbus address for chromatograph and its applications connection status
+        analysis_time_input_address:int
+            modbus address for time from the start of analysis
         method_holding_address:int
             modbus address for setting instrumental methods
         chromatograph_command_holding_address:int
@@ -68,6 +70,7 @@ class ChromatecControlPanelModbus():
         self._request_trials = request_trials
         self._working_status_input_address = working_status_input_address
         self._connection_status_input_address = connection_status_input_address
+        self._analysis_time_input_address = analysis_time_input_address
         self._method_holding_address = method_holding_address
         self._chromatograph_command_holding_address = chromatograph_command_holding_address
         self._application_command_holding_address = application_command_holding_address
@@ -108,7 +111,7 @@ class ChromatecControlPanelModbus():
         while True:
             self._logger.debug(f'Getting analysis time. Trial #{count}')
             try:
-                response = self._modbus_client.read_input_registers(address=self._analysis_time_address, count=??, unit=self._modbus_id)
+                response = self._modbus_client.read_input_registers(address=self._analysis_time_input_address, count=??, unit=self._modbus_id)
                 response_registers = response.registers
                 self._logger.log(5, f'{response_registers = }')
                 break
