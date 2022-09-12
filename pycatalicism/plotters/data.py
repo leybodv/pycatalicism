@@ -22,3 +22,13 @@ class Data():
             self._x.append(x)
             if y is not None:
                 self._y.append(y)
+
+    def get_x(self) -> list[float]:
+        """
+        """
+        return self._x
+
+    def get_y(self) -> list[float]:
+        """
+        """
+        return self._y
