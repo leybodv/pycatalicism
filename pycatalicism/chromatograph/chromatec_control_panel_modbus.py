@@ -130,6 +130,28 @@ class ChromatecControlPanelModbus():
         self._logger.log(5, f'{serial_number = }')
         return serial_number
 
+    def get_analysis_time(self) -> float:
+        """
+        """
+        count = 0
+        while True:
+            self._logger.debug(f'Getting analysis time. Trial #{count}')
+            try:
+                response = self._modbus_client.read_input_registers(address=self._analysis_time_address, count=??, unit=self._modbus_id)
+                response_registers = response.registers
+                self._logger.log(5, f'{response_registers = }')
+                break
+            except AttributeError:
+                if count == self._request_trials-1:
+                    raise ChromatographException('Cannot get analysis time!')
+                else:
+                    count += 1
+                    self._logger.warning(f'Error during communication with control panel. Trying to reconnect. Trial #{count}')
+                    time.sleep(1)
+        analysis_time = convert.bytes_to_float(response_registers)
+        self._logger.debug(f'{analysis_time = }')
+        return analysis_time
+
     def get_connection_status(self) -> ConnectionStatus:
         """
         Get status of connection with chromatograph and control panel modbus slave.
