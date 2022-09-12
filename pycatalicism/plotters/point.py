@@ -2,7 +2,7 @@ class Point():
     """
     """
 
-    def __init__(self, x:float, y:float, label:str):
+    def __init__(self, x:float, y:float|None, label:str):
         """
         """
         self._x = x
