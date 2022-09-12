@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import matplotlib
 import matplotlib.axes
 
+from pycatalicism.plotters.data import Data
+
 class NonBlockingPlotter():
     """
     Non blocking plotter that should be run in a separate process due to the incompatibility of matplotlib with multithreading. It will draw data from instance variables every minute after the process was started. Data must be sent over multiprocessing pipe.
