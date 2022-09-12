@@ -192,3 +192,16 @@ class ChromatecCrystal5000():
         working_status = self._control_panel.get_current_working_status()
         self._logger.info(f'{working_status = }')
         return working_status
+
+    def get_analysis_time(self) -> float:
+        """
+        """
+        if not self._connected:
+            raise ChromatographStateException('Connect chromatograph first!')
+        working_status = self._control_panel.get_current_working_status()
+        if working_status is not WorkingStatus.ANALYSIS:
+            raise ChromatographStateException('Woring status is not analysis, cannot retreive analysis time')
+        self._logger.info('Getting analysis time.')
+        analysis_time = self._control_panel.get_analysis_time()
+        self._logger.info(f'{analysis_time = }')
+        return analysis_time
