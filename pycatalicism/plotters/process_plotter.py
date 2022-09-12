@@ -5,6 +5,7 @@ import threading
 
 from pycatalicism.furnace.owen_tmp101 import OwenTPM101
 from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
+from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
 from pycatalicism.plotters.non_blocking_plotter import NonBlockingPlotter
 
 class DataCollectorPlotter(threading.Thread):
@@ -12,7 +13,7 @@ class DataCollectorPlotter(threading.Thread):
     Class for plotting data from activation and activity measurement experiments.
     """
 
-    def __init__(self, furnace_controller:OwenTPM101, mass_flow_controllers:list[BronkhorstF201CV]):
+    def __init__(self, furnace_controller:OwenTPM101, mass_flow_controllers:list[BronkhorstF201CV], chromatograph:ChromatecCrystal5000|None):
         """
         Initialize base class, instance variables and start non blocking plotter in a separate process.
 
@@ -22,10 +23,13 @@ class DataCollectorPlotter(threading.Thread):
             furnace controller to get information about current temperature
         mass_flow_controllers:list[BronkhorstF201CV]
             list of mass flow controllers to get information about current flow rates
+        chromatograph:ChromatecCrystal5000
+            chromatograph to get information about analysis start time
         """
         super().__init__(daemon=False)
         self._furnace_controller = furnace_controller
         self._mfcs = mass_flow_controllers
+        self._chromatograph = chromatograph
         self._collector_pipe, self._plotter_pipe = multiprocessing.Pipe()
         self._plotter = NonBlockingPlotter()
         self._plotter_process = multiprocessing.Process(target=self._plotter, args=(self._plotter_pipe,), daemon=False)
