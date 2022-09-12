@@ -32,3 +32,8 @@ class Data():
         """
         """
         return self._y
+
+    def get_label(self) -> str:
+        """
+        """
+        return self._label
