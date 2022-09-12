@@ -28,7 +28,7 @@ class ChromatecCrystal5000():
 
     def connect(self):
         """
-        Connect to chromatograph. If chromatec control panel is not up, start control panel, connection is established automatically in this case. If control panel is up, but chromatograph is disconnected, establish connection. Do nothing otherwise.
+        Connect to chromatograph. If chromatec control panel is not up, start control panel, connection is established automatically in this case. If control panel is up, but chromatograph is disconnected, establish connection. Do nothing otherwise. Method waits until connection status is CP_ON_CONNECTED, so, if chromatograph is not on, method will be hanged.
 
         raises
         ------
