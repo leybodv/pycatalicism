@@ -4,6 +4,18 @@ import pycatalicism.chromatograph.chromatograph_logging as chromatograph_logging
 
 _logger = chromatograph_logging.get_logger(__name__)
 
+def bytes_to_float(response_bytes:list[int]) -> float:
+    """
+    """
+    _logger.debug(f'Converting bytes: {response_bytes} to float')
+    float_bytes = b''
+    for b in response_bytes:
+        float_bytes += b.to_bytes(2, 'little')
+    _logger.log(5, f'String bytes: {float_bytes = }')
+    float_num, = struct.unpack('<d', float_bytes)
+    _logger.log(5, f'{float_num = }')
+    return float_num
+
 def bytes_to_string(response_bytes:list[int]) -> str:
     """
     Converts bytes received from chromatograph to string.
