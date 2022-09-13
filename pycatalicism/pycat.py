@@ -60,34 +60,40 @@ def furnace_print_temperature(args:argparse.Namespace):
     temperature = furnace_controller.get_temperature()
     print(f'Current temperature is {temperature}°C')
 
-def chromatograph_set_method(args:argparse.Namespace):
+def _initialize_chromatograph() -> ChromatecCrystal5000:
     """
-    Set chromatograph instrument method
+    Initialize modbus objects and chromatograph object with parameters in config.py file, connect to chromatograph.
+
+    returns
+    -------
+    chromatograph:ChromatecCrystal5000
+        chromatograph used for analysis
     """
     control_panel_modbus = ChromatecControlPanelModbus(modbus_id=config.control_panel_modbus_id, working_status_input_address=config.working_status_input_address, serial_number_input_address=config.serial_number_input_address, connection_status_input_address=config.connection_status_input_address, method_holding_address=config.method_holding_address, chromatograph_command_holding_address=config.chromatograph_command_holding_address, application_command_holding_address=config.application_command_holding_address)
     analytic_modbus = ChromatecAnalyticModbus(modbus_id=config.analytic_modbus_id, sample_name_holding_address=config.sample_name_holding_address, chromatogram_purpose_holding_address=config.chromatogram_purpose_holding_address, sample_volume_holding_address=config.sample_volume_holding_address, sample_dilution_holding_address=config.sample_dilution_holding_address, operator_holding_address=config.operator_holding_address, column_holding_address=config.column_holding_address, lab_name_holding_address=config.lab_name_holding_address)
     chromatograph = ChromatecCrystal5000(control_panel_modbus, analytic_modbus, config.methods)
     chromatograph.connect()
+    return chromatograph
+
+def chromatograph_set_method(args:argparse.Namespace):
+    """
+    Set chromatograph instrument method
+    """
+    chromatograph = _initialize_chromatograph()
     chromatograph.set_method(method=args.method)
 
 def chromatograph_start_analysis(args:argparse.Namespace):
     """
     Start chromatograph analysis
     """
-    control_panel_modbus = ChromatecControlPanelModbus(modbus_id=config.control_panel_modbus_id, working_status_input_address=config.working_status_input_address, serial_number_input_address=config.serial_number_input_address, connection_status_input_address=config.connection_status_input_address, method_holding_address=config.method_holding_address, chromatograph_command_holding_address=config.chromatograph_command_holding_address, application_command_holding_address=config.application_command_holding_address)
-    analytic_modbus = ChromatecAnalyticModbus(modbus_id=config.analytic_modbus_id, sample_name_holding_address=config.sample_name_holding_address, chromatogram_purpose_holding_address=config.chromatogram_purpose_holding_address, sample_volume_holding_address=config.sample_volume_holding_address, sample_dilution_holding_address=config.sample_dilution_holding_address, operator_holding_address=config.operator_holding_address, column_holding_address=config.column_holding_address, lab_name_holding_address=config.lab_name_holding_address)
-    chromatograph = ChromatecCrystal5000(control_panel_modbus, analytic_modbus, config.methods)
-    chromatograph.connect()
+    chromatograph = _initialize_chromatograph()
     chromatograph.start_analysis()
 
 def chromatograph_set_passport(args:argparse.Namespace):
     """
     Set values of chromatogram passport. Should be run after analysis is complete.
     """
-    control_panel_modbus = ChromatecControlPanelModbus(modbus_id=config.control_panel_modbus_id, working_status_input_address=config.working_status_input_address, serial_number_input_address=config.serial_number_input_address, connection_status_input_address=config.connection_status_input_address, method_holding_address=config.method_holding_address, chromatograph_command_holding_address=config.chromatograph_command_holding_address, application_command_holding_address=config.application_command_holding_address)
-    analytic_modbus = ChromatecAnalyticModbus(modbus_id=config.analytic_modbus_id, sample_name_holding_address=config.sample_name_holding_address, chromatogram_purpose_holding_address=config.chromatogram_purpose_holding_address, sample_volume_holding_address=config.sample_volume_holding_address, sample_dilution_holding_address=config.sample_dilution_holding_address, operator_holding_address=config.operator_holding_address, column_holding_address=config.column_holding_address, lab_name_holding_address=config.lab_name_holding_address)
-    chromatograph = ChromatecCrystal5000(control_panel_modbus, analytic_modbus, config.methods)
-    chromatograph.connect()
+    chromatograph = _initialize_chromatograph()
     if args.purpose == 'analysis':
         purpose = ChromatogramPurpose.ANALYSIS
     elif args.purpose == 'graduation':
@@ -203,21 +209,6 @@ def _initialize_mass_flow_controllers() -> list[BronkhorstF201CV]:
     for mfc in mfcs:
         mfc.connect()
     return mfcs
-
-def _initialize_chromatograph() -> ChromatecCrystal5000:
-    """
-    Initialize modbus objects and chromatograph object with parameters in config.py file, connect to chromatograph.
-
-    returns
-    -------
-    chromatograph:ChromatecCrystal5000
-        chromatograph used for analysis
-    """
-    control_panel_modbus = ChromatecControlPanelModbus(modbus_id=config.control_panel_modbus_id, working_status_input_address=config.working_status_input_address, serial_number_input_address=config.serial_number_input_address, connection_status_input_address=config.connection_status_input_address, method_holding_address=config.method_holding_address, chromatograph_command_holding_address=config.chromatograph_command_holding_address, application_command_holding_address=config.application_command_holding_address)
-    analytic_modbus = ChromatecAnalyticModbus(modbus_id=config.analytic_modbus_id, sample_name_holding_address=config.sample_name_holding_address, chromatogram_purpose_holding_address=config.chromatogram_purpose_holding_address, sample_volume_holding_address=config.sample_volume_holding_address, sample_dilution_holding_address=config.sample_dilution_holding_address, operator_holding_address=config.operator_holding_address, column_holding_address=config.column_holding_address, lab_name_holding_address=config.lab_name_holding_address)
-    chromatograph = ChromatecCrystal5000(control_panel_modbus, analytic_modbus, config.methods)
-    chromatograph.connect()
-    return chromatograph
 
 def _check_flow_rates(mfcs:list[BronkhorstF201CV], flow_rates:list[float], plotter:DataCollectorPlotter|None=None):
     """
