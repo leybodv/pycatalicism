@@ -24,8 +24,8 @@ isothermal = 30
 # list of measurement temperatures
 temperatures = []
 # name of sample
-sample_name = 
+sample_name = '
 # operator's name
-operator = 
+operator = '
 # catalyst loading
 sample_mass = 
