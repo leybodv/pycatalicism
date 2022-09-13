@@ -6,6 +6,17 @@ _logger = chromatograph_logging.get_logger(__name__)
 
 def bytes_to_float(response_bytes:list[int]) -> float:
     """
+    Converts bytes received from chromatograph to float (8 byte double).
+
+    parameters
+    ----------
+    response_bytes:list[int]
+        bytes received from chromatograph
+
+    returns
+    -------
+    float_num:float
+        converted float value
     """
     _logger.debug(f'Converting bytes: {response_bytes} to float')
     float_bytes = b''
