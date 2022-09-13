@@ -195,6 +195,17 @@ class ChromatecCrystal5000():
 
     def get_analysis_time(self) -> float:
         """
+        Get time from the start of the analysis step in minutes.
+
+        returns
+        -------
+        analysis_time:float
+            time from the start of the analysis step in minutes
+
+        raises
+        ------
+        ChromatographStateException
+            if chromatograph is not connected or if current step is not analysis
         """
         if not self._connected:
             raise ChromatographStateException('Connect chromatograph first!')
