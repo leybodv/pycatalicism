@@ -27,7 +27,7 @@ class DataCollectorPlotter(threading.Thread):
             list of mass flow controllers to get information about current flow rates
         gases:list[str]
             list of gases used for process, which will be added as legend to plot
-        chromatograph:ChromatecCrystal5000
+        chromatograph:ChromatecCrystal5000|None
             chromatograph to get information about analysis start time
         """
         super().__init__(daemon=False)
@@ -60,6 +60,16 @@ class DataCollectorPlotter(threading.Thread):
 
     def _collect_data(self) -> tuple[Point, Point|None, list[Point]]:
         """
+        Get data about current temperature, time from the beginning of the chromatographic analysis and current gas flow rates.
+
+        returns
+        -------
+        temperature_point:Point
+            time and furnace temperature
+        chromatograph_point:Point|None
+            time from the beginning of the chromatographic analysis or None if chromatograph is not used or if current chromatograph working status is not analysis
+        flow_rate_points:list[Point]
+            list of times and flow rates for all mass flow controllers
         """
         t = (time.time() - self._start_time) / 60.0
         T = self._furnace_controller.get_temperature()
