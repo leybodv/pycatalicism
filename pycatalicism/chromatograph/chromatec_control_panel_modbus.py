@@ -98,6 +98,7 @@ class ChromatecControlPanelModbus():
                     raise ChromatographException('Cannot get working status!')
                 else:
                     count += 1
+                    self._logger.warning(f'Error during communication with control panel. Trying to reconnect. Trial #{count}')
                     time.sleep(1)
         current_status_id = convert.bytes_to_int(response_registers)
         current_status = WorkingStatus(current_status_id)
@@ -106,6 +107,17 @@ class ChromatecControlPanelModbus():
 
     def get_step_time(self) -> float:
         """
+        Get time passed from the beginning of the current step in minutes.
+
+        returns
+        -------
+        step_time:float
+            time from the beginning of the current step in minutes
+
+        raises
+        ------
+        ChromatographException
+            if error occured during communication with control panel
         """
         count = 0
         while True:
@@ -147,6 +159,7 @@ class ChromatecControlPanelModbus():
                     raise ChromatographException('Cannot get connection status!')
                 else:
                     count += 1
+                    self._logger.warning(f'Error during communication with control panel. Trying to reconnect. Trial #{count}')
                     time.sleep(1)
         connection_status = ConnectionStatus(response_registers[0])
         self._logger.log(5, f'{connection_status = }')
