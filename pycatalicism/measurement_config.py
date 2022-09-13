@@ -1,3 +1,9 @@
+# gases connected to mass flow controllers
+gases = [
+        'He',
+        'O2',
+        'CO',
+        ]
 # mass flow controllers calibrations
 # see config.py for details
 calibrations = [
@@ -21,3 +27,5 @@ temperatures = []
 sample_name = 
 # operator's name
 operator = 
+# catalyst loading
+sample_mass = 
