@@ -1,3 +1,9 @@
+# gases connected to mass flow controllers
+gases = [
+        'He',
+        'O2',
+        'H2',
+        ]
 # mass flow controllers calibrations
 # see config.py for details
 calibrations = [
