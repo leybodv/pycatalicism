@@ -104,7 +104,7 @@ class ChromatecControlPanelModbus():
         self._logger.log(5, f'{current_status = }')
         return current_status
 
-    def get_analysis_time(self) -> float:
+    def get_step_time(self) -> float:
         """
         """
         count = 0
@@ -122,9 +122,9 @@ class ChromatecControlPanelModbus():
                     count += 1
                     self._logger.warning(f'Error during communication with control panel. Trying to reconnect. Trial #{count}')
                     time.sleep(1)
-        analysis_time = convert.bytes_to_float(response_registers)
-        self._logger.debug(f'{analysis_time = }')
-        return analysis_time
+        step_time = convert.bytes_to_float(response_registers)
+        self._logger.debug(f'{step_time = }')
+        return step_time
 
     def get_connection_status(self) -> ConnectionStatus:
         """
