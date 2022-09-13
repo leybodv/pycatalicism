@@ -67,7 +67,7 @@ class DataCollectorPlotter(threading.Thread):
         chromatograph_point = None
         if self._chromatograph is not None:
             try:
-                t = round((time.time() - self._start_time) / 60.0, 2) - self._chromatograph.get_analysis_time()
+                t = round((time.time() - self._start_time) / 60.0, 2) - round(self._chromatograph.get_analysis_time(), 2)
                 chromatograph_point = Point(x=t, y=None, label='chromatograms')
             except ChromatographStateException:
                 pass
