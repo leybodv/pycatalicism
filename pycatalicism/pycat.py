@@ -315,10 +315,10 @@ def measure(args:argparse.Namespace):
     today = date.today()
     furnace = _initialize_furnace_controller()
     mfcs = _initialize_mass_flow_controllers()
-    _set_flow_rates(mfcs, process_config.calibrations, process_config.flow_rates)
     chromatograph = _initialize_chromatograph()
     plotter = DataCollectorPlotter(furnace_controller=furnace, mass_flow_controllers=mfcs, gases=process_config.gases, chromatograph=chromatograph)
     plotter.start()
+    _set_flow_rates(mfcs, process_config.calibrations, process_config.flow_rates)
     chromatograph.set_method('purge')
     # wait 10 minutes to purge the system
     time.sleep(10*60)
@@ -419,12 +419,16 @@ def measure_init_conc(args:argparse.Namespace):
         - purges chromatograph prior to analysis
         - measures several chromatograms (number is defined in config file)
         - starts chromatograph cooldown
+    Furnace temperature, gas flow rates and chromatograph analysis start times are plotted during the process. User has to hit enter after chromatograph started colling down to stop plotter.
     """
     config_path = Path(args.config)
     process_config = _import_config(config_path)
     today = date.today()
+    furnace = _initialize_furnace_controller()
     mfcs = _initialize_mass_flow_controllers()
     chromatograph = _initialize_chromatograph()
+    plotter = DataCollectorPlotter(furnace_controller=furnace, mass_flow_controllers=mfcs, gases=process_config.gases, chromatograph=chromatograph)
+    plotter.start()
     chromatograph.set_method('purge')
     _set_flow_rates(mfcs, process_config.calibrations, process_config.flow_rates)
     # wait until chromatograph is ready to start analysis
@@ -481,6 +485,8 @@ def measure_init_conc(args:argparse.Namespace):
             chromatograph.set_method('cooling')
             break
         time.sleep(60)
+    input()
+    plotter.stop()
 
 def main():
     parser = argparse.ArgumentParser()
