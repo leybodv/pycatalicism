@@ -32,8 +32,8 @@ logging_levels = {
 control_panel_modbus_id = 1
 # register with working status of chromatograph
 working_status_input_address = 0
-# register with resial number of chromatograph
-serial_number_input_address = 2
+# register with step time in minutes
+step_time_input_address = 18
 # register with connection status
 connection_status_input_address = 17
 # register with current instrumental method
