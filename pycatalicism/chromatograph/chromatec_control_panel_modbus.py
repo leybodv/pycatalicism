@@ -111,7 +111,7 @@ class ChromatecControlPanelModbus():
         while True:
             self._logger.debug(f'Getting analysis time. Trial #{count}')
             try:
-                response = self._modbus_client.read_input_registers(address=self._analysis_time_input_address, count=??, unit=self._modbus_id)
+                response = self._modbus_client.read_input_registers(address=self._analysis_time_input_address, count=4, unit=self._modbus_id)
                 response_registers = response.registers
                 self._logger.log(5, f'{response_registers = }')
                 break
