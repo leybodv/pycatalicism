@@ -308,7 +308,7 @@ def activate(args:argparse.Namespace):
 
 def measure(args:argparse.Namespace):
     """
-    Gather chromatograms at different measurement temperatures defined in a config file provided as an argument. Configuration file is a file with several variables defined using python syntax. Use measurement_config.py as an example of configuration. Method initializes devices and connects to them. It sets chromatograph method to 'purge', sets mass flow controller calibrations and flow rates. Heats furnace to the first measurement temperature and waits until target temperature is reached. Starts chromatograph purge, waits until purge is over and sets chromatograph method to the one specified in a config. Then, for each measurement temperature, method waits until chromatograph is ready for analysis, starts measurement, heats furnace to the next temperature. Finally, it turns off furnace and starts chromatograph cool down.
+    Gather chromatograms at different measurement temperatures defined in a config file provided as an argument. Configuration file is a file with several variables defined using python syntax. Use measurement_config.py as an example of configuration. Method initializes devices and connects to them. It sets chromatograph method to 'purge', sets mass flow controller calibrations and flow rates. Heats furnace to the first measurement temperature and waits until target temperature is reached. Starts chromatograph purge, waits until purge is over and sets chromatograph method to the one specified in a config. Then, for each measurement temperature, method waits until chromatograph is ready for analysis, starts measurement, heats furnace to the next temperature. Finally, it turns off furnace and starts chromatograph cool down. During the process temperature, gas flow rates and chromatogram analysis start times are plotted. User has to hit enter after chromatograph cool down is started to stop plotter.
     """
     config_path = Path(args.config)
     process_config = _import_config(config_path)
@@ -317,6 +317,8 @@ def measure(args:argparse.Namespace):
     mfcs = _initialize_mass_flow_controllers()
     _set_flow_rates(mfcs, process_config.calibrations, process_config.flow_rates)
     chromatograph = _initialize_chromatograph()
+    plotter = DataCollectorPlotter(furnace_controller=furnace, mass_flow_controllers=mfcs, gases=process_config.gases, chromatograph=chromatograph)
+    plotter.start()
     chromatograph.set_method('purge')
     # wait 10 minutes to purge the system
     time.sleep(10*60)
@@ -407,6 +409,8 @@ def measure(args:argparse.Namespace):
             chromatograph.set_method('cooling')
             break
         time.sleep(60)
+    input()
+    plotter.stop()
 
 def measure_init_conc(args:argparse.Namespace):
     """
