@@ -30,7 +30,7 @@ class NonBlockingPlotter():
         """
         self._pipe = pipe
         self._fig = plt.figure()
-        self._left_ax = self._fig.add_axes([0.07, 0.1, 0.6, 0.85]) # left, bottom, right, top
+        self._left_ax = self._fig.add_axes([0.1, 0.1, 0.6, 0.85]) # left, bottom, right, top
         self._setup_left_ax(self._left_ax)
         self._right_ax = self._left_ax.twinx()
         self._setup_right_ax(self._right_ax)
