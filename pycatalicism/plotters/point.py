@@ -41,3 +41,14 @@ class Point():
             y value
         """
         return self._y
+
+    def get_label(self) -> str:
+        """
+        Get label associated with data.
+
+        returns
+        -------
+        label:str
+            label associated with data
+        """
+        return self._label
