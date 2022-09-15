@@ -72,13 +72,13 @@ class NonBlockingPlotter():
                 self._setup_left_ax(self._left_ax)
                 self._setup_right_ax(self._right_ax)
                 lines = []
-                line, = self._left_ax.plot(self._temperatures.get_x(), self._temperatures.get_y(), color='red', linewidth=1, linestyle=':', marker='o', markersize=5, markeredgewidth=0, label=self._temperatures.get_label())
+                line, = self._left_ax.plot(self._temperatures.get_x(), self._temperatures.get_y(), color='red', linewidth=1, linestyle=':', label=self._temperatures.get_label())
                 lines.append(line)
                 if self._chromatograms is not None:
-                    line = self._left_ax.vlines(self._chromatograms.get_x(), self._left_ax.get_ylim()[0], self._left_ax.get_ylim()[1], colors=['#e6daa6'], linewidth=1, label=self._chromatograms.get_label())
+                    line = self._left_ax.vlines(self._chromatograms.get_x(), self._left_ax.get_ylim()[0], self._left_ax.get_ylim()[1], colors=['#000000'], linewidth=1, label=self._chromatograms.get_label())
                     lines.append(line)
                 for flow_rate in self._flow_rates:
-                    line, = self._right_ax.plot(flow_rate.get_x(), flow_rate.get_y(), linewidth=0, marker='o', fillstyle='none', label=flow_rate.get_label())
+                    line, = self._right_ax.plot(flow_rate.get_x(), flow_rate.get_y(), linewidth=1, linestyle=':', label=flow_rate.get_label())
                     lines.append(line)
                 self._left_ax.legend(handles=lines, bbox_to_anchor=(1.1, 1), loc='upper left', borderaxespad=0)
         self._fig.canvas.draw()
