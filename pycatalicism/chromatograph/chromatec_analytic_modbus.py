@@ -1,4 +1,5 @@
 from enum import Enum
+import threading
 
 from pymodbus.client.sync import ModbusTcpClient
 
@@ -49,6 +50,7 @@ class ChromatecAnalyticModbus():
         self._column_holding_address = column_holding_address
         self._lab_name_holding_address = lab_name_holding_address
         self._modbus_client = ModbusTcpClient()
+        self._read_write_lock = threading.Lock()
         self._logger = chromatograph_logging.get_logger(self.__class__.__name__)
 
     def set_sample_name(self, name:str):
@@ -62,7 +64,8 @@ class ChromatecAnalyticModbus():
         """
         self._logger.debug(f'Setting chromatogram name to {name}')
         name_bytes = convert.string_to_bytes(name)
-        self._modbus_client.write_registers(address=self._sample_name_holding_address, values=name_bytes, unit=self._modbus_id)
+        with self._read_write_lock:
+            self._modbus_client.write_registers(address=self._sample_name_holding_address, values=name_bytes, unit=self._modbus_id)
 
     def set_chromatogram_purpose(self, purpose:ChromatogramPurpose):
         """
@@ -75,7 +78,8 @@ class ChromatecAnalyticModbus():
         """
         self._logger.debug(f'Setting chromatogram purpose to {purpose}')
         purpose_bytes = convert.int_to_bytes(purpose.value)
-        self._modbus_client.write_registers(address=self._chromatogram_purpose_holding_address, values=purpose_bytes, unit=self._modbus_id)
+        with self._read_write_lock:
+            self._modbus_client.write_registers(address=self._chromatogram_purpose_holding_address, values=purpose_bytes, unit=self._modbus_id)
 
     def set_sample_volume(self, volume:float):
         """
@@ -88,7 +92,8 @@ class ChromatecAnalyticModbus():
         """
         self._logger.debug(f'Setting sample volume to {volume}')
         volume_bytes = convert.double_to_bytes(volume)
-        self._modbus_client.write_registers(address=self._sample_volume_holding_address, values=volume_bytes, unit=self._modbus_id)
+        with self._read_write_lock:
+            self._modbus_client.write_registers(address=self._sample_volume_holding_address, values=volume_bytes, unit=self._modbus_id)
 
     def set_sample_dilution(self, dilution:float):
         """
@@ -101,7 +106,8 @@ class ChromatecAnalyticModbus():
         """
         self._logger.debug(f'Setting sample dilution to {dilution}')
         dilution_bytes = convert.double_to_bytes(dilution)
-        self._modbus_client.write_registers(address=self._sample_dilution_holding_address, values=dilution_bytes, unit=self._modbus_id)
+        with self._read_write_lock:
+            self._modbus_client.write_registers(address=self._sample_dilution_holding_address, values=dilution_bytes, unit=self._modbus_id)
 
     def set_operator(self, operator:str):
         """
@@ -114,7 +120,8 @@ class ChromatecAnalyticModbus():
         """
         self._logger.debug(f'Setting operator to {operator}')
         operator_bytes = convert.string_to_bytes(operator)
-        self._modbus_client.write_registers(address=self._operator_holding_address, values=operator_bytes, unit=self._modbus_id)
+        with self._read_write_lock:
+            self._modbus_client.write_registers(address=self._operator_holding_address, values=operator_bytes, unit=self._modbus_id)
 
     def set_column(self, column:str):
         """
@@ -127,7 +134,8 @@ class ChromatecAnalyticModbus():
         """
         self._logger.debug(f'Setting column to {column}')
         column_bytes = convert.string_to_bytes(column)
-        self._modbus_client.write_registers(address=self._column_holding_address, values=column_bytes, unit=self._modbus_id)
+        with self._read_write_lock:
+            self._modbus_client.write_registers(address=self._column_holding_address, values=column_bytes, unit=self._modbus_id)
 
     def set_lab_name(self, name:str):
         """
@@ -140,7 +148,8 @@ class ChromatecAnalyticModbus():
         """
         self._logger.debug(f'Setting laboratory name to {name}')
         name_bytes = convert.string_to_bytes(name)
-        self._modbus_client.write_registers(address=self._lab_name_holding_address, values=name_bytes, unit=self._modbus_id)
+        with self._read_write_lock:
+            self._modbus_client.write_registers(address=self._lab_name_holding_address, values=name_bytes, unit=self._modbus_id)
 
     def get_lab_name(self) -> str:
         """
@@ -152,7 +161,8 @@ class ChromatecAnalyticModbus():
             laboratory name
         """
         self._logger.debug('Getting laboratory name')
-        response = self._modbus_client.read_holding_registers(address=self._lab_name_holding_address, count=15, unit=self._modbus_id)
+        with self._read_write_lock:
+            response = self._modbus_client.read_holding_registers(address=self._lab_name_holding_address, count=15, unit=self._modbus_id)
         name = convert.bytes_to_string(response.registers)
         self._logger.log(5, f'{name = }')
         return name
