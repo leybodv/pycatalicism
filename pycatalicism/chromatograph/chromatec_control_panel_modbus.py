@@ -1,5 +1,6 @@
 from enum import Enum
 import time
+import threading
 
 from pymodbus.client.sync import ModbusTcpClient
 
@@ -75,6 +76,7 @@ class ChromatecControlPanelModbus():
         self._chromatograph_command_holding_address = chromatograph_command_holding_address
         self._application_command_holding_address = application_command_holding_address
         self._modbus_client = ModbusTcpClient()
+        self._read_write_lock = threading.Lock()
         self._logger = chromatograph_logging.get_logger(self.__class__.__name__)
 
     def get_current_working_status(self) -> WorkingStatus:
@@ -90,7 +92,8 @@ class ChromatecControlPanelModbus():
         while True:
             self._logger.debug(f'Getting current working status of chromatograph. Trial #{count}')
             try:
-                response = self._modbus_client.read_input_registers(address=self._working_status_input_address, count=2, unit=self._modbus_id)
+                with self._read_write_lock:
+                    response = self._modbus_client.read_input_registers(address=self._working_status_input_address, count=2, unit=self._modbus_id)
                 response_registers = response.registers
                 break
             except AttributeError:
@@ -123,7 +126,8 @@ class ChromatecControlPanelModbus():
         while True:
             self._logger.debug(f'Getting analysis time. Trial #{count}')
             try:
-                response = self._modbus_client.read_input_registers(address=self._step_time_input_address, count=4, unit=self._modbus_id)
+                with self._read_write_lock:
+                    response = self._modbus_client.read_input_registers(address=self._step_time_input_address, count=4, unit=self._modbus_id)
                 response_registers = response.registers
                 self._logger.log(5, f'{response_registers = }')
                 break
@@ -151,7 +155,8 @@ class ChromatecControlPanelModbus():
         while True:
             self._logger.debug(f'Getting chromatograph and control panel connection status. Trial #{count}')
             try:
-                response = self._modbus_client.read_input_registers(address=self._connection_status_input_address, count=1, unit=self._modbus_id)
+                with self._read_write_lock:
+                    response = self._modbus_client.read_input_registers(address=self._connection_status_input_address, count=1, unit=self._modbus_id)
                 response_registers = response.registers
                 break
             except AttributeError:
@@ -175,7 +180,8 @@ class ChromatecControlPanelModbus():
             sequential number of instrumental method
         """
         self._logger.debug(f'Setting instrumental method to {method_id}')
-        self._modbus_client.write_registers(address=self._method_holding_address, values=[method_id], unit=self._modbus_id)
+        with self._read_write_lock:
+            self._modbus_client.write_registers(address=self._method_holding_address, values=[method_id], unit=self._modbus_id)
 
     def send_chromatograph_command(self, command:ChromatographCommand):
         """
@@ -187,7 +193,8 @@ class ChromatecControlPanelModbus():
             one of the constants defined in ChromatographCommand enum
         """
         self._logger.debug(f'Sending command to chromatograph: {command}')
-        self._modbus_client.write_registers(address=self._chromatograph_command_holding_address, values=[command.value], unit=self._modbus_id)
+        with self._read_write_lock:
+            self._modbus_client.write_registers(address=self._chromatograph_command_holding_address, values=[command.value], unit=self._modbus_id)
 
     def send_application_command(self, command:ApplicationCommand):
         """
@@ -199,4 +206,5 @@ class ChromatecControlPanelModbus():
             one of the constants defined in ApplicationCommand enum
         """
         self._logger.debug(f'Sending command to control panel: {command}')
-        self._modbus_client.write_registers(address=self._application_command_holding_address, values=[command.value], unit=self._modbus_id)
+        with self._read_write_lock:
+            self._modbus_client.write_registers(address=self._application_command_holding_address, values=[command.value], unit=self._modbus_id)
