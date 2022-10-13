@@ -20,6 +20,6 @@ flow_rates = [
 # chromatograph instrumental method to use for measurement
 chromatograph_method = 'co-oxidation'
 # number of measurements
-measurement_number = 5
+measurements_number = 5
 # operator's name
 operator = 
