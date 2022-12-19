@@ -1,4 +1,4 @@
-<p>Формат сообщения:</p>
+<p>Формат сообщения (ведущий -> ведомый):</p>
 <table>
   <tr>
     <td>@</td>
@@ -13,14 +13,36 @@
 <table>
   <tr>
     <td>&lt;command&gt;</td>
-    <td>SET - set state of the valve &lt;devnum&gt;<br>GET - get state of the valve &lt;devnum&gt;</td>
+    <td>SET - установить значение клапана &lt;devnum&gt;<br>GET - запросить состояние клапана &lt;devnum&gt; (значение &lt;value&gt; должно быть NONE)<br>HSH - приветствие (значение devnum должно быть 0)</td>
   </tr>
   <tr>
     <td>&lt;devnum&gt;</td>
-    <td>valve number from 0 to 4</td>
+    <td>valve number from 1 to 5</td>
   </tr>
   <tr>
     <td>&lt;value&gt;</td>
-    <td>OPEN - open the valve<br>CLOSE - close the valve</td>
+    <td>OPEN - открыть клапан<br>CLOSE - закрыть клапан<br>NONE - значение при запросе состояния клапана<br>NISMF - слово приветствие</td>
+  </tr>
+</table>
+<p>Формат ответа (ведомый -> ведущий)</p>
+<table>
+  <tr>
+    <td>@</td>
+    <td>&lt;devstat&gt;</td>
+    <td>.</td>
+    <td>&lt;value&gt;</td>
+    <td>#</td>
+  </tr>
+</table>
+<table>
+  <tr>
+      <td>&lt;devstat&gt;</td>
+      <td>OK - последняя операция выполнена успешно<br>ERR - последняя операция выполнена с ошибками<br>HSH - ответ на приветствие<br>ANS - ответ на команду GET</td>
+  </tr>
+  <tr>
+    <td>&lt;value&gt;</td>
+    <td>OPEN|CLOSE - открыт или закрыт клапан (высылается при успешном выполнении последней операции или при ответе на запрос ведущего устройства)</td>
+    <td>&lt;errcode&gt; - код ошибки</td>
+    <td>DBQWT - слово ответа на приветствие</td>
   </tr>
 </table>
