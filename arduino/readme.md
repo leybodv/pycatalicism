@@ -20,7 +20,7 @@
   </tr>
   <tr>
     <td>&lt;devnum&gt;</td>
-    <td>valve number from 1 to 5</td>
+    <td>Номер клапана от 1 до 5</td>
   </tr>
   <tr>
     <td>&lt;value&gt;</td>
