@@ -940,7 +940,7 @@
   (symbol (lib_id "my_library:VSAA_solenoid_valve") (at 104.14 57.15 270) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 05de500d-1161-4310-8519-b2804cb3777b)
-    (property "Reference" "VSAA2" (id 0) (at 111.76 55.8799 90)
+    (property "Reference" "VSAA4" (id 0) (at 111.76 55.8799 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "VSAA_solenoid_valve" (id 1) (at 111.76 58.4199 90)
@@ -1008,7 +1008,7 @@
   (symbol (lib_id "Transistor_FET:IRF540N") (at 106.68 91.44 90) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 1af4c67a-c000-4054-9b8f-ffb2d0e44f70)
-    (property "Reference" "Q1" (id 0) (at 106.68 81.28 90))
+    (property "Reference" "Q5" (id 0) (at 106.68 81.28 90))
     (property "Value" "IRF530N" (id 1) (at 106.68 83.82 90))
     (property "Footprint" "" (id 2) (at 108.585 85.09 0)
       (effects (font (size 1.27 1.27) italic) (justify left) hide)
@@ -1346,7 +1346,7 @@
   (symbol (lib_id "Transistor_FET:IRF540N") (at 187.96 91.44 90) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid 9bc83bcc-e0b8-4105-9061-2c6d0758e3b7)
-    (property "Reference" "Q5" (id 0) (at 187.96 81.28 90))
+    (property "Reference" "Q1" (id 0) (at 187.96 81.28 90))
     (property "Value" "IRF530N" (id 1) (at 187.96 83.82 90))
     (property "Footprint" "" (id 2) (at 189.865 85.09 0)
       (effects (font (size 0 0) italic) (justify left) hide)
@@ -1408,7 +1408,7 @@
   (symbol (lib_id "my_library:VSAA_solenoid_valve") (at 66.04 57.15 270) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid b6927a09-a2f9-4c72-8b2d-0ddfde6db60a)
-    (property "Reference" "VSAA1" (id 0) (at 73.66 55.8799 90)
+    (property "Reference" "VSAA5" (id 0) (at 73.66 55.8799 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "VSAA_solenoid_valve" (id 1) (at 73.66 58.4199 90)
@@ -1479,7 +1479,7 @@
   (symbol (lib_id "my_library:VSAA_solenoid_valve") (at 218.44 57.15 270) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid bb0bd072-604b-4f94-b7a8-ba7be997d4aa)
-    (property "Reference" "VSAA5" (id 0) (at 226.06 55.8799 90)
+    (property "Reference" "VSAA1" (id 0) (at 226.06 55.8799 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "VSAA_solenoid_valve" (id 1) (at 226.06 58.4199 90)
@@ -1546,7 +1546,7 @@
   (symbol (lib_id "my_library:VSAA_solenoid_valve") (at 180.34 57.15 270) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid db5ca4ae-4770-4ea2-82b0-b4805117d6f8)
-    (property "Reference" "VSAA4" (id 0) (at 187.96 55.8799 90)
+    (property "Reference" "VSAA2" (id 0) (at 187.96 55.8799 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "VSAA_solenoid_valve" (id 1) (at 187.96 58.4199 90)
@@ -1566,7 +1566,7 @@
   (symbol (lib_id "Transistor_FET:IRF540N") (at 127 91.44 90) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid e3f7b2b1-9086-4943-bca4-ed77cb19a3fe)
-    (property "Reference" "Q2" (id 0) (at 127 81.28 90))
+    (property "Reference" "Q4" (id 0) (at 127 81.28 90))
     (property "Value" "IRF530N" (id 1) (at 127 83.82 90))
     (property "Footprint" "" (id 2) (at 128.905 85.09 0)
       (effects (font (size 1.27 1.27) italic) (justify left) hide)
@@ -1582,7 +1582,7 @@
   (symbol (lib_id "Transistor_FET:IRF540N") (at 167.64 91.44 90) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid e5157e2c-6aed-4c9a-ba37-76b5bf465b5a)
-    (property "Reference" "Q4" (id 0) (at 167.64 81.28 90))
+    (property "Reference" "Q2" (id 0) (at 167.64 81.28 90))
     (property "Value" "IRF530N" (id 1) (at 167.64 83.82 90))
     (property "Footprint" "" (id 2) (at 169.545 85.09 0)
       (effects (font (size 1.27 1.27) italic) (justify left) hide)
@@ -1769,19 +1769,19 @@
     (path "/d095e08a-0e80-4a07-9c71-c7ff9f147c70"
       (reference "D5") (unit 1) (value "LED") (footprint "")
     )
-    (path "/1af4c67a-c000-4054-9b8f-ffb2d0e44f70"
+    (path "/9bc83bcc-e0b8-4105-9061-2c6d0758e3b7"
       (reference "Q1") (unit 1) (value "IRF530N") (footprint "")
     )
-    (path "/e3f7b2b1-9086-4943-bca4-ed77cb19a3fe"
+    (path "/e5157e2c-6aed-4c9a-ba37-76b5bf465b5a"
       (reference "Q2") (unit 1) (value "IRF530N") (footprint "")
     )
     (path "/f73fe1b3-b8e2-4079-993f-ab39481e8c26"
       (reference "Q3") (unit 1) (value "IRF530N") (footprint "")
     )
-    (path "/e5157e2c-6aed-4c9a-ba37-76b5bf465b5a"
+    (path "/e3f7b2b1-9086-4943-bca4-ed77cb19a3fe"
       (reference "Q4") (unit 1) (value "IRF530N") (footprint "")
     )
-    (path "/9bc83bcc-e0b8-4105-9061-2c6d0758e3b7"
+    (path "/1af4c67a-c000-4054-9b8f-ffb2d0e44f70"
       (reference "Q5") (unit 1) (value "IRF530N") (footprint "")
     )
     (path "/1bc814da-5275-41ed-80aa-a7ba925f8d46"
@@ -1799,19 +1799,19 @@
     (path "/0b58b939-7e28-46d5-a9f4-ac49bf51dc9a"
       (reference "R5") (unit 1) (value "220R") (footprint "")
     )
-    (path "/b6927a09-a2f9-4c72-8b2d-0ddfde6db60a"
+    (path "/bb0bd072-604b-4f94-b7a8-ba7be997d4aa"
       (reference "VSAA1") (unit 1) (value "VSAA_solenoid_valve") (footprint "")
     )
-    (path "/05de500d-1161-4310-8519-b2804cb3777b"
+    (path "/db5ca4ae-4770-4ea2-82b0-b4805117d6f8"
       (reference "VSAA2") (unit 1) (value "VSAA_solenoid_valve") (footprint "")
     )
     (path "/1cf24050-2e38-4dee-9be1-6b350e139e36"
       (reference "VSAA3") (unit 1) (value "VSAA_solenoid_valve") (footprint "")
     )
-    (path "/db5ca4ae-4770-4ea2-82b0-b4805117d6f8"
+    (path "/05de500d-1161-4310-8519-b2804cb3777b"
       (reference "VSAA4") (unit 1) (value "VSAA_solenoid_valve") (footprint "")
     )
-    (path "/bb0bd072-604b-4f94-b7a8-ba7be997d4aa"
+    (path "/b6927a09-a2f9-4c72-8b2d-0ddfde6db60a"
       (reference "VSAA5") (unit 1) (value "VSAA_solenoid_valve") (footprint "")
     )
   )
