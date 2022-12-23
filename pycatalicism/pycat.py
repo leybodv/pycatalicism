@@ -164,6 +164,14 @@ def mfc_print_flow_rate(args:argparse.Namespace):
     else:
         raise Exception(f'Unknown gas {gas}!')
 
+def valves_set_state(args:argparse.Namespace):
+    """
+    Set state of solenoid  valve
+    """
+    valve_controller = ArduinoValveController(port=config.valves_port, baudrate=config.valves_baudrate, bytesize=config.valves_bytesize, parity=config.valves_parity, stopbits=config.valves_stopbits)
+    valve_controller.connect()
+    valve_controller.set_state(valve_num=config.valves_gases[args.gas], state=args.state)
+
 def _import_config(path:Path) -> types.ModuleType:
     """
     """
