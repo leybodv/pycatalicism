@@ -16,7 +16,7 @@
 <table>
   <tr>
     <td>&lt;command&gt;</td>
-    <td>SET - установить значение клапана &lt;devnum&gt;<br>GET - запросить состояние клапана &lt;devnum&gt; (значение &lt;value&gt; должно быть NONE)<br>HSH - приветствие (значение devnum должно быть 0)</td>
+    <td>SET - установить значение клапана &lt;devnum&gt;<br>GET - запросить состояние клапана &lt;devnum&gt; (значение &lt;value&gt; должно быть NONE)<br>HSH - приветствие (значение devnum не имеет значения)</td>
   </tr>
   <tr>
     <td>&lt;devnum&gt;</td>
