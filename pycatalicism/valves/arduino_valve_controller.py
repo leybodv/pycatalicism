@@ -39,3 +39,9 @@ class ArduinoValveController():
         self._read_write_lock = threading.Lock()
         self._logger = valves_logging.get_logget(self.__class__.__name__)
         self._connected = False
+
+    def connect(self):
+        """
+        """
+        response = self._send_message(self._handshake_message)
+        state, value = self._parse_response(response)
