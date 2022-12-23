@@ -107,7 +107,7 @@ valves_port = ''
 valves_baudrate = 9600
 valves_bytesize = serial.EIGHTBITS
 valves_parity = serial.PARITY_NONE
-valves_parity = serial.STOPBITS_ONE
+valves_stopbits = serial.STOPBITS_ONE
 valves_gases = {
                 'He'  :  1,
                 'CO2' :  2,
