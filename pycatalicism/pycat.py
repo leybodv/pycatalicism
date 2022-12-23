@@ -164,13 +164,39 @@ def mfc_print_flow_rate(args:argparse.Namespace):
     else:
         raise Exception(f'Unknown gas {gas}!')
 
-def valves_set_state(args:argparse.Namespace):
+def _initialize_valve_controller() -> ArduinoValveController:
     """
-    Set state of solenoid  valve
+    Initialize valve controller object
     """
     valve_controller = ArduinoValveController(port=config.valves_port, baudrate=config.valves_baudrate, bytesize=config.valves_bytesize, parity=config.valves_parity, stopbits=config.valves_stopbits)
     valve_controller.connect()
-    valve_controller.set_state(valve_num=config.valves_gases[args.gas], state=args.state)
+    return valve_controller
+
+def valves_set_state(args:argparse.Namespace):
+    """
+    Set state of solenoid valve
+    """
+    valve_controller = _initialize_valve_controller()
+    valve_num = config.valves_gases[args.gas]
+    state = args.state
+    if state == 'open':
+        valve_controller.set_state(valve_num=valve_num, state=ValveState.OPEN)
+    elif state == 'close':
+        valve_controller.set_state(valve_num=valve_num, state=ValveState.CLOSE)
+    else:
+        raise Exception(f'Unknown valve state {state}!')
+
+def valves_get_state(args:argparse.Namespace):
+    """
+    Print state of solenoid valve
+    """
+    valve_controller = _initialize_valve_controller()
+    valve_num = config.valves_gases[args.gas]
+    state = valve_controller.get_state(valve_num=valve_num)
+    if state is ValveState.OPEN:
+        print(f'Valve for {args.gas} is opened')
+    else:
+        print(f'Valve for {args.gas} is closed')
 
 def _import_config(path:Path) -> types.ModuleType:
     """
