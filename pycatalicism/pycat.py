@@ -544,6 +544,16 @@ def main():
     mfc_print_flow_rate_parser.set_defaults(func=mfc_print_flow_rate)
     mfc_print_flow_rate_parser.add_argument('--gas', required=True, choices=['He', 'CO2', 'O2', 'H2', 'CO', 'CH4'], help='which gas to print flow rate for')
 
+    valves_parser = subparsers.add_parser('valve', help='commands to control solenoid valves')
+    valves_subparser = valves_parser.add_subparsers(required=True)
+    valves_set_state_parser = valves_subparser.add_parser('set-state', help='set state of the valve')
+    valves_set_state_parser.set_defaules(func=valves_set_state)
+    valves_set_state_parser.add_argument('--gas', required=True, help='which gas to set state of the valve for')
+    valves_set_state_parser.add_argument('--state', required=True, choices=['open', 'close'], help='state of the valve')
+    valves_get_state_parser = valves_subparser.add_parser('get-state', help='get state of the valve')
+    valves_get_state_parser.set_defaults(func=valves_get_state)
+    valves_get_state_parser.add_argument('--gas', required=True, help='which gas to get state of the valve for')
+
     activation_parser = subparsers.add_parser('activate', help='activate catalyst using parameters provided in configuration file')
     activation_parser.set_defaults(func=activate)
     activation_parser.add_argument('--config', required=True, help='configuration file with activation parameters')
