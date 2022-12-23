@@ -7,6 +7,7 @@
     <li><a href="#furnace-control">Управление печи</a></li>
     <li><a href="#chromatograph-control">Управление хроматографом</a></li>
     <li><a href="#mfc">Управление регуляторами расхода газов</a></li>
+    <li><a href="#valves">Управление соленоидными клапанами</a></li>
     <li><a href="#activation">Проведение активации</a></li>
     <li><a href="#measurement">Проведение измерения</a></li>
     <li><a href="#init-conc-measurement">Проведение измерения исходной концентрации реагентов</a></li>
@@ -257,6 +258,32 @@
       <tr>
         <td>--gas {He|CO2|O2|H2|CO|CH4}</td>
         <td>газ, для которого нужно показать поток. Программа выбирает регулятор на основе этого значения</td>
+      </tr>
+    </table>
+  </p>
+  <h2 id="valves">Управление соленоидными клапанами</h2>
+  <p>Программа осуществляет управление соленоидными клапанами VSAA, подключёнными к ардуино согласно схеме <a href="https://github.com/leybodv/pycatalicism/blob/main/wiring/valve-controller_scheme.png">scheme</a>. Соответствие номеров клапанов и соответствующих им газов должно быть прописано в файле <a href="https://github.com/leybodv/pycatalicism/blob/main/pycatalicism/config.py">config.py</a>.</p>
+  <p><code>pycat valve set-state --gas G --state {open|close}</code></p>
+  <p>Изменяет состояние клапана</p>
+  <p>
+    <table>
+      <tr>
+        <td>--gas G</td>
+        <td>газ, для которого необходимо изменить состояние клапана. Должен быть прописан в файле конфигурации</td>
+      </tr>
+      <tr>
+        <td>--state {open|close}</td>
+        <td>open - открыть клапан<br>close - закрыть клапан</td>
+      </tr>
+    </table>
+  </p>
+  <p><code>pycat valve get-state --gas G</code></p>
+  <p>Запрашивает состояние клапана</p>
+  <p>
+    <table>
+      <tr>
+        <td>--gas G</td>
+        <td>газ, для которого запрашивается состояние клапана. Должен быть прописан в файле конфигурации</td>
       </tr>
     </table>
   </p>
