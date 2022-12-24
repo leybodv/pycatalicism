@@ -24,7 +24,8 @@ from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatogramPur
 from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
 from pycatalicism.chromatograph.chromatec_control_panel_modbus import WorkingStatus
 from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
-from pycatalicism.valves.adruino_valve_controller import ArduinoValveController
+from pycatalicism.valves.arduino_valve_controller import ArduinoValveController
+from pycatalicism.valves.arduino_valve_controller import ValveState
 from pycatalicism.plotters.process_plotter import DataCollectorPlotter
 
 def calculate(args:argparse.Namespace):
@@ -582,7 +583,7 @@ def main():
     valves_parser = subparsers.add_parser('valve', help='commands to control solenoid valves')
     valves_subparser = valves_parser.add_subparsers(required=True)
     valves_set_state_parser = valves_subparser.add_parser('set-state', help='set state of the valve')
-    valves_set_state_parser.set_defaules(func=valves_set_state)
+    valves_set_state_parser.set_defaults(func=valves_set_state)
     valves_set_state_parser.add_argument('--gas', required=True, help='which gas to set state of the valve for')
     valves_set_state_parser.add_argument('--state', required=True, choices=['open', 'close'], help='state of the valve')
     valves_get_state_parser = valves_subparser.add_parser('get-state', help='get state of the valve')
