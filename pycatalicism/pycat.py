@@ -24,6 +24,7 @@ from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatogramPur
 from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
 from pycatalicism.chromatograph.chromatec_control_panel_modbus import WorkingStatus
 from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
+from pycatalicism.valves.adruino_valve_controller import ArduinoValveController
 from pycatalicism.plotters.process_plotter import DataCollectorPlotter
 
 def calculate(args:argparse.Namespace):
