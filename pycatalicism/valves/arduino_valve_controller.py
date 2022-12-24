@@ -42,8 +42,9 @@ class ArduinoValveController():
 
     def connect(self):
         """
+        Connect to the valve controller. Methods sends handshake message to the controller and checks the response.
         """
-        response = self._send_message(self._handshake_message)
+        response = self._send_message(command=self._handshake_command, devnum=1, value=self._handshake_value)
         state, value = self._parse_response(response)
         if state == 'HSH':
             if value == 'DBQWT':
@@ -55,3 +56,20 @@ class ArduinoValveController():
             raise ControllerErrorException(error_code=value)
         else:
             raise MessageStateException(f'Unknown state value "{state}" got from the controller')
+
+    def set_state(self, valve_num:int, state:ValveState):
+        """
+        Set state of the valve.
+
+        parameters
+        ----------
+        valve_num:int
+            Valve number from 1 to 5
+        state:ValveState
+            Whether to open or close the valve
+        """
+        value = "OPEN" if state == ValveState.OPEN else "CLOSE"
+        response = self._send_message(command=self._set_state_value, devnum=valve_num, value=value)
+        state, value = self._parse_response(response)
+        if state == 'ERR':
+            raise ControllerErrorException(error_code=value)
