@@ -1,6 +1,8 @@
 from enum import Enum
 import threading
 
+import serial
+
 import pycatalicism.valves.valves_logging as valves_logging
 
 class ValveState(Enum):
@@ -40,6 +42,7 @@ class ArduinoValveController():
         self._stopbits = stopbits
         self._read_write_lock = threading.Lock()
         self._logger = valves_logging.get_logger(self.__class__.__name__)
+        self._request_trials = request_trials
         self._connected = False
 
     def connect(self):
@@ -110,3 +113,11 @@ class ArduinoValveController():
             raise ControllerErrorException(error_code=value)
         else:
             raise MessageStateException(f'Unknown state value "{state}" was got from the controller')
+
+    def _send_message(self, command:str, devnum:int, value:str) -> str:
+        """
+        """
+        with self._read_write_lock:
+            with serial.Serial(port=self._port, baudrate=self._baudrate, bytesize=self._bytesize, parity=self._parity, stopbits=self._stopbits, timeout=1) as ser:
+                ser.write(f'@{command}.{devnum}.{value}#'.encode(encoding='ascii'))
+                ans = ser.read_until(expected='#'.encode(encoding='ascii'))
