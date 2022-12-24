@@ -1,6 +1,8 @@
 from enum import Enum
 import threading
 
+import pycatalicism.valves.valves_logging as valves_logging
+
 class ValveState(Enum):
     """
     State of the solenoid valve
