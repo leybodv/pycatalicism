@@ -37,7 +37,7 @@ class ArduinoValveController():
         self._parity = parity
         self._stopbits = stopbits
         self._read_write_lock = threading.Lock()
-        self._logger = valves_logging.get_logget(self.__class__.__name__)
+        self._logger = valves_logging.get_logger(self.__class__.__name__)
         self._connected = False
 
     def connect(self):
@@ -45,3 +45,13 @@ class ArduinoValveController():
         """
         response = self._send_message(self._handshake_message)
         state, value = self._parse_response(response)
+        if state == 'HSH':
+            if value == 'DBQWT':
+                self._connected = True
+                self._logger.info('Connected to arduino valve controller')
+            else:
+                raise MessageValueException(f'Unexpected value "{value}" was got from the controller')
+        elif  state == 'ERR':
+            raise ControllerErrorException(error_code=value)
+        else:
+            raise MessageStateException(f'Unknown state value "{state}" got from the controller')
