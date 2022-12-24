@@ -69,7 +69,42 @@ class ArduinoValveController():
             Whether to open or close the valve
         """
         value = "OPEN" if state == ValveState.OPEN else "CLOSE"
-        response = self._send_message(command=self._set_state_value, devnum=valve_num, value=value)
+        response = self._send_message(command=self._set_state_command, devnum=valve_num, value=value)
         state, value = self._parse_response(response)
-        if state == 'ERR':
+        if state == 'OK':
+            self._logger.info(f'Successfully set valve {valve_num} to {state}')
+            return
+        elif state == 'ERR':
             raise ControllerErrorException(error_code=value)
+        else:
+            raise MessageStateException(f'Unknown state value "{state}" got from the controller')
+
+    def get_state(self, valve_num:int) -> ValveState:
+        """
+        Retrieve state of the valve from the controller.
+
+        parameters
+        ----------
+        valve_num:int
+            Valve number from 1 to 5
+
+        returns
+        -------
+        state:ValveState
+            whether the valve is opened or closed
+        """
+        response = self._send_message(command=self._get_state_command, devnum=valve_num, value="NONE")
+        state, value = self._parse_response(response)
+        if state == 'ANS':
+            if value == 'OPEN':
+                self._logger.info(f'Valve {valve_num} is opened')
+                return ValveState.OPEN
+            elif value == 'CLOSE':
+                self._logger.info(f'Valve {valve_num} is closed')
+                return ValveState.CLOSE
+            else:
+                raise MessageValueException(f'Unexpected value "{value}" was got from the controller')
+        elif state == 'ERR':
+            raise ControllerErrorException(error_code=value)
+        else:
+            raise MessageStateException(f'Unknown state value "{state}" was got from the controller')
