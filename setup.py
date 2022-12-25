@@ -8,13 +8,13 @@ install_requires = [
     "numpy>=1.23.2",
     "matplotlib>=3.5.3",
     "pyserial>=3.5",
-    "pymodbus>=2.5.3",
+    "pymodbus>=2.5.3,<2.6",
     "bronkhorst-propar>=1.0",
     ]
 
 setuptools.setup(
      name='pycatalicism',
-     version='1.0.1.1',
+     version='1.0.1.2',
      author="Denis Leybo",
      author_email="leybodv@gmail.com",
      description="Program controls catalytic activity of materials measurement equipment as well calculations",
