@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pymodbus.client import ModbusTcpClient
+from pymodbus.client.sync import ModbusTcpClient
 
 import pycatalicism.chromatograph.chromatograph_logging as chromatograph_logging
 import pycatalicism.chromatograph.modbus_converter as convert
@@ -17,14 +17,12 @@ class ChromatecAnalyticModbus():
     Class represents modbus protocol for connection with chromatec analytic modbus slave
     """
 
-    def __init__(self, tcp_host:str, modbus_id:int, sample_name_holding_address:int, chromatogram_purpose_holding_address:int, sample_volume_holding_address:int, sample_dilution_holding_address:int, operator_holding_address:int, column_holding_address:int, lab_name_holding_address:int):
+    def __init__(self, modbus_id:int, sample_name_holding_address:int, chromatogram_purpose_holding_address:int, sample_volume_holding_address:int, sample_dilution_holding_address:int, operator_holding_address:int, column_holding_address:int, lab_name_holding_address:int):
         """
         Initializes private instance variables. Registers logger.
 
         parameters
         ----------
-        tcp_host:str
-            host ip address or host name
         modbus_id:int
             modbus slave id of analytic software
         sample_name_holding_address:int
@@ -50,7 +48,7 @@ class ChromatecAnalyticModbus():
         self._operator_holding_address = operator_holding_address
         self._column_holding_address = column_holding_address
         self._lab_name_holding_address = lab_name_holding_address
-        self._modbus_client = ModbusTcpClient(tcp_host)
+        self._modbus_client = ModbusTcpClient()
         self._logger = chromatograph_logging.get_logger(self.__class__.__name__)
 
     def set_sample_name(self, name:str):
