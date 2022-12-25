@@ -50,6 +50,7 @@ class ArduinoValveController():
         self._handshake_command = 'HSH'
         self._handshake_value = 'NISMF'
         self._set_state_command = 'SET'
+        self._get_state_command = 'GET'
 
     def connect(self):
         """
