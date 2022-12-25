@@ -1,5 +1,6 @@
 from enum import Enum
 import threading
+import time
 
 import serial
 
@@ -143,9 +144,14 @@ class ArduinoValveController():
         with self._read_write_lock:
             with serial.Serial(port=self._port, baudrate=self._baudrate, bytesize=self._bytesize, parity=self._parity, stopbits=self._stopbits, timeout=1) as ser:
                 for i in range(self._request_trials):
-                    ser.write(f'@{command}.{devnum}.{value}#'.encode(encoding='ascii'))
+                    msg = f'@{command}.{devnum}.{value}#'.encode(encoding='ascii')
+                    self._logger.log(level=5, msg=f'Writing message: {msg}')
+                    ser.write(msg)
+                    time.sleep(0.1)
                     ans = ser.read_until(expected='#'.encode(encoding='ascii'))
+                    self._logger.log(level=5, msg=f'Got byte answer: {ans}')
                     ans = str(ans, encoding='ascii')
+                    self._logger.log(level=5, msg=f'String answer: {ans}')
                     if ans.startswith('@') and ans.endswith('#') and ans.find('.') > 0 and ans.find('.') < ans.find('#'):
                         return ans
                     else:
