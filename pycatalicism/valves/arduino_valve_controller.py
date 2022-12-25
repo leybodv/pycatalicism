@@ -7,6 +7,7 @@ import pycatalicism.valves.valves_logging as valves_logging
 from pycatalicism.valves.valves_exceptions import MessageValueException
 from pycatalicism.valves.valves_exceptions import ControllerErrorException
 from pycatalicism.valves.valves_exceptions import MessageStateException
+from pycatalicism.valves.valves_exceptions import ConnectionException
 
 class ValveState(Enum):
     """
@@ -149,7 +150,7 @@ class ArduinoValveController():
                         return ans
                     else:
                         self._logger.warning(f'Wrong message was got from the controller: {ans}. Trying to connect again. Trial #{i}.')
-        raise ConnectionException(f'Wrong message was got from the controller after {self._request_trials} times: {ans}')
+        raise ConnectionException(f'Wrong message was got from the controller after {self._request_trials} times.')
 
     def _parse_response(self, response:str) -> tuple[str, str]:
         """
