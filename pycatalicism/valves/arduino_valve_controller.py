@@ -6,6 +6,7 @@ import serial
 import pycatalicism.valves.valves_logging as valves_logging
 from pycatalicism.valves.valves_exceptions import MessageValueException
 from pycatalicism.valves.valves_exceptions import ControllerErrorException
+from pycatalicism.valves.valves_exceptions import MessageStateException
 
 class ValveState(Enum):
     """
@@ -48,6 +49,7 @@ class ArduinoValveController():
         self._connected = False
         self._handshake_command = 'HSH'
         self._handshake_value = 'NISMF'
+        self._set_state_command = 'SET'
 
     def connect(self):
         """
@@ -79,14 +81,14 @@ class ArduinoValveController():
         """
         value = "OPEN" if state == ValveState.OPEN else "CLOSE"
         response = self._send_message(command=self._set_state_command, devnum=valve_num, value=value)
-        state, value = self._parse_response(response)
-        if state == 'OK':
-            self._logger.info(f'Successfully set valve {valve_num} to {state}')
+        controller_state, controller_value = self._parse_response(response)
+        if controller_state == 'OK':
+            self._logger.info(f'Successfully set valve {valve_num} to {value}')
             return
-        elif state == 'ERR':
-            raise ControllerErrorException(error_code=value)
+        elif controller_state == 'ERR':
+            raise ControllerErrorException(error_code=controller_value)
         else:
-            raise MessageStateException(f'Unknown state value "{state}" got from the controller')
+            raise MessageStateException(f'Unknown state value "{controller_state}" got from the controller')
 
     def get_state(self, valve_num:int) -> ValveState:
         """
