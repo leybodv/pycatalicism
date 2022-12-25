@@ -116,8 +116,20 @@ class ArduinoValveController():
 
     def _send_message(self, command:str, devnum:int, value:str) -> str:
         """
+        Sends message to the controller and gets answer from it. Message is made up according to the connection protocol.
+
+        parameters
+        ----------
+        command:str
+            command to send to the controller
+        devnum:int
+            number of valve to send to the controller
+        value:str
+            value to send to the controller
         """
         with self._read_write_lock:
             with serial.Serial(port=self._port, baudrate=self._baudrate, bytesize=self._bytesize, parity=self._parity, stopbits=self._stopbits, timeout=1) as ser:
                 ser.write(f'@{command}.{devnum}.{value}#'.encode(encoding='ascii'))
                 ans = ser.read_until(expected='#'.encode(encoding='ascii'))
+                ans = str(ans, encoding='ascii')
+            return ans
