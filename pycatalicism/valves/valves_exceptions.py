@@ -28,3 +28,8 @@ class ControllerErrorException(Exception):
         else:
             msg = 'Unknown error code'
         super().__init__(f'Controller returned error: {msg}')
+
+class MessageStateException(Exception):
+    """
+    Exception is thrown when unknown state value was got from the controller
+    """
