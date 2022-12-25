@@ -33,3 +33,8 @@ class MessageStateException(Exception):
     """
     Exception is thrown when unknown state value was got from the controller
     """
+
+class ConnectionException(Exception):
+    """
+    Exception is thrown when connection problems are encountered
+    """
