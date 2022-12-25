@@ -4,6 +4,8 @@ import threading
 import serial
 
 import pycatalicism.valves.valves_logging as valves_logging
+from pycatalicism.valves.valves_exceptions import MessageValueException
+from pycatalicism.valves.valves_exceptions import ControllerErrorException
 
 class ValveState(Enum):
     """
