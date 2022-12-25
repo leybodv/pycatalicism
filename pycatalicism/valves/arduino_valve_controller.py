@@ -44,6 +44,8 @@ class ArduinoValveController():
         self._logger = valves_logging.get_logger(self.__class__.__name__)
         self._request_trials = request_trials
         self._connected = False
+        self._handshake_command = 'HSH'
+        self._handshake_value = 'NISMF'
 
     def connect(self):
         """
@@ -126,10 +128,41 @@ class ArduinoValveController():
             number of valve to send to the controller
         value:str
             value to send to the controller
+
+        returns
+        -------
+        ans:str
+            answer from the controller in a format: @devstat.value#
         """
         with self._read_write_lock:
             with serial.Serial(port=self._port, baudrate=self._baudrate, bytesize=self._bytesize, parity=self._parity, stopbits=self._stopbits, timeout=1) as ser:
-                ser.write(f'@{command}.{devnum}.{value}#'.encode(encoding='ascii'))
-                ans = ser.read_until(expected='#'.encode(encoding='ascii'))
-                ans = str(ans, encoding='ascii')
-            return ans
+                for i in range(self._request_trials):
+                    ser.write(f'@{command}.{devnum}.{value}#'.encode(encoding='ascii'))
+                    ans = ser.read_until(expected='#'.encode(encoding='ascii'))
+                    ans = str(ans, encoding='ascii')
+                    if ans.startswith('@') and ans.endswith('#') and ans.find('.') > 0 and ans.find('.') < ans.find('#'):
+                        return ans
+                    else:
+                        self._logger.warning(f'Wrong message was got from the controller: {ans}. Trying to connect again. Trial #{i}.')
+        raise ConnectionException(f'Wrong message was got from the controller after {self._request_trials} times: {ans}')
+
+    def _parse_response(self, response:str) -> tuple[str, str]:
+        """
+        Parse answer from the controller according to connection protocol.
+
+        parameters
+        ----------
+        response:str
+            response message got from the controller
+
+        returns
+        -------
+        state:str
+            state part of the message
+        value:str
+            value part of the message
+        """
+        split = response.split(sep='.')
+        state = split[0].removeprefix('@')
+        value = split[1].removesuffix('#')
+        return (state, value)
