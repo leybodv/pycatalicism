@@ -186,7 +186,9 @@ def valves_set_state(args:argparse.Namespace):
     elif state == 'close':
         valve_controller.set_state(valve_num=valve_num, state=ValveState.CLOSE)
     else:
+        valve_controller.close()
         raise Exception(f'Unknown valve state {state}!')
+    valve_controller.close()
 
 def valves_get_state(args:argparse.Namespace):
     """
@@ -199,6 +201,7 @@ def valves_get_state(args:argparse.Namespace):
         print(f'Valve for {args.gas} is opened')
     else:
         print(f'Valve for {args.gas} is closed')
+    valve_controller.close()
 
 def _import_config(path:Path) -> types.ModuleType:
     """
