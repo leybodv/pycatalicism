@@ -59,6 +59,7 @@ class ArduinoValveController():
         Connect to the valve controller. Methods sends handshake message to the controller and checks the response.
         """
         self._serial = serial.Serial(port=self._port, baudrate=self._baudrate, bytesize=self._bytesize, parity=self._parity, stopbits=self._stopbits, timeout=1)
+        time.sleep(0.6)
         response = self._send_message(command=self._handshake_command, devnum=1, value=self._handshake_value)
         state, value = self._parse_response(response)
         if state == 'HSH':
