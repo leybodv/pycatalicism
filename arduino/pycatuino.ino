@@ -8,6 +8,13 @@ void setup() {
     pinMode(valves[i], OUTPUT);
     digitalWrite(valves[i], LOW);
   }
+  pinMode(LED_BUILTIN, OUTPUT);
+  for (byte i = 0; i < 5; i = i + 1) {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(50);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(50);
+  }
   Serial.begin(9600);
 }
 
