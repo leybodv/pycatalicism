@@ -48,27 +48,30 @@ class ArduinoValveController():
         self._read_write_lock = threading.Lock()
         self._logger = valves_logging.get_logger(self.__class__.__name__)
         self._request_trials = request_trials
-        self._connected = False
         self._handshake_command = 'HSH'
         self._handshake_value = 'NISMF'
         self._set_state_command = 'SET'
         self._get_state_command = 'GET'
+        self._serial = None
 
     def connect(self):
         """
         Connect to the valve controller. Methods sends handshake message to the controller and checks the response.
         """
+        self._serial = serial.Serial(port=self._port, baudrate=self._baudrate, bytesize=self._bytesize, parity=self._parity, stopbits=self._stopbits, timeout=1)
         response = self._send_message(command=self._handshake_command, devnum=1, value=self._handshake_value)
         state, value = self._parse_response(response)
         if state == 'HSH':
             if value == 'DBQWT':
-                self._connected = True
                 self._logger.info('Connected to arduino valve controller')
             else:
+                self.close()
                 raise MessageValueException(f'Unexpected value "{value}" was got from the controller')
         elif  state == 'ERR':
+            self.close()
             raise ControllerErrorException(error_code=value)
         else:
+            self.close()
             raise MessageStateException(f'Unknown state value "{state}" got from the controller')
 
     def set_state(self, valve_num:int, state:ValveState):
@@ -82,6 +85,8 @@ class ArduinoValveController():
         state:ValveState
             Whether to open or close the valve
         """
+        if not self._serial:
+            raise ConnectionException('Connect to controller first')
         value = "OPEN" if state == ValveState.OPEN else "CLOSE"
         response = self._send_message(command=self._set_state_command, devnum=valve_num, value=value)
         controller_state, controller_value = self._parse_response(response)
@@ -89,8 +94,10 @@ class ArduinoValveController():
             self._logger.info(f'Successfully set valve {valve_num} to {value}')
             return
         elif controller_state == 'ERR':
+            self.close()
             raise ControllerErrorException(error_code=controller_value)
         else:
+            self.close()
             raise MessageStateException(f'Unknown state value "{controller_state}" got from the controller')
 
     def get_state(self, valve_num:int) -> ValveState:
@@ -107,6 +114,8 @@ class ArduinoValveController():
         state:ValveState
             whether the valve is opened or closed
         """
+        if not self._serial:
+            raise ConnectionException('Connect to controller first')
         response = self._send_message(command=self._get_state_command, devnum=valve_num, value="NONE")
         state, value = self._parse_response(response)
         if state == 'ANS':
@@ -117,11 +126,22 @@ class ArduinoValveController():
                 self._logger.info(f'Valve {valve_num} is closed')
                 return ValveState.CLOSE
             else:
+                self.close()
                 raise MessageValueException(f'Unexpected value "{value}" was got from the controller')
         elif state == 'ERR':
+            self.close()
             raise ControllerErrorException(error_code=value)
         else:
+            self.close()
             raise MessageStateException(f'Unknown state value "{state}" was got from the controller')
+
+    def close(self):
+        """
+        Closes connection with serial port and dereferences serial object.
+        """
+        if self._serial:
+            self._serial.close()
+            self._serial = None
 
     def _send_message(self, command:str, devnum:int, value:str) -> str:
         """
@@ -141,21 +161,23 @@ class ArduinoValveController():
         ans:str
             answer from the controller in a format: @devstat.value#
         """
+        if not self._serial:
+            raise ConnectionException('Connect to controller first')
         with self._read_write_lock:
-            with serial.Serial(port=self._port, baudrate=self._baudrate, bytesize=self._bytesize, parity=self._parity, stopbits=self._stopbits, timeout=1) as ser:
-                for i in range(self._request_trials):
-                    msg = f'@{command}.{devnum}.{value}#'.encode(encoding='ascii')
-                    self._logger.log(level=5, msg=f'Writing message: {msg}')
-                    ser.write(msg)
-                    time.sleep(0.1)
-                    ans = ser.read_until(expected='#'.encode(encoding='ascii'))
-                    self._logger.log(level=5, msg=f'Got byte answer: {ans}')
-                    ans = str(ans, encoding='ascii')
-                    self._logger.log(level=5, msg=f'String answer: {ans}')
-                    if ans.startswith('@') and ans.endswith('#') and ans.find('.') > 0 and ans.find('.') < ans.find('#'):
-                        return ans
-                    else:
-                        self._logger.warning(f'Wrong message was got from the controller: {ans}. Trying to connect again. Trial #{i}.')
+            for i in range(self._request_trials):
+                msg = f'@{command}.{devnum}.{value}#'.encode(encoding='ascii')
+                self._logger.log(level=5, msg=f'Writing message: {msg}')
+                self._serial.write(msg)
+                time.sleep(0.05)
+                ans = self._serial.read_until(expected='#'.encode(encoding='ascii'))
+                self._logger.log(level=5, msg=f'Got byte answer: {ans}')
+                ans = str(ans, encoding='ascii')
+                self._logger.log(level=5, msg=f'String answer: {ans}')
+                if ans.startswith('@') and ans.endswith('#') and ans.find('.') > 0 and ans.find('.') < ans.find('#'):
+                    return ans
+                else:
+                    self._logger.warning(f'Wrong message was got from the controller: {ans}. Trying to connect again. Trial #{i}.')
+        self.close()
         raise ConnectionException(f'Wrong message was got from the controller after {self._request_trials} times.')
 
     def _parse_response(self, response:str) -> tuple[str, str]:
