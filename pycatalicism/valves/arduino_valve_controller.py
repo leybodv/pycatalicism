@@ -145,8 +145,6 @@ class ArduinoValveController():
         ans:str
             answer from the controller in a format: @devstat.value#
         """
-        if not self._connected:
-            raise ConnectionException('Connect to controller first')
         with self._read_write_lock:
             with serial.Serial(port=self._port, baudrate=self._baudrate, bytesize=self._bytesize, parity=self._parity, stopbits=self._stopbits, timeout=1) as ser:
                 for i in range(self._request_trials):
