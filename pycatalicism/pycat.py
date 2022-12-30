@@ -174,6 +174,26 @@ def _initialize_valve_controller() -> ArduinoValveController:
     valve_controller.connect()
     return valve_controller
 
+def _set_valve_states(valve_controller:ArduinoValveController, states:dict[str,str]):
+    """
+    Set state of the valves.
+
+    parameters
+    ----------
+    valve_controller:ArduinoValveController
+        valve controller opening and closing valves
+    states:dict
+        dictionary of valve states with gas name keys and state values. Key values must be the same as in global config, and state values are 'open' or 'close'.
+    """
+    for gas in states:
+        valve_num = config.valves_gases[gas]
+        if states[gas] == 'open':
+            valve_controller.set_state(valve_num=valve_num, state=ValveState.OPEN)
+        elif states[gas] == 'close':
+            valve_controller.set_state(valve_num=valve_num, state=ValveState.CLOSE)
+        else:
+            raise Exception(f'Unknown valve state {states[gas]}!')
+
 def valves_set_state(args:argparse.Namespace):
     """
     Set state of solenoid valve
