@@ -12,6 +12,8 @@ gases = [
         'H2',
         ]
 # valves states used at different steps
+# gas values must match the ones in config.py for valves configuration
+# state values must be 'open' or 'close'
 valves = [
           { # 1st step
            'He'  : 'close',
@@ -58,7 +60,7 @@ calibrations = [
                  3,
                 ],
                ]
-# flow rates of gases during activation step
+# flow rates of gases in ml/min during activation step
 flow_rates = [
               [ # 1st step
                0, # He mass flow controller
