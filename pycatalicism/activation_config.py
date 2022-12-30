@@ -1,9 +1,13 @@
+############################################################################
+##                                                                        ##
 ## An example configuration of activation procedure.                      ##
 ## Program with this configure will do following step:                    ##
 ## - open H2 valve, set H2 flow rate to 36 ml/min, wait for 30 min        ##
 ## - heat furnace to 500°C, wait for 600 min                              ##
 ## - change H2 flow rate to 3 ml/min, cool down furnace to 100°C          ##
 ## - open CO2 valve, set flow rate to 3 ml/min CO2 and 6 ml/min H2        ##
+##                                                                        ##
+############################################################################
 
 # gases connected to mass flow controllers, these will be shown on plot
 gases = [
