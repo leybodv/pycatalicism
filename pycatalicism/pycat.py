@@ -292,9 +292,9 @@ def _set_flow_rates(mfcs:list[BronkhorstF201CV], calibrations:list[int], flow_ra
         mfc.set_calibration(calibration_num=calibration)
         mfc.set_flow_rate(flow_rate)
 
-def _heat_and_wait_until_temperature_reached(furnace:OwenTPM101, temperature:float):
+def _set_and_wait_until_temperature_reached(furnace:OwenTPM101, temperature:float):
     """
-    Heat furnace to the required temperature and wait until this temperature is reached.
+    Set furnace temperature to the required value and wait until it is reached. If temperature is 0, turn off heating and return immideately. Temperature is considered reached if current temperature falls into 1 percent window from target temperature.
 
     parameters
     ----------
@@ -303,11 +303,15 @@ def _heat_and_wait_until_temperature_reached(furnace:OwenTPM101, temperature:flo
     temperature:float
         required temperature
     """
+    if temperature == 0:
+        furnace.set_temperature(0)
+        furnace.set_temperature_control(False)
+        return
     furnace.set_temperature_control(True)
     furnace.set_temperature(temperature)
     while True:
         current_temperature = furnace.get_temperature()
-        if current_temperature >= temperature:
+        if abs(current_temperature - temperature) <= temperature * 0.01:
             break
         time.sleep(60)
 
