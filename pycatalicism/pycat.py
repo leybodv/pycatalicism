@@ -362,17 +362,19 @@ def measure(args:argparse.Namespace):
     config_path = Path(args.config)
     process_config = _import_config(config_path)
     today = date.today()
+    valve_controller = _initialize_valve_controller()
     furnace = _initialize_furnace_controller()
     mfcs = _initialize_mass_flow_controllers()
     chromatograph = _initialize_chromatograph()
     plotter = DataCollectorPlotter(furnace_controller=furnace, mass_flow_controllers=mfcs, gases=process_config.gases, chromatograph=chromatograph)
     plotter.start()
+    _set_valve_states(valve_controller=valve_controller, states=process_config.valves)
     _set_flow_rates(mfcs, process_config.calibrations, process_config.flow_rates)
     chromatograph.set_method('purge')
-    # wait 10 minutes to purge the system
-    time.sleep(10*60)
+    # purge the system
+    time.sleep(process_config.purge_time*60)
     _check_flow_rates(mfcs, process_config.flow_rates)
-    _heat_and_wait_until_temperature_reached(furnace, process_config.temperatures[0])
+    _set_and_wait_until_temperature_reached(furnace, process_config.temperatures[0])
     # wait until chromatograph is ready for analysis, start chromatograph purge afterwards
     while True:
         chromatograph_is_ready = chromatograph.is_ready_for_analysis()
@@ -417,7 +419,7 @@ def measure(args:argparse.Namespace):
             time.sleep(60)
         chromatogram_temperature = furnace.get_temperature()
         chromatograph.start_analysis()
-        _heat_and_wait_until_temperature_reached(furnace, temperature)
+        _set_and_wait_until_temperature_reached(furnace, temperature)
         isothermal_start = time.time()
         while True:
             chromatograph_working_status = chromatograph.get_working_status()
