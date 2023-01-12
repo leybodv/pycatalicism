@@ -444,8 +444,7 @@ def measure(args:argparse.Namespace):
             break
         time.sleep(60)
     # turn off heating
-    furnace.set_temperature(0)
-    furnace.set_temperature_control(False)
+    _set_and_wait_until_temperature_reached(furnace=furnace, temperature=0)
     # set final chromatogram passport values
     while True:
         chromatograph_working_status = chromatograph.get_working_status()
