@@ -39,6 +39,6 @@ flow_rates = [
 # chromatograph instrumental method to use for measurement
 chromatograph_method = 'co2-hydrogenation'
 # number of measurements
-measurement_number = 3
+measurements_number = 3
 # operator's name
 operator = 'best-ever-operator'
