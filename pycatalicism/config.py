@@ -1,3 +1,5 @@
+import serial
+
 # parser type used to convert raw data from equipment for gas composition measurement to input data for calculator to calculate conversion/activity/selectivity vs. temperature
 #
 # chromatec-crystal-composition-copy-paste
@@ -100,9 +102,21 @@ mfc_H2_calibrations = {
                     4	:	BronkhorstMFCCalibration(max_flow_rate=100, gas='CO', p_in=11, p_out=1),
                     }
 
-## furnace configuration ##
-import serial
+## solenoid valves configuration ##
+valves_port = ''
+valves_baudrate = 9600
+valves_bytesize = serial.EIGHTBITS
+valves_parity = serial.PARITY_NONE
+valves_stopbits = serial.STOPBITS_ONE
+valves_gases = {
+                'He'  :  1,
+                'CO2' :  2,
+                'O2'  :  2,
+                'H2'  :  3,
+                'CO'  :  3,
+                }
 
+## furnace configuration ##
 # Furnace controller type
 furnace_device_name = 'ÒÐÌ101' # <- this string is actually returned by the device \_O_/ although should be 'TPM101' according to owen protocol
 # Furnace controller port name and corresponding port parameters (baudrate, bytesize, parity, stopbits) which must be the same as configured on controller device

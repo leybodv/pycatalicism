@@ -1,0 +1,10 @@
+{
+  "include": [
+    "/home/d/git/pycatalicism"
+  ],
+  "executionEnvironments": [
+    {
+    "root": "/home/d/git/pycatalicism"
+    }
+  ]
+}

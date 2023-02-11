@@ -24,6 +24,8 @@ from pycatalicism.chromatograph.chromatec_analytic_modbus import ChromatogramPur
 from pycatalicism.chromatograph.chromatec_crystal_5000 import ChromatecCrystal5000
 from pycatalicism.chromatograph.chromatec_control_panel_modbus import WorkingStatus
 from pycatalicism.mass_flow_controller.bronkhorst_f201cv import BronkhorstF201CV
+from pycatalicism.valves.arduino_valve_controller import ArduinoValveController
+from pycatalicism.valves.arduino_valve_controller import ValveState
 from pycatalicism.plotters.process_plotter import DataCollectorPlotter
 
 def calculate(args:argparse.Namespace):
@@ -164,6 +166,60 @@ def mfc_print_flow_rate(args:argparse.Namespace):
     else:
         raise Exception(f'Unknown gas {gas}!')
 
+def _initialize_valve_controller() -> ArduinoValveController:
+    """
+    Initialize valve controller object
+    """
+    valve_controller = ArduinoValveController(port=config.valves_port, baudrate=config.valves_baudrate, bytesize=config.valves_bytesize, parity=config.valves_parity, stopbits=config.valves_stopbits)
+    valve_controller.connect()
+    return valve_controller
+
+def _set_valve_states(valve_controller:ArduinoValveController, states:dict[str,str]):
+    """
+    Set state of the valves.
+
+    parameters
+    ----------
+    valve_controller:ArduinoValveController
+        valve controller opening and closing valves
+    states:dict
+        dictionary of valve states with gas name keys and state values. Key values must be the same as in global config, and state values are 'open' or 'close'.
+    """
+    for gas in states:
+        valve_num = config.valves_gases[gas]
+        if states[gas] == 'open':
+            valve_controller.set_state(valve_num=valve_num, state=ValveState.OPEN)
+        elif states[gas] == 'close':
+            valve_controller.set_state(valve_num=valve_num, state=ValveState.CLOSE)
+        else:
+            raise Exception(f'Unknown valve state {states[gas]}!')
+
+def valves_set_state(args:argparse.Namespace):
+    """
+    Set state of solenoid valve
+    """
+    valve_controller = _initialize_valve_controller()
+    valve_num = config.valves_gases[args.gas]
+    state = args.state
+    if state == 'open':
+        valve_controller.set_state(valve_num=valve_num, state=ValveState.OPEN)
+    elif state == 'close':
+        valve_controller.set_state(valve_num=valve_num, state=ValveState.CLOSE)
+    else:
+        raise Exception(f'Unknown valve state {state}!')
+
+def valves_get_state(args:argparse.Namespace):
+    """
+    Print state of solenoid valve
+    """
+    valve_controller = _initialize_valve_controller()
+    valve_num = config.valves_gases[args.gas]
+    state = valve_controller.get_state(valve_num=valve_num)
+    if state is ValveState.OPEN:
+        print(f'Valve for {args.gas} is opened')
+    else:
+        print(f'Valve for {args.gas} is closed')
+
 def _import_config(path:Path) -> types.ModuleType:
     """
     """
@@ -256,9 +312,9 @@ def _set_flow_rates(mfcs:list[BronkhorstF201CV], calibrations:list[int], flow_ra
         mfc.set_calibration(calibration_num=calibration)
         mfc.set_flow_rate(flow_rate)
 
-def _heat_and_wait_until_temperature_reached(furnace:OwenTPM101, temperature:float):
+def _set_and_wait_until_temperature_reached(furnace:OwenTPM101, temperature:float):
     """
-    Heat furnace to the required temperature and wait until this temperature is reached.
+    Set furnace temperature to the required value and wait until it is reached. If temperature is 0, turn off heating and return immideately. Temperature is considered reached if current temperature falls into 1 percent window from target temperature.
 
     parameters
     ----------
@@ -267,63 +323,58 @@ def _heat_and_wait_until_temperature_reached(furnace:OwenTPM101, temperature:flo
     temperature:float
         required temperature
     """
+    if temperature == 0:
+        furnace.set_temperature(0)
+        furnace.set_temperature_control(False)
+        return
     furnace.set_temperature_control(True)
     furnace.set_temperature(temperature)
     while True:
         current_temperature = furnace.get_temperature()
-        if current_temperature >= temperature:
+        if abs(current_temperature - temperature) <= temperature * 0.01:
             break
         time.sleep(60)
 
 def activate(args:argparse.Namespace):
     """
-    Activate catalyst using parameters defined in configuration file, provided as argument. Configuration file is file with several variables created using python syntax. Use activation_config.py as an example. Method initializes furnace controller, mass flow controllers and connects to the devices. It sets mass flow controllers with proper calibrations and flow rates (corresponding valves must be opened prior this method is called). It waits 30 minutes for system to be purged with gases, heats furnace to activation temperature and holds it at that temperature for activation time. It then turns off heating, waits until furnace is cooled down and sets gas flow rates to the specified in configuration file values. NB: valves cannot be opened or closed automatically.
+    Activate catalyst using parameters defined in configuration file, provided as argument. Configuration file is file with several variables created using python syntax. Use activation_config.py as an example. Method initializes furnace controller, valve controller, mass flow controllers, connects to the devices, and starts plotter. It then performs activation step-by-step. After the activation is finished function waits until user hits enter. Plotter is stopped and the plot can be saved if necessary. Program finally terminates after the plot is closed.
     """
     config_path = Path(args.config)
     process_config = _import_config(config_path)
+    valves_controller = _initialize_valve_controller()
     furnace_controller = _initialize_furnace_controller()
     mfcs = _initialize_mass_flow_controllers()
-    _set_flow_rates(mfcs, process_config.calibrations, process_config.activation_flow_rates)
     plotter = DataCollectorPlotter(furnace_controller=furnace_controller, mass_flow_controllers=mfcs, gases=process_config.gases, chromatograph=None)
     plotter.start()
-    # wait system to be purged with gases for 30 minutes
-    time.sleep(30*60)
-    _check_flow_rates(mfcs, process_config.activation_flow_rates, plotter=plotter)
-    _heat_and_wait_until_temperature_reached(furnace_controller, process_config.activation_temperature)
-    # dwell for activation duration time
-    time.sleep(process_config.activation_duration*60)
-    # turn off heating, wait until furnace is cooled down to post_temperature
-    furnace_controller.set_temperature(0)
-    furnace_controller.set_temperature_control(False)
-    while True:
-        current_temperature = furnace_controller.get_temperature()
-        if current_temperature <= process_config.post_temperature:
-            break
-        time.sleep(60)
-    # change gas flow rates to post activation values
-    for mfc, flow_rate in zip(mfcs, process_config.post_flow_rates):
-        mfc.set_flow_rate(flow_rate)
+    for step_valve_states, step_calibrations, step_flow_rates, step_temperature, step_time in zip(process_config.valves, process_config.calibrations, process_config.flow_rates, process_config.temperatures, process_config.times):
+        _set_valve_states(valves_controller, step_valve_states)
+        _set_flow_rates(mfcs, step_calibrations, step_flow_rates)
+        _set_and_wait_until_temperature_reached(furnace_controller, step_temperature)
+        if step_time:
+            time.sleep(step_time * 60)
     input()
     plotter.stop()
 
 def measure(args:argparse.Namespace):
     """
-    Gather chromatograms at different measurement temperatures defined in a config file provided as an argument. Configuration file is a file with several variables defined using python syntax. Use measurement_config.py as an example of configuration. Method initializes devices and connects to them. It sets chromatograph method to 'purge', sets mass flow controller calibrations and flow rates. Heats furnace to the first measurement temperature and waits until target temperature is reached. Starts chromatograph purge, waits until purge is over and sets chromatograph method to the one specified in a config. Then, for each measurement temperature, method waits until chromatograph is ready for analysis, starts measurement, heats furnace to the next temperature. Finally, it turns off furnace and starts chromatograph cool down. During the process temperature, gas flow rates and chromatogram analysis start times are plotted. User has to hit enter after chromatograph cool down is started to stop plotter.
+    Gather chromatograms at different measurement temperatures defined in a config file provided as an argument. Configuration file is a file with several variables defined using python syntax. Use measurement_config.py as an example of configuration. Method initializes devices and connects to them. It sets chromatograph method to 'purge', sets, valve states, mass flow controller calibrations and flow rates. Heats furnace to the first measurement temperature and waits until target temperature is reached. Starts chromatograph purge, waits until purge is over and sets chromatograph method to the one specified in a config. Then, for each measurement temperature, method waits until chromatograph is ready for analysis, starts measurement, heats furnace to the next temperature. Finally, it turns off furnace and starts chromatograph cool down. During the process temperature, gas flow rates and chromatogram analysis start times are plotted. User has to hit enter after chromatograph cool down is started to stop plotter.
     """
     config_path = Path(args.config)
     process_config = _import_config(config_path)
     today = date.today()
+    valve_controller = _initialize_valve_controller()
     furnace = _initialize_furnace_controller()
     mfcs = _initialize_mass_flow_controllers()
     chromatograph = _initialize_chromatograph()
     plotter = DataCollectorPlotter(furnace_controller=furnace, mass_flow_controllers=mfcs, gases=process_config.gases, chromatograph=chromatograph)
     plotter.start()
+    _set_valve_states(valve_controller=valve_controller, states=process_config.valves)
     _set_flow_rates(mfcs, process_config.calibrations, process_config.flow_rates)
     chromatograph.set_method('purge')
-    # wait 10 minutes to purge the system
-    time.sleep(10*60)
+    # purge the system
+    time.sleep(process_config.purge_time*60)
     _check_flow_rates(mfcs, process_config.flow_rates)
-    _heat_and_wait_until_temperature_reached(furnace, process_config.temperatures[0])
+    _set_and_wait_until_temperature_reached(furnace, process_config.temperatures[0])
     # wait until chromatograph is ready for analysis, start chromatograph purge afterwards
     while True:
         chromatograph_is_ready = chromatograph.is_ready_for_analysis()
@@ -368,7 +419,7 @@ def measure(args:argparse.Namespace):
             time.sleep(60)
         chromatogram_temperature = furnace.get_temperature()
         chromatograph.start_analysis()
-        _heat_and_wait_until_temperature_reached(furnace, temperature)
+        _set_and_wait_until_temperature_reached(furnace, temperature)
         isothermal_start = time.time()
         while True:
             chromatograph_working_status = chromatograph.get_working_status()
@@ -393,8 +444,7 @@ def measure(args:argparse.Namespace):
             break
         time.sleep(60)
     # turn off heating
-    furnace.set_temperature(0)
-    furnace.set_temperature_control(False)
+    _set_and_wait_until_temperature_reached(furnace=furnace, temperature=0)
     # set final chromatogram passport values
     while True:
         chromatograph_working_status = chromatograph.get_working_status()
@@ -415,6 +465,7 @@ def measure(args:argparse.Namespace):
 def measure_init_conc(args:argparse.Namespace):
     """
     Method for measuring initial concentration of gas mixture needed for conversion calculation. Parameters of measurement must be in a configuration file provided as a parameter to this method. Method performs following actions:
+        - sets valves to states specified in config file
         - sets gas flow rates to the values specified in config file
         - purges chromatograph prior to analysis
         - measures several chromatograms (number is defined in config file)
@@ -424,13 +475,15 @@ def measure_init_conc(args:argparse.Namespace):
     config_path = Path(args.config)
     process_config = _import_config(config_path)
     today = date.today()
+    valve_controller = _initialize_valve_controller()
     furnace = _initialize_furnace_controller()
     mfcs = _initialize_mass_flow_controllers()
     chromatograph = _initialize_chromatograph()
     plotter = DataCollectorPlotter(furnace_controller=furnace, mass_flow_controllers=mfcs, gases=process_config.gases, chromatograph=chromatograph)
     plotter.start()
-    chromatograph.set_method('purge')
+    _set_valve_states(valve_controller=valve_controller, states=process_config.valves)
     _set_flow_rates(mfcs, process_config.calibrations, process_config.flow_rates)
+    chromatograph.set_method('purge')
     # wait until chromatograph is ready to start analysis
     while True:
         chromatograph_is_ready = chromatograph.is_ready_for_analysis()
@@ -543,6 +596,16 @@ def main():
     mfc_print_flow_rate_parser = mfc_subparser.add_parser('print-flow-rate', help='print current flow rate')
     mfc_print_flow_rate_parser.set_defaults(func=mfc_print_flow_rate)
     mfc_print_flow_rate_parser.add_argument('--gas', required=True, choices=['He', 'CO2', 'O2', 'H2', 'CO', 'CH4'], help='which gas to print flow rate for')
+
+    valves_parser = subparsers.add_parser('valve', help='commands to control solenoid valves')
+    valves_subparser = valves_parser.add_subparsers(required=True)
+    valves_set_state_parser = valves_subparser.add_parser('set-state', help='set state of the valve')
+    valves_set_state_parser.set_defaults(func=valves_set_state)
+    valves_set_state_parser.add_argument('--gas', required=True, help='which gas to set state of the valve for')
+    valves_set_state_parser.add_argument('--state', required=True, choices=['open', 'close'], help='state of the valve')
+    valves_get_state_parser = valves_subparser.add_parser('get-state', help='get state of the valve')
+    valves_get_state_parser.set_defaults(func=valves_get_state)
+    valves_get_state_parser.add_argument('--gas', required=True, help='which gas to get state of the valve for')
 
     activation_parser = subparsers.add_parser('activate', help='activate catalyst using parameters provided in configuration file')
     activation_parser.set_defaults(func=activate)
