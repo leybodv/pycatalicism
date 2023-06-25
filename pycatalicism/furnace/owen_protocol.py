@@ -132,7 +132,7 @@ class OwenProtocol():
 
     def send_PIC(self, parameter:str, value:float):
         """
-        Set parameter value of type PIC to specified value. The value will be rounded to 1 digit after decimal separator (see issue #19).
+        Set parameter value of type PIC to specified value. If the value is not multiple of 0.5, the value will be rounded to the nearest integer (see issue #19).
 
         parameters
         ----------
@@ -146,9 +146,9 @@ class OwenProtocol():
         FurnaceConnectionException
             if several trials were unsuccessful to set the new value
         """
-        if (10 * value % 1) != 0:
-            self._logger.warning(f'Value {value} will be rounded to {round(value, 1)}')
-        data = self._float_to_PIC(value=round(value, 1))
+        if (10 * value % 5) != 0:
+            self._logger.warning(f'Value {value} will be rounded to {round(value)}')
+        data = self._float_to_PIC(value=round(value))
         message = self._pack_message(command=parameter, is_request=False, data=data)
         count = 0
         while True:
