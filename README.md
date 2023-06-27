@@ -21,6 +21,7 @@
       <p><code>pip install pycatalicism</code></p>
     <h3>Windows</h3>
       <p>Установить python отсюда: <a href="python.org">python.org</a></p>
+      <p>Установить <a href="https://www.microsoft.com/en-us/download/details.aspx?id=48145">Visual C++ Redistributable for Visual Studio 2015</a></p>
       <p>Установить программу:</p>
       <p><code>pip install pycatalicism</code></p>
       <p>Скачать и установить драйвер usb -> com отсюда: <a href="https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers">silabs.com</a></p>
