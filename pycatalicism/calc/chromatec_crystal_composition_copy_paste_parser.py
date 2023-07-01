@@ -190,7 +190,7 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
             new_contents:str
                 string with file contents in which commas were replaced with dots
         """
-        with path.open(mode='r') as file:
+        with path.open(mode='r', encoding='utf8') as file:
             contents = file.read()
             new_contents = contents.replace(',', '.')
         return new_contents
