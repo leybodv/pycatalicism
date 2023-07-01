@@ -327,8 +327,10 @@
       <li>переписать модуль calc: селективность должна рассчитываться автоматически, если это имеет смысл; должно быть 2 команды <code>calculate activity</code> и <code>calculate conversion</code></li>
       <li>автоматически конвертировать данные с газовых часов в СИ при рассчёте</li>
     </ul>
-    <h2 id="changes">Изменения в новых версиях</h2>
+  <h2 id="changes">Изменения в новых версиях</h2>
     <ul>
       <li>2.0.1</li>
       <p>Исправлена ошибка <a href="https://github.com/leybodv/pycatalicism/issues/19">issue 19</a></p>
+      <li>2.0.2</li>
+      <p>Исправлена ошибка <a href="https://github.com/leybodv/pycatalicism/issues/1">issue 1</a></p>
     </ul>
