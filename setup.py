@@ -14,7 +14,7 @@ install_requires = [
 
 setuptools.setup(
      name='pycatalicism',
-     version='2.0.1',
+     version='2.0.1.1',
      author="Denis Leybo",
      author_email="denis@leybo.xyz",
      description="Program controls catalytic activity of materials measurement equipment as well as calculations",
