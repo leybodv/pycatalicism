@@ -66,6 +66,7 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
             raise ParserException(f'initial data path {initial_data_path} must be a file')
         if not input_data_path.is_dir():
             raise ParserException(f'input data path {input_data_path} must be a directory')
+        self.logger.info(f'Parsing file with initial data: {initial_data_path}')
         _, Cs_i, Ta_i, Pa_i, f_i = self._parse_file(initial_data_path)
         flow_is_measured = Ta_i and Pa_i and f_i
         Ts = []
@@ -80,6 +81,7 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
                 self.logger.warning(f'Found directory {file} in input data path')
                 continue
             try:
+                self.logger.info(f'Parsing data file: {file}')
                 T, C, Ta, Pa, f = self._parse_file(file)
             except ParserException:
                 self.logger.warning(f'Wrong data format in file {file}. Skipping.')
@@ -133,6 +135,7 @@ class ChromatecCrystalCompositionCopyPasteParser(Parser):
             if data format is wrong
         """
         try:
+            self.logger.debug(f'Replacing commas with dots in file: {path}')
             file_contents = self._replace_commas_with_dots(path)
         except UnicodeDecodeError:
             raise ParserException(f'Non unicode file {path}')
