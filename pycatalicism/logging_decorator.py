@@ -2,6 +2,7 @@ import functools
 import inspect
 import logging
 import sys
+from pathlib import Path
 from typing import Callable
 
 import pycatalicism.config as config
@@ -23,6 +24,7 @@ class Logging:
         functools.update_wrapper(self, func)
         self.func = func
         self.logging_levels = config.logging_levels
+        self.logfilepath = config.logfilepath
 
     def __get__(self, obj:object, type=None):
         """
@@ -59,19 +61,19 @@ class Logging:
             module = sys.modules[self.func.__module__]
             if 'logger' not in module.__dict__:
                 logger = logging.getLogger(module.__name__)
-                self._configure_logger(logger, self.logging_levels[module.__name__])
+                self._configure_logger(logger, self.logfilepath, self.logging_levels[module.__name__])
                 module.__dict__['logger'] = logger
         elif inspect.ismethod(self.func):
             obj = self.func.__self__
             if 'logger' not in obj.__dict__:
                 logger = logging.getLogger(obj.__class__.__name__)
-                self._configure_logger(logger, self.logging_levels[obj.__class__.__name__])
+                self._configure_logger(logger, self.logfilepath, self.logging_levels[obj.__class__.__name__])
                 obj.__dict__['logger'] = logger
         else:
             raise Exception(f'Cannot decorate function {self.func.__name__}')
         return self.func(*args, **kwargs)
 
-    def _configure_logger(self, logger:logging.Logger, level:int):
+    def _configure_logger(self, logger:logging.Logger, logfilepath:str, level:int):
         """
         Set level to logger, add StreamHandler (will log to console) and formatter
 
@@ -79,17 +81,26 @@ class Logging:
         ----------
         logger:Logger
             logger to be configured
+        logfilepath:str
+            path to file to write logging to
         level:int
             logging level
         """
         logger.setLevel(level)
         logger.propagate = False
+        logfile = Path(logfilepath).absolute()
+        logfile.parent.mkdir(parents=True, exist_ok=True)
 
-        ch = logging.StreamHandler()
-        ch.setLevel(level)
+        if not logger.handlers:
+            ch = logging.StreamHandler()
+            ch.setLevel(level)
+            fh = logging.FileHandler(filename=logfile)
+            fh.setLevel(level)
 
-        formatter = logging.Formatter(fmt='[%(asctime)s] %(name)s.%(funcName)s: %(levelname)s: %(message)s', datefmt='%d.%m.%Y %H:%M:%S')
+            formatter = logging.Formatter(fmt='[%(asctime)s] %(name)s.%(funcName)s: %(levelname)s: %(message)s', datefmt='%d.%m.%Y %H:%M:%S')
 
-        ch.setFormatter(formatter)
+            ch.setFormatter(formatter)
+            fh.setFormatter(formatter)
 
-        logger.addHandler(ch)
+            logger.addHandler(ch)
+            logger.addHandler(fh)

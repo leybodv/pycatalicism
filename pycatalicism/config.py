@@ -17,6 +17,7 @@ raw_data_parser_type = 'chromatec-crystal-composition-copy-paste'
 
 # logging levels for different classes/modules
 import logging
+from datetime import datetime
 logging_levels = {
                     'ChromatecCrystalCompositionCopyPasteParser'    :   logging.INFO,
                     'CO2HydrogenationCalculator'                    :   logging.INFO,
@@ -28,6 +29,8 @@ logging_levels = {
                     'COOxidationPlotter'                            :   logging.INFO,
                     'RawData'                                       :   logging.INFO,
                     }
+# path to file to which logs will be written
+logfilepath=f'./pycatalicism_logs/{datetime.now():%Y%m%d_%H%M%S}.log'
 
 ## chromatograph configuration ##
 # slave id in control panel modbus configuration
