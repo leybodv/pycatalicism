@@ -10,7 +10,7 @@ class BronkhorstF201CV():
     Class represents Bronkhorst F201CV mass flow controller.
     """
 
-    def __init__(self, serial_address:str, serial_id:str, calibrations:dict[int, BronkhorstMFCCalibration]):
+    def __init__(self, serial_address:str, serial_id:str, calibrations:dict[int, BronkhorstMFCCalibration], logfilename:str):
         """
         Initializes instance variables, registers logger.
 
@@ -22,13 +22,15 @@ class BronkhorstF201CV():
             serial number of this controller (e.g. M111202123A, see documentation)
         calibrations:dict[int, BronkhorstMFCCalibration]
             set of calibrations written in the memory of the device with corresponding calibration number. NB: calibration number is for propar protocol, numbering is started from 0, so fluid1 has 0th number
+        logfilename:str
+            path to file to write logs to
         """
         self._serial_address = serial_address
         self._serial_id = serial_id
         self._calibrations = calibrations
         self._current_calibration = None
         self._connected = False
-        self._logger = mfc_logging.get_logger(self.__class__.__name__)
+        self._logger = mfc_logging.get_logger(self.__class__.__name__, logfilename)
 
     def connect(self):
         """
