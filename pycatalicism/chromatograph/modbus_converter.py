@@ -1,8 +1,9 @@
 import struct
 
 import pycatalicism.chromatograph.chromatograph_logging as chromatograph_logging
+from pycatalicism.config import logfilepath
 
-_logger = chromatograph_logging.get_logger(__name__)
+_logger = chromatograph_logging.get_logger(__name__, logfilepath)
 
 def bytes_to_float(response_bytes:list[int]) -> float:
     """
