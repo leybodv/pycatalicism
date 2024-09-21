@@ -12,7 +12,7 @@ class OwenProtocol():
     Class represents simplified Owen Protocol. It does not support all parameter types as well as ignores some peculiarities of the protocol.
     """
 
-    def __init__(self, address:int, port:str, baudrate:int, bytesize:int, parity:str, stopbits:float, timeout:float, write_timeout:float|None, rtscts:bool, request_trials:int=3):
+    def __init__(self, address:int, port:str, baudrate:int, bytesize:int, parity:str, stopbits:float, timeout:float, write_timeout:float|None, rtscts:bool, logfilename:str, request_trials:int=3):
         """
         Initialize instance variables, gather read/write lock and register logger.
 
@@ -36,6 +36,8 @@ class OwenProtocol():
             write timeout to use during communication via serial port. See pyserial for details.
         rtscts:bool
             enable hardware flow control. See pyserial for details.
+        logfilename:str
+            path to file to log to
         request_trials:int (default: 3)
             how many times to try connecting to the controller before exception is thrown
         """
@@ -50,7 +52,7 @@ class OwenProtocol():
         self._write_timeout = write_timeout
         self._read_write_lock = threading.Lock()
         self._request_trials = request_trials
-        self._logger = furnace_logging.get_logger(self.__class__.__name__)
+        self._logger = furnace_logging.get_logger(self.__class__.__name__, logfilename)
 
     ## Public interface ##
 
