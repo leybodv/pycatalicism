@@ -46,7 +46,7 @@ class ChromatecControlPanelModbus():
     Class represents simplified version of modbus protocol for connection with chromatec control panel modbus slave.
     """
 
-    def __init__(self, modbus_id:int, working_status_input_address:int, connection_status_input_address:int, step_time_input_address:int, method_holding_address:int, chromatograph_command_holding_address:int, application_command_holding_address:int, request_trials:int=3):
+    def __init__(self, modbus_id:int, working_status_input_address:int, connection_status_input_address:int, step_time_input_address:int, method_holding_address:int, chromatograph_command_holding_address:int, application_command_holding_address:int, logfilename:str, request_trials:int=3):
         """
         Initializes instance private variables, creates modbus client and registers logger.
 
@@ -66,6 +66,8 @@ class ChromatecControlPanelModbus():
             modbus address for chromatograph commands (see chromatec modbus manual for details)
         application_command_holding_address:int
             modbus address for application commands (see chromatec modbus manual for details)
+        logfilename:str
+            path to file to log to
         """
         self._modbus_id = modbus_id
         self._request_trials = request_trials
@@ -77,7 +79,7 @@ class ChromatecControlPanelModbus():
         self._application_command_holding_address = application_command_holding_address
         self._modbus_client = ModbusTcpClient()
         self._read_write_lock = threading.Lock()
-        self._logger = chromatograph_logging.get_logger(self.__class__.__name__)
+        self._logger = chromatograph_logging.get_logger(self.__class__.__name__, logfilename)
 
     def get_current_working_status(self) -> WorkingStatus:
         """
