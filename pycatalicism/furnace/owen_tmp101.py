@@ -7,7 +7,7 @@ class OwenTPM101():
     Class represents simplified version of Owen TPM101 temperature controller. Far less parameters can be used in this class in comparison to the real controller.
     """
 
-    def __init__(self, device_name:str, owen_protocol:OwenProtocol):
+    def __init__(self, device_name:str, owen_protocol:OwenProtocol, logfilename:str):
         """
         Assign parameters to instance variables, initialize connection flag and register logger.
 
@@ -17,11 +17,13 @@ class OwenTPM101():
             The name of the controller which is returned via serial protocol.
         owen_protocol:OwenProtocol
             Protocol used for communication over serial port.
+        logfilename:str
+            Path to file to log to
         """
         self._connected = False
         self._owen_protocol = owen_protocol
         self._device_name = device_name
-        self._logger = furnace_logging.get_logger(self.__class__.__name__)
+        self._logger = furnace_logging.get_logger(self.__class__.__name__, logfilename)
 
     def connect(self):
         """
