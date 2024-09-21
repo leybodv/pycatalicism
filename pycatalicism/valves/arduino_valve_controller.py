@@ -21,7 +21,7 @@ class ArduinoValveController():
     """
     """
 
-    def __init__(self, port:str, baudrate:int, bytesize:int, parity:str, stopbits:float, request_trials:int=3):
+    def __init__(self, port:str, baudrate:int, bytesize:int, parity:str, stopbits:float, logfilename:str, request_trials:int=3):
         """
         Initialize object with serial connection parameters. Register logger.
 
@@ -37,6 +37,8 @@ class ArduinoValveController():
             parity to use for communication. Must be the same as in arduino sketch
         stopbits:float
             stopbits to use for communication. Must be the same as in arduino sketch
+        logfilename:str
+            path to file to write logs to
         request_truals:int (default: 3)
             how many times to try connecting to the controller before exception is thrown
         """
@@ -46,7 +48,7 @@ class ArduinoValveController():
         self._parity = parity
         self._stopbits = stopbits
         self._read_write_lock = threading.Lock()
-        self._logger = valves_logging.get_logger(self.__class__.__name__)
+        self._logger = valves_logging.get_logger(self.__class__.__name__, logfilename)
         self._request_trials = request_trials
         self._handshake_command = 'HSH'
         self._handshake_value = 'NISMF'
