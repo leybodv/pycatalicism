@@ -16,14 +16,14 @@ class ChromatecCrystal5000():
     Class represents chromatec crystal 5000 chromatograph. Communication is done via modbus protocol.
     """
 
-    def __init__(self, control_panel:ChromatecControlPanelModbus, analytic:ChromatecAnalyticModbus, methods:dict[str, int]):
+    def __init__(self, control_panel:ChromatecControlPanelModbus, analytic:ChromatecAnalyticModbus, methods:dict[str, int], logfilename:str):
         """
         Initializes instance variables, registers logger.
         """
         self._control_panel = control_panel
         self._analytic = analytic
         self._methods = methods
-        self._logger = chromatograph_logging.get_logger(self.__class__.__name__)
+        self._logger = chromatograph_logging.get_logger(self.__class__.__name__, logfilename)
         self._connected = False
 
     def connect(self):
