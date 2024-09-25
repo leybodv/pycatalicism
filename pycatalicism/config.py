@@ -106,17 +106,19 @@ mfc_H2_calibrations = {
                     }
 
 ## solenoid valves configuration ##
-valves_port = ''
+valves_port = 'COM7'
 valves_baudrate = 9600
 valves_bytesize = serial.EIGHTBITS
 valves_parity = serial.PARITY_NONE
 valves_stopbits = serial.STOPBITS_ONE
 valves_gases = {
-                'He'  :  1,
-                'CO2' :  2,
-                'O2'  :  2,
-                'H2'  :  3,
-                'CO'  :  3,
+                'He'     :  1,
+                'CO2'    :  2,
+                'O2'     :  2,
+                'H2_NH3' :  3,
+                'H2'     :  4,
+                'CO'     :  4,
+                'NH3'    :  5,
                 }
 
 ## furnace configuration ##
