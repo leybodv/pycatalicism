@@ -42,8 +42,8 @@ def furnace_set_temperature(args:argparse.Namespace):
     """
     Set furnace temperature to specified value
     """
-    furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts)
-    furnace_controller = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol)
+    furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts, logfilename=config.logfilepath)
+    furnace_controller = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol, logfilename=config.logfilepath)
     temperature = float(args.temperature)
     furnace_controller.connect()
     furnace_controller.set_temperature(temperature)
@@ -56,8 +56,8 @@ def furnace_print_temperature(args:argparse.Namespace):
     """
     Print current temperature to console
     """
-    furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts)
-    furnace_controller = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol)
+    furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts, logfilename=config.logfilepath)
+    furnace_controller = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol, logfilename=config.logfilepath)
     furnace_controller.connect()
     temperature = furnace_controller.get_temperature()
     print(f'Current temperature is {temperature}°C')
@@ -71,9 +71,9 @@ def _initialize_chromatograph() -> ChromatecCrystal5000:
     chromatograph:ChromatecCrystal5000
         chromatograph used for analysis
     """
-    control_panel_modbus = ChromatecControlPanelModbus(modbus_id=config.control_panel_modbus_id, working_status_input_address=config.working_status_input_address, step_time_input_address=config.step_time_input_address, connection_status_input_address=config.connection_status_input_address, method_holding_address=config.method_holding_address, chromatograph_command_holding_address=config.chromatograph_command_holding_address, application_command_holding_address=config.application_command_holding_address)
-    analytic_modbus = ChromatecAnalyticModbus(modbus_id=config.analytic_modbus_id, sample_name_holding_address=config.sample_name_holding_address, chromatogram_purpose_holding_address=config.chromatogram_purpose_holding_address, sample_volume_holding_address=config.sample_volume_holding_address, sample_dilution_holding_address=config.sample_dilution_holding_address, operator_holding_address=config.operator_holding_address, column_holding_address=config.column_holding_address, lab_name_holding_address=config.lab_name_holding_address)
-    chromatograph = ChromatecCrystal5000(control_panel_modbus, analytic_modbus, config.methods)
+    control_panel_modbus = ChromatecControlPanelModbus(modbus_id=config.control_panel_modbus_id, working_status_input_address=config.working_status_input_address, step_time_input_address=config.step_time_input_address, connection_status_input_address=config.connection_status_input_address, method_holding_address=config.method_holding_address, chromatograph_command_holding_address=config.chromatograph_command_holding_address, application_command_holding_address=config.application_command_holding_address, logfilename=config.logfilepath)
+    analytic_modbus = ChromatecAnalyticModbus(modbus_id=config.analytic_modbus_id, sample_name_holding_address=config.sample_name_holding_address, chromatogram_purpose_holding_address=config.chromatogram_purpose_holding_address, sample_volume_holding_address=config.sample_volume_holding_address, sample_dilution_holding_address=config.sample_dilution_holding_address, operator_holding_address=config.operator_holding_address, column_holding_address=config.column_holding_address, lab_name_holding_address=config.lab_name_holding_address, logfilename=config.logfilepath)
+    chromatograph = ChromatecCrystal5000(control_panel_modbus, analytic_modbus, config.methods, config.logfilepath)
     chromatograph.connect()
     return chromatograph
 
@@ -108,9 +108,9 @@ def mfc_set_flow_rate(args:argparse.Namespace):
     """
     Set flow rate of mfc to specified value.
     """
-    mfc_He = BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations)
-    mfc_CO2 = BronkhorstF201CV(serial_address=config.mfc_CO2_serial_address, serial_id=config.mfc_CO2_serial_id, calibrations=config.mfc_CO2_calibrations)
-    mfc_H2 = BronkhorstF201CV(serial_address=config.mfc_H2_serial_address, serial_id=config.mfc_H2_serial_id, calibrations=config.mfc_H2_calibrations)
+    mfc_He = BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations, logfilename=config.logfilepath)
+    mfc_CO2 = BronkhorstF201CV(serial_address=config.mfc_CO2_serial_address, serial_id=config.mfc_CO2_serial_id, calibrations=config.mfc_CO2_calibrations, logfilename=config.logfilepath)
+    mfc_H2 = BronkhorstF201CV(serial_address=config.mfc_H2_serial_address, serial_id=config.mfc_H2_serial_id, calibrations=config.mfc_H2_calibrations, logfilename=config.logfilepath)
     gas = args.gas
     flow_rate = float(args.flow_rate)
     if gas == 'He':
@@ -129,9 +129,9 @@ def mfc_set_calibration(args:argparse.Namespace):
     """
     Set calibration for mass flow controller.
     """
-    mfc_He = BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations)
-    mfc_CO2 = BronkhorstF201CV(serial_address=config.mfc_CO2_serial_address, serial_id=config.mfc_CO2_serial_id, calibrations=config.mfc_CO2_calibrations)
-    mfc_H2 = BronkhorstF201CV(serial_address=config.mfc_H2_serial_address, serial_id=config.mfc_H2_serial_id, calibrations=config.mfc_H2_calibrations)
+    mfc_He = BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations, logfilename=config.logfilepath)
+    mfc_CO2 = BronkhorstF201CV(serial_address=config.mfc_CO2_serial_address, serial_id=config.mfc_CO2_serial_id, calibrations=config.mfc_CO2_calibrations, logfilename=config.logfilepath)
+    mfc_H2 = BronkhorstF201CV(serial_address=config.mfc_H2_serial_address, serial_id=config.mfc_H2_serial_id, calibrations=config.mfc_H2_calibrations, logfilename=config.logfilepath)
     gas = args.gas
     calibration_num = int(args.calibration_number)
     if gas == 'He':
@@ -150,9 +150,9 @@ def mfc_print_flow_rate(args:argparse.Namespace):
     """
     Print current flow rate.
     """
-    mfc_He = BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations)
-    mfc_CO2 = BronkhorstF201CV(serial_address=config.mfc_CO2_serial_address, serial_id=config.mfc_CO2_serial_id, calibrations=config.mfc_CO2_calibrations)
-    mfc_H2 = BronkhorstF201CV(serial_address=config.mfc_H2_serial_address, serial_id=config.mfc_H2_serial_id, calibrations=config.mfc_H2_calibrations)
+    mfc_He = BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations, logfilename=config.logfilepath)
+    mfc_CO2 = BronkhorstF201CV(serial_address=config.mfc_CO2_serial_address, serial_id=config.mfc_CO2_serial_id, calibrations=config.mfc_CO2_calibrations, logfilename=config.logfilepath)
+    mfc_H2 = BronkhorstF201CV(serial_address=config.mfc_H2_serial_address, serial_id=config.mfc_H2_serial_id, calibrations=config.mfc_H2_calibrations, logfilename=config.logfilepath)
     gas = args.gas
     if gas == 'He':
         mfc_He.connect()
@@ -170,7 +170,7 @@ def _initialize_valve_controller() -> ArduinoValveController:
     """
     Initialize valve controller object
     """
-    valve_controller = ArduinoValveController(port=config.valves_port, baudrate=config.valves_baudrate, bytesize=config.valves_bytesize, parity=config.valves_parity, stopbits=config.valves_stopbits)
+    valve_controller = ArduinoValveController(port=config.valves_port, baudrate=config.valves_baudrate, bytesize=config.valves_bytesize, parity=config.valves_parity, stopbits=config.valves_stopbits, logfilename=config.logfilepath)
     valve_controller.connect()
     return valve_controller
 
@@ -244,8 +244,8 @@ def _initialize_furnace_controller() -> OwenTPM101:
     furnace_controller:OwenTPM101
         furnace controller
     """
-    furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts)
-    furnace_controller = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol)
+    furnace_controller_protocol = OwenProtocol(address=config.furnace_address, port=config.furnace_port, baudrate=config.furnace_baudrate, bytesize=config.furnace_bytesize, parity=config.furnace_parity, stopbits=config.furnace_stopbits, timeout=config.furnace_timeout, write_timeout=config.furnace_write_timeout, rtscts=config.furnace_rtscts, logfilename=config.logfilepath)
+    furnace_controller = OwenTPM101(device_name=config.furnace_device_name, owen_protocol=furnace_controller_protocol, logfilename=config.logfilepath)
     furnace_controller.connect()
     return furnace_controller
 
@@ -259,9 +259,9 @@ def _initialize_mass_flow_controllers() -> list[BronkhorstF201CV]:
         list of mass flow controllers
     """
     mfcs = list()
-    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations))
-    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_CO2_serial_address, serial_id=config.mfc_CO2_serial_id, calibrations=config.mfc_CO2_calibrations))
-    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_H2_serial_address, serial_id=config.mfc_H2_serial_id, calibrations=config.mfc_H2_calibrations))
+    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_He_serial_address, serial_id=config.mfc_He_serial_id, calibrations=config.mfc_He_calibrations, logfilename=config.logfilepath))
+    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_CO2_serial_address, serial_id=config.mfc_CO2_serial_id, calibrations=config.mfc_CO2_calibrations, logfilename=config.logfilepath))
+    mfcs.append(BronkhorstF201CV(serial_address=config.mfc_H2_serial_address, serial_id=config.mfc_H2_serial_id, calibrations=config.mfc_H2_calibrations, logfilename=config.logfilepath))
     for mfc in mfcs:
         mfc.connect()
     return mfcs
